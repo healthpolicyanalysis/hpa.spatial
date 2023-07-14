@@ -6,7 +6,15 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of hpa.spatial is to …
+The goal of hpa.spatial is to make relevant shape files and data easily
+available and include helpful functions for analysis of spatial data.
+
+## Notes on other packages
+
+Shape files are available within
+[`{absmapsdata}`](https://github.com/wfmackey/absmapsdata) and these can
+be (lazy) loaded using
+[`{strayr}`](https://github.com/runapp-aus/strayr).
 
 ## Installation
 
