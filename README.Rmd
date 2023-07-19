@@ -25,9 +25,6 @@ The goal of hpa.spatial is to make relevant shape files and data easily availabl
 Shape files are available within [`{absmapsdata}`](https://github.com/wfmackey/absmapsdata) and these can be (lazy) loaded using [`{strayr}`](https://github.com/runapp-aus/strayr).
 
 
-
-
-
 ## Installation
 
 You can install the development version of hpa.spatial from [GitHub](https://github.com/) with:
@@ -37,12 +34,102 @@ You can install the development version of hpa.spatial from [GitHub](https://git
 devtools::install_github("healthpolicyanalysis/hpa.spatial")
 ```
 
-## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-```{r example}
+```{r, message=FALSE}
 library(hpa.spatial)
-## basic example code
+library(sf)
+library(dplyr)
+library(ggplot2)
+```
+
+## Getting shapefiles
+
+`get_polygon()` is used to get shape files from the abs.
+
+```{r}
+sa2_2016 <- get_polygon(area = "sa2", year = 2016)
+head(sa2_2016)
+
+sa2_2016 |> 
+  ggplot() +
+  geom_sf() +
+  theme_bw()
+```
+
+This is used in the same way as `strayr::read_absmap()` except it also includes a `simplify_keep` argument for simplifying the polygon.
+
+```{r, eval=FALSE}
+sa2_2016_simple <- get_polygon(area = "sa2", year = 2016, simplify_keep = 0.1)
+
+sa2_2016 |> 
+  filter(gcc_name_2016 == "Greater Brisbane") |> 
+  ggplot() +
+  geom_sf() +
+  scale_x_continuous(limits = c(152.9, 153.1)) +
+  scale_y_continuous(limits = c(-27.4, -27.6)) +
+  theme_bw()
+
+sa2_2016_simple |> 
+  filter(gcc_name_2016 == "Greater Brisbane") |> 
+  ggplot() +
+  geom_sf() +
+  scale_x_continuous(limits = c(152.9, 153.1)) +
+  scale_y_continuous(limits = c(-27.4, -27.6)) +
+  theme_bw()
+```
+
+
+```{r, echo=FALSE, message=FALSE}
+sa2_2016_simple <- get_polygon(area = "sa2", year = 2016, simplify_keep = 0.1)
+
+p1 <- sa2_2016 |> 
+  filter(gcc_name_2016 == "Greater Brisbane") |> 
+  ggplot() +
+  geom_sf() +
+  scale_x_continuous(limits = c(152.9, 153.1)) +
+  scale_y_continuous(limits = c(-27.4, -27.6)) +
+  theme_bw()
+
+p2 <- sa2_2016_simple |> 
+  filter(gcc_name_2016 == "Greater Brisbane") |> 
+  ggplot() +
+  geom_sf() +
+  scale_x_continuous(limits = c(152.9, 153.1)) +
+  scale_y_continuous(limits = c(-27.4, -27.6)) +
+  theme_bw()
+
+gridExtra::grid.arrange(p1, p2, ncol = 2)
+```
+
+
+## Mapping data between ASGS editions
+
+`map_data_with_correspondence()` is used to map data across ASGS editions.
+
+When used with unit level data, it will randomly allocate the value to the code of the updated edition based on the population-weighted proportions (as probabiilties) on the relevant correspondence table.
+
+```{r}
+map_data_with_correspondence(
+  codes = c(107011130, 107041149),
+  values = c(10, 10),
+  fromArea = "sa2",
+  fromYear = 2011,
+  toArea = "sa2",
+  toYear = 2016,
+  value_type = "units"
+)
+```
+
+When used with aggregate data, it will split the value amongst the codes of the updated edition based on the population-weighted proportions on the relevant correspondence table.
+
+```{r}
+map_data_with_correspondence(
+  codes = c(107011130, 107041149),
+  values = c(10, 10),
+  fromArea = "sa2",
+  fromYear = 2011,
+  toArea = "sa2",
+  toYear = 2016,
+  value_type = "aggs"
+)
 ```
 
