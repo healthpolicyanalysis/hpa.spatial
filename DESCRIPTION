@@ -8,10 +8,13 @@ Authors@R:
 Description: Data and helpful functions for spatial data analyses.
 License: file LICENSE
 Imports: 
-    ASGS.foyer,
-    sf
+    rmapshaper,
+    strayr
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
 Depends: 
     R (>= 2.10)
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
