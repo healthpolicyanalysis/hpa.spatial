@@ -8,13 +8,17 @@ Authors@R:
 Description: Data and helpful functions for spatial data analyses.
 License: file LICENSE
 Imports: 
+    absmapsdata,
+    dplyr,
+    glue,
     rmapshaper,
     strayr
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
 Depends: 
-    R (>= 2.10)
+    R (>= 4.10)
 Suggests: 
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    withr
 Config/testthat/edition: 3
