@@ -39,5 +39,6 @@ a polygon of class \code{sf}.
 Get shapefiles from ABS
 }
 \examples{
-get_polygon(area="sa1", year = 2016)
+get_polygon(area = "sa2", year = 2016)
+get_polygon(name = "sa22016", simplify_keep = 0.05)
 }

@@ -13,7 +13,8 @@
 #' @export
 #'
 #' @examples
-#' get_polygon(area="sa1", year = 2016)
+#' get_polygon(area = "sa2", year = 2016)
+#' get_polygon(name = "sa22016", simplify_keep = 0.05)
 get_polygon <- function(name,
                         area,
                         year,
@@ -22,18 +23,15 @@ get_polygon <- function(name,
                         .validate_name,
                         simplify_keep = 1,
                         ...) {
-
   # call strayr::read_absmap with all args except for `simplify_keep`
   call <- match.call.defaults(expand.dots = FALSE)
   call$simplify_keep <- NULL
   call$... <- NULL
-  # read_absmap <- strayr::read_absmap
-  # browser()
   call[[1]] <- as.name("read_absmap")
-  # browser()
   polygon <- eval(call, envir = parent.frame())
 
-  if(simplify_keep != 1) {
+  # apply smoothing to polygon
+  if (simplify_keep != 1) {
     polygon <- rmapshaper::ms_simplify(polygon, keep = simplify_keep, ...)
   }
 
@@ -52,11 +50,13 @@ match.call.defaults <- function(definition = sys.function(sys.parent()),
   call <- match.call(definition, call, expand.dots, envir)
   formals <- formals(definition)
 
-  if(expand.dots && '...' %in% names(formals))
-    formals[['...']] <- NULL
+  if (expand.dots && "..." %in% names(formals)) {
+    formals[["..."]] <- NULL
+  }
 
-  for(i in setdiff(names(formals), names(call)))
-    call[i] <- list( formals[[i]] )
+  for (i in setdiff(names(formals), names(call))) {
+    call[i] <- list(formals[[i]])
+  }
 
 
   match.call(definition, call, TRUE, envir)
