@@ -74,7 +74,7 @@ head(sa2_2016)
 #> 5 MULTIPOLYGON (((149.2563 -3...
 #> 6 MULTIPOLYGON (((149.2064 -3...
 
-sa2_2016 |> 
+sa2_2016 |>
   ggplot() +
   geom_sf() +
   theme_bw()
@@ -88,16 +88,16 @@ includes a `simplify_keep` argument for simplifying the polygon.
 ``` r
 sa2_2016_simple <- get_polygon(area = "sa2", year = 2016, simplify_keep = 0.1)
 
-sa2_2016 |> 
-  filter(gcc_name_2016 == "Greater Brisbane") |> 
+sa2_2016 |>
+  filter(gcc_name_2016 == "Greater Brisbane") |>
   ggplot() +
   geom_sf() +
   scale_x_continuous(limits = c(152.9, 153.1)) +
   scale_y_continuous(limits = c(-27.4, -27.6)) +
   theme_bw()
 
-sa2_2016_simple |> 
-  filter(gcc_name_2016 == "Greater Brisbane") |> 
+sa2_2016_simple |>
+  filter(gcc_name_2016 == "Greater Brisbane") |>
   ggplot() +
   geom_sf() +
   scale_x_continuous(limits = c(152.9, 153.1)) +
@@ -130,8 +130,8 @@ map_data_with_correspondence(
 #> # Rowwise: 
 #>   SA2_MAINCODE_2016 values
 #>   <chr>              <dbl>
-#> 1 107011546             10
-#> 2 107041549             10
+#> 1 107011547             10
+#> 2 107041548             10
 ```
 
 When used with aggregate data, it will split the value amongst the codes

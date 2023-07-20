@@ -11,6 +11,7 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
+set.seed(42)
 ```
 
 # hpa.spatial
@@ -49,7 +50,7 @@ library(ggplot2)
 sa2_2016 <- get_polygon(area = "sa2", year = 2016)
 head(sa2_2016)
 
-sa2_2016 |> 
+sa2_2016 |>
   ggplot() +
   geom_sf() +
   theme_bw()
@@ -60,16 +61,16 @@ This is used in the same way as `strayr::read_absmap()` except it also includes 
 ```{r, eval=FALSE}
 sa2_2016_simple <- get_polygon(area = "sa2", year = 2016, simplify_keep = 0.1)
 
-sa2_2016 |> 
-  filter(gcc_name_2016 == "Greater Brisbane") |> 
+sa2_2016 |>
+  filter(gcc_name_2016 == "Greater Brisbane") |>
   ggplot() +
   geom_sf() +
   scale_x_continuous(limits = c(152.9, 153.1)) +
   scale_y_continuous(limits = c(-27.4, -27.6)) +
   theme_bw()
 
-sa2_2016_simple |> 
-  filter(gcc_name_2016 == "Greater Brisbane") |> 
+sa2_2016_simple |>
+  filter(gcc_name_2016 == "Greater Brisbane") |>
   ggplot() +
   geom_sf() +
   scale_x_continuous(limits = c(152.9, 153.1)) +
@@ -81,16 +82,16 @@ sa2_2016_simple |>
 ```{r, echo=FALSE, message=FALSE}
 sa2_2016_simple <- get_polygon(area = "sa2", year = 2016, simplify_keep = 0.1)
 
-p1 <- sa2_2016 |> 
-  filter(gcc_name_2016 == "Greater Brisbane") |> 
+p1 <- sa2_2016 |>
+  filter(gcc_name_2016 == "Greater Brisbane") |>
   ggplot() +
   geom_sf() +
   scale_x_continuous(limits = c(152.9, 153.1)) +
   scale_y_continuous(limits = c(-27.4, -27.6)) +
   theme_bw()
 
-p2 <- sa2_2016_simple |> 
-  filter(gcc_name_2016 == "Greater Brisbane") |> 
+p2 <- sa2_2016_simple |>
+  filter(gcc_name_2016 == "Greater Brisbane") |>
   ggplot() +
   geom_sf() +
   scale_x_continuous(limits = c(152.9, 153.1)) +
