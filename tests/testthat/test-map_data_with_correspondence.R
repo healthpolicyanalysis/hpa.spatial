@@ -1,18 +1,61 @@
-test_that("multiplication works", {
+test_that("mapping data works", {
+  sa2_2011 <- suppressMessages(get_polygon(area = "sa2", year = 2011))
+
+  withr::with_seed(
+    42,
+    sa2_2016_mapped_unit <- map_data_with_correspondence(
+      codes = sa2_2011$sa2_code_2011,
+      values = rnorm(n = nrow(sa2_2011)),
+      fromArea = "sa2",
+      fromYear = 2011,
+      toArea = "sa2",
+      toYear = 2016
+    )
+  )
+
+  expect_snapshot(sa2_2016_mapped_unit)
+
+  # expect that some SA2s will have multiple units mapped to them (not a 1-to-1
+  # relationship when mapping on unit level
+  expect_gt(nrow(sa2_2016_mapped_unit), length(unique(sa2_2016_mapped_unit$SA2_MAINCODE_2016)))
+
+
+  withr::with_seed(
+    42,
+    sa2_2016_mapped_aggs <- map_data_with_correspondence(
+      codes = sa2_2011$sa2_code_2011,
+      values = rpois(n = nrow(sa2_2011), lambda = 15),
+      fromArea = "sa2",
+      fromYear = 2011,
+      toArea = "sa2",
+      toYear = 2016,
+      value_type = "aggs"
+    )
+  )
+  expect_snapshot(sa2_2016_mapped_aggs)
+  # expect that all SA2s will only a single value (1-to-1 relationship when
+  # mapping on aggregate level as the mapped values should be summed within new
+  # location codes)
+  expect_equal(
+    length(unique(sa2_2016_mapped_aggs$SA2_MAINCODE_2016)),
+    nrow(sa2_2016_mapped_aggs)
+  )
+
   mdf <- suppressMessages(map_data_with_correspondence(
-    codes = c(107011130, 107041548),
-    values = c(10, 10),
+    codes = c(107011130, 107041548, 234234, 234234, 234234),
+    values = c(10, 10, 1, 1, 1),
     fromArea = "sa2",
     fromYear = 2011,
     toArea = "sa2",
     toYear = 2016
   ))
 
-  # should have removed bad code
+  # should have removed bad codes
   expect_equal(nrow(mdf), 1)
 
 
-  # should see message with bad code
+  # should see message with bad code(s)
+  ## singular
   suppressMessages(
     expect_message(
       map_data_with_correspondence(
@@ -23,7 +66,22 @@ test_that("multiplication works", {
         toArea = "sa2",
         toYear = 2016
       ),
-      "not valid sa2"
+      "not a valid"
+    )
+  )
+
+  ## plural
+  suppressMessages(
+    expect_message(
+      map_data_with_correspondence(
+        codes = c(107011130, 107041548, 234239874),
+        values = c(10, 10, 1),
+        fromArea = "sa2",
+        fromYear = 2011,
+        toArea = "sa2",
+        toYear = 2016
+      ),
+      "not valid"
     )
   )
 

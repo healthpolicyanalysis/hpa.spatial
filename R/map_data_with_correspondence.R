@@ -63,27 +63,39 @@ map_data_with_correspondence <- function(codes,
   stopifnot(length(codes) == length(values))
 
   # remove codes that aren't in the correspondence table
-  bad_codes <- codes[!codes %in% dplyr::pull(correspondence_tbl, 1)]
+  bad_codes <- codes[!codes %in% correspondence_tbl[[1]]]
 
   if (length(bad_codes) != 0) {
-    message(glue::glue(
-      "\nThe following codes were passed but are not valid {fromArea}({fromYear}) codes:"
-    ))
+    if (length(bad_codes) > 1) {
+      message(glue::glue(
+        "\nThe following {length(bad_codes)} codes were passed but are not valid {fromArea} ({fromYear}) codes:"
+      ))
+    } else {
+      message(glue::glue(
+        "\nThe following code was passed but is not a valid {fromArea} ({fromYear}) code:"
+      ))
+    }
+
     for (c in bad_codes) {
-      message("\n")
       message(c)
     }
   }
 
   df <- data.frame(codes = as.character(codes), values) |>
-    dplyr::filter(codes %in% dplyr::pull(correspondence_tbl, 1))
+    dplyr::filter(codes %in% correspondence_tbl[[1]])
 
 
   if (value_type == "units") {
     # randomly assign codes to new mapped codes based on ratios
     f_assign_code <- function(code, mapping_df) {
       mapping_df_filtered <- mapping_df[mapping_df[, 1] == code, ]
-      sample(dplyr::pull(mapping_df_filtered, 2), size = 1, prob = dplyr::pull(mapping_df_filtered, 3))
+
+      if (any(is.na(mapping_df_filtered[[3]]))) {
+        na_count <- sum(is.na(mapping_df_filtered[[3]]))
+        sum_ratio <- sum(mapping_df_filtered[[3]], na.rm = TRUE)
+        mapping_df_filtered[is.na(mapping_df_filtered[[3]]), 3] <- (1 - sum_ratio) / na_count
+      }
+      sample(mapping_df_filtered[[2]], size = 1, prob = mapping_df_filtered[[3]])
     }
 
     mapped_df <- df |>
@@ -94,15 +106,14 @@ map_data_with_correspondence <- function(codes,
   }
 
   if (value_type == "aggs") {
-    # dispers value
     stopifnot(length(codes) == length(unique(codes)))
-    # browser()
 
     mapped_df <-
       df |>
       dplyr::left_join(correspondence_tbl, by = c("codes" = names(correspondence_tbl)[1])) |>
       dplyr::mutate(values = values * ratio) |>
-      dplyr::select(dplyr::all_of(c(names(correspondence_tbl)[3], "values"))) |>
+      dplyr::group_by(!!rlang::sym(names(correspondence_tbl)[3])) |>
+      dplyr::summarize(values = sum(values)) |>
       (\(.data) if (round) dplyr::mutate(.data, values = round(values)) else .data)()
   }
 
