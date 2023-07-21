@@ -80,6 +80,30 @@ map_data_with_correspondence <- function(codes,
     }
   }
 
+  if(is_SA(fromArea) & is_SA(toArea) &
+     clean_sa(fromArea) != clean_sa(toArea) &
+     clean_year(fromYear) != clean_year(toYear)
+  ){
+    # if the areas are both SA's and the years are different, then the user is
+    # wanting to both map using the correspondence tables from one edition to another
+    # AND aggregate the data assigned to map codes to a new ASGS level (i.e. SA2 to SA3)
+
+    # approach... call function recursively to:
+    #     > map editions (fromArea to fromArea)
+    #     > aggregate up area levels
+    call <- match.call.defaults()
+    call$toArea <- fromArea
+
+    df_edition_mapped <- eval(call, envir = parent.frame())
+
+    call <- match.call.defaults()
+    call$fromYear <- toYear
+    call$codes <- df_edition_mapped[[1]]
+    call$values <- df_edition_mapped$values
+
+    return(eval(call, envir = parent.frame()))
+  }
+
   call <- match.call.defaults()
   call$codes <- NULL
   call$values <- NULL
