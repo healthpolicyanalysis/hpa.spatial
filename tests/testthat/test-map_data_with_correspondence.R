@@ -1,3 +1,38 @@
+test_that("aggregating up SA's works", {
+  sa2_2011 <- suppressMessages(get_polygon(area = "sa2", year = 2011))
+
+
+  n_sample <- 200
+  withr::with_seed(
+    42,
+    {sa2_to_sa3_2011_mapped_unit <- map_data_with_correspondence(
+      codes = sample(sa2_2011$sa2_code_2011, size = n_sample),
+      values = rnorm(n = n_sample),
+      fromArea = "sa2",
+      fromYear = 2011,
+      toArea = "sa3",
+      toYear = 2011
+    )
+
+    sa2_to_sa3_2011_mapped_aggs <- map_data_with_correspondence(
+      codes = sample(sa2_2011$sa2_code_2011, size = n_sample),
+      values = rnorm(n = n_sample),
+      fromArea = "sa2",
+      fromYear = 2011,
+      toArea = "sa3",
+      toYear = 2011,
+      value_type = "aggs"
+
+    )}
+  )
+
+  expect_snapshot(sa2_to_sa3_2011_mapped_unit)
+  expect_snapshot(sa2_to_sa3_2011_mapped_aggs)
+  expect_lt(nrow(sa2_to_sa3_2011_mapped_aggs), nrow(sa2_to_sa3_2011_mapped_unit))
+})
+
+
+
 test_that("mapping data works", {
   sa2_2011 <- suppressMessages(get_polygon(area = "sa2", year = 2011))
 

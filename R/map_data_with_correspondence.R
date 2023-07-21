@@ -50,6 +50,36 @@ map_data_with_correspondence <- function(codes,
                                          toYear,
                                          value_type = c("units", "aggs"),
                                          round = FALSE) {
+
+  value_type <- match.arg(value_type)
+  stopifnot(length(codes) == length(values))
+
+  if(is_SA(fromArea) & is_SA(toArea) & clean_year(fromYear) == clean_year(toYear)) {
+    # if the areas are both SA's and the year is the same, this is the process
+    # of aggregating up (i.e. from SA2 to SA3) and can be done without
+    # correspondence tables but just with the asgs tables.
+    asgs_tbl <- get_asgs_table(
+      fromArea = clean_sa(fromArea),
+      toArea = clean_sa(toArea),
+      year = clean_year(fromYear)
+    )
+
+    mapped_df <- cbind(asgs_tbl[asgs_tbl[[1]] %in% codes, 2, drop = FALSE], values)
+
+    if(value_type == "units"){
+      return(mapped_df)
+    }
+
+    if(value_type == "aggs") {
+      mapped_df <- mapped_df |>
+        dplyr::group_by(!!rlang::sym(names(mapped_df)[1])) |>
+        dplyr::summarize(values = sum(values)) |>
+        (\(.data) if (round) dplyr::mutate(.data, values = round(values)) else .data)()
+
+      return(mapped_df)
+    }
+  }
+
   call <- match.call.defaults()
   call$codes <- NULL
   call$values <- NULL
@@ -59,8 +89,7 @@ map_data_with_correspondence <- function(codes,
   call[[1]] <- as.name("get_correspondence_absmaps")
   correspondence_tbl <- eval(call, envir = parent.frame())
 
-  value_type <- match.arg(value_type)
-  stopifnot(length(codes) == length(values))
+
 
   # remove codes that aren't in the correspondence table
   bad_codes <- codes[!codes %in% correspondence_tbl[[1]]]
@@ -118,6 +147,50 @@ map_data_with_correspondence <- function(codes,
   }
 
   mapped_df
+}
+
+
+get_mapping_tbl_col_name <- function(area, year) {
+  if(length(area) > 1) {
+    col_names <- lapply(area, \(x) get_mapping_tbl_col_name(x, year))
+    return(do.call("c", col_names))
+  }
+
+  if(is_SA(area)) {
+    glue::glue("{clean_sa(area)}_code_{year}")
+  } else {
+    stop("Not sure how to make col names for non-SA areas yet...")
+  }
+
+}
+
+
+get_asgs_table <- function(fromArea, toArea, year) {
+  stopifnot(as.character(year) %in% c("2011", "2016", "2021"))
+
+  valid_areas <- c("sa1", "sa2", "sa3", "sa4", "gcc")
+  stopifnot(fromArea %in% valid_areas)
+  stopifnot(toArea %in% valid_areas)
+  stopifnot(which(valid_areas == fromArea) < which(valid_areas == toArea))
+
+  cols <- glue::glue("{tolower(c(fromArea, toArea))}_code_{year}")
+
+  get(paste0("asgs_", year)) |>
+    dplyr::select(dplyr::all_of(cols)) |>
+    dplyr::distinct()
+}
+
+
+clean_sa <- function(x) {
+  stringr::str_trim(tolower(x))
+}
+
+is_SA <- function(x) {
+  clean_sa(x) %in% c("sa1", "sa2", "sa3", "sa4", "gcc")
+}
+
+clean_year <- function(x) {
+  stringr::str_trim(x)
 }
 
 
