@@ -40,6 +40,33 @@ save(
 )
 
 
+get_sa_phn_correspondence <- function(url) {
+  # download file
+  tfile <- tempfile()
+  download.file(url = url, destfile = tfile)
+
+  # read data and check n_rows that are not trash at the end of the sheet
+  df_check <- readxl::read_xlsx(tfile, sheet = "Table 3", skip = 4)
+  n_max <- which(is.na(df_check[[1]]))[2]
+
+  df <- readxl::read_xlsx(tfile, sheet = "Table 3", skip = 4, n_max = n_max)
+
+
+  df |>
+    dplyr::filter(!is.na(!!rlang::sym(names(df)[1]))) |>  # remove any empty rows between header and data
+    dplyr::rename("ratio" = "RATIO")
+}
+
+
+sa_phn_correspondence_tables <- c(
+  "sa1" = "https://www.health.gov.au/sites/default/files/documents/2021/06/primary-health-networks-phn-concordance-files-australian-statistical-geography-standards-statistical-area-level-1-2017-primary-health-networks-phn-concordance-files-australian-statistical-geography-standards-statistical-a.xlsx",
+  "sa2" = "https://www.health.gov.au/sites/default/files/documents/2021/06/primary-health-networks-phn-concordance-files-australian-statistical-geography-standards-statistical-area-level-2-2017-primary-health-networks-phn-concordance-files-australian-statistical-geography-standards-statistical-a.xlsx",
+  "sa3" = "https://www.health.gov.au/sites/default/files/documents/2021/06/primary-health-networks-phn-concordance-files-australian-statistical-geography-standards-statistical-area-level-3-2017-primary-health-networks-phn-concordance-files-australian-statistical-geography-standards-statistical-a.xlsx"
+) |>
+  lapply(get_sa_phn_correspondence)
+
+usethis::use_data(sa_phn_correspondence_tables)
+
 # library(strayr)
 # library(tidyverse)
 # library(sf)
