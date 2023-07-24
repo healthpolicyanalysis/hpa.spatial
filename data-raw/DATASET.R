@@ -40,6 +40,7 @@ save(
 )
 
 
+# download and save make SA-PHN correspondence tables
 get_sa_phn_correspondence <- function(url) {
   # download file
   tfile <- tempfile()
@@ -66,6 +67,14 @@ sa_phn_correspondence_tables <- c(
   lapply(get_sa_phn_correspondence)
 
 usethis::use_data(sa_phn_correspondence_tables)
+
+
+qld_hhs <- sf::read_sf("data-raw/QSC_Extracted_Data_20230724_114923035000-49708/Hospital_and_Health_Service_boundaries.shp")
+
+usethis::use_data(qld_hhs)
+
+
+
 
 # library(strayr)
 # library(tidyverse)
