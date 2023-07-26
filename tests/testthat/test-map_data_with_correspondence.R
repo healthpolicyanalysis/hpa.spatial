@@ -9,19 +9,19 @@ test_that("aggregating up SA's works", {
       sa2_to_sa3_2011_mapped_unit <- map_data_with_correspondence(
         codes = sample(sa2_2011$sa2_code_2011, size = n_sample),
         values = rnorm(n = n_sample),
-        fromArea = "sa2",
-        fromYear = 2011,
-        toArea = "sa3",
-        toYear = 2011
+        from_area = "sa2",
+        from_year = 2011,
+        to_area = "sa3",
+        to_year = 2011
       )
 
       sa2_to_sa3_2011_mapped_aggs <- map_data_with_correspondence(
         codes = sample(sa2_2011$sa2_code_2011, size = n_sample),
         values = rnorm(n = n_sample),
-        fromArea = "sa2",
-        fromYear = 2011,
-        toArea = "sa3",
-        toYear = 2011,
+        from_area = "sa2",
+        from_year = 2011,
+        to_area = "sa3",
+        to_year = 2011,
         value_type = "aggs"
       )
     }
@@ -44,19 +44,19 @@ test_that("mapping across SAs and editions together works", {
       sa2_to_sa3_2011_to_2016_mapped_unit <- map_data_with_correspondence(
         codes = sample(sa2_2011$sa2_code_2011, size = n_sample),
         values = rnorm(n = n_sample),
-        fromArea = "sa2",
-        fromYear = 2011,
-        toArea = "sa3",
-        toYear = 2016
+        from_area = "sa2",
+        from_year = 2011,
+        to_area = "sa3",
+        to_year = 2016
       )
 
       sa2_to_sa3_2011_to_2016_mapped_aggs <- map_data_with_correspondence(
         codes = sample(sa2_2011$sa2_code_2011, size = n_sample),
         values = rnorm(n = n_sample),
-        fromArea = "sa2",
-        fromYear = 2011,
-        toArea = "sa3",
-        toYear = 2016,
+        from_area = "sa2",
+        from_year = 2011,
+        to_area = "sa3",
+        to_year = 2016,
         value_type = "aggs"
       )
     }
@@ -87,10 +87,10 @@ test_that("mapping data works", {
     sa2_2016_mapped_unit <- map_data_with_correspondence(
       codes = sa2_2011$sa2_code_2011,
       values = rnorm(n = nrow(sa2_2011)),
-      fromArea = "sa2",
-      fromYear = 2011,
-      toArea = "sa2",
-      toYear = 2016
+      from_area = "sa2",
+      from_year = 2011,
+      to_area = "sa2",
+      to_year = 2016
     )
   )
 
@@ -106,10 +106,10 @@ test_that("mapping data works", {
     sa2_2016_mapped_aggs <- map_data_with_correspondence(
       codes = sa2_2011$sa2_code_2011,
       values = rpois(n = nrow(sa2_2011), lambda = 15),
-      fromArea = "sa2",
-      fromYear = 2011,
-      toArea = "sa2",
-      toYear = 2016,
+      from_area = "sa2",
+      from_year = 2011,
+      to_area = "sa2",
+      to_year = 2016,
       value_type = "aggs"
     )
   )
@@ -125,10 +125,10 @@ test_that("mapping data works", {
   mdf <- suppressMessages(map_data_with_correspondence(
     codes = c(107011130, 107041548, 234234, 234234, 234234),
     values = c(10, 10, 1, 1, 1),
-    fromArea = "sa2",
-    fromYear = 2011,
-    toArea = "sa2",
-    toYear = 2016
+    from_area = "sa2",
+    from_year = 2011,
+    to_area = "sa2",
+    to_year = 2016
   ))
 
   # should have removed bad codes
@@ -142,10 +142,10 @@ test_that("mapping data works", {
       map_data_with_correspondence(
         codes = c(107011130, 107041548),
         values = c(10, 10),
-        fromArea = "sa2",
-        fromYear = 2011,
-        toArea = "sa2",
-        toYear = 2016
+        from_area = "sa2",
+        from_year = 2011,
+        to_area = "sa2",
+        to_year = 2016
       ),
       "not a valid"
     )
@@ -157,10 +157,10 @@ test_that("mapping data works", {
       map_data_with_correspondence(
         codes = c(107011130, 107041548, 234239874),
         values = c(10, 10, 1),
-        fromArea = "sa2",
-        fromYear = 2011,
-        toArea = "sa2",
-        toYear = 2016
+        from_area = "sa2",
+        from_year = 2011,
+        to_area = "sa2",
+        to_year = 2016
       ),
       "not valid"
     )
@@ -172,10 +172,10 @@ test_that("mapping data works", {
     mdf_agg <- map_data_with_correspondence(
       codes = c(107011130, 107041149),
       values = c(10, 10),
-      fromArea = "sa2",
-      fromYear = 2011,
-      toArea = "sa2",
-      toYear = 2016,
+      from_area = "sa2",
+      from_year = 2011,
+      to_area = "sa2",
+      to_year = 2016,
       value_type = "aggs"
     )
   )
@@ -186,10 +186,10 @@ test_that("mapping data works", {
     mdf_agg_rounded <- map_data_with_correspondence(
       codes = c(107011130, 107041149),
       values = c(10, 10),
-      fromArea = "sa2",
-      fromYear = 2011,
-      toArea = "sa2",
-      toYear = 2016,
+      from_area = "sa2",
+      from_year = 2011,
+      to_area = "sa2",
+      to_year = 2016,
       value_type = "aggs",
       round = TRUE
     )

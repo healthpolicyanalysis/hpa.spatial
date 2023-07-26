@@ -7,31 +7,31 @@
 map_data_with_correspondence(
   codes,
   values,
-  fromArea,
-  fromYear,
-  toArea,
-  toYear,
+  from_area,
+  from_year,
+  to_area,
+  to_year,
   value_type = c("units", "aggs"),
   round = FALSE
 )
 }
 \arguments{
-\item{codes}{codes representing locations relevant to the \code{fromArea}.
+\item{codes}{codes representing locations relevant to the \code{from_area}.
 SA1 or SA2, for example.}
 
 \item{values}{values associated with codes to be alloocated to newly mapped
 codes.}
 
-\item{fromArea}{The area you want to correspond FROM (ie the areas your data
+\item{from_area}{The area you want to correspond FROM (ie the areas your data
 are currently in). For example: "sa1", "sa2, "sa3", "sa4".}
 
-\item{fromYear}{The year you want to correspond FROM. For example: 2011,
+\item{from_year}{The year you want to correspond FROM. For example: 2011,
 2016.}
 
-\item{toArea}{The area you want to correspond TO (ie the areas you want your
+\item{to_area}{The area you want to correspond TO (ie the areas you want your
 data to be in).}
 
-\item{toYear}{The year you want to correspond TO.}
+\item{to_year}{The year you want to correspond TO.}
 
 \item{value_type}{Whether the data are unit level or aggregate level data.
 Unit level data is randomly allocated to new locations based on proportions
@@ -52,19 +52,19 @@ Map data between editions using correspondence tables from the ABS.
 map_data_with_correspondence(
   codes = c(107011130, 107041149),
   values = c(10, 10),
-  fromArea = "sa2",
-  fromYear = 2011,
-  toArea = "sa2",
-  toYear = 2016,
+  from_area = "sa2",
+  from_year = 2011,
+  to_area = "sa2",
+  to_year = 2016,
   value_type = "units"
 )
 map_data_with_correspondence(
   codes = c(107011130, 107041149),
   values = c(10, 10),
-  fromArea = "sa2",
-  fromYear = 2011,
-  toArea = "sa2",
-  toYear = 2016,
+  from_area = "sa2",
+  from_year = 2011,
+  to_area = "sa2",
+  to_year = 2016,
   value_type = "aggs"
 )
 

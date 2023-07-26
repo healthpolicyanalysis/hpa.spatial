@@ -112,10 +112,10 @@ When used with unit level data, it will randomly allocate the value to the code 
 map_data_with_correspondence(
   codes = c(107011130, 107041149),
   values = c(10, 10),
-  fromArea = "sa2",
-  fromYear = 2011,
-  toArea = "sa2",
-  toYear = 2016,
+  from_area = "sa2",
+  from_year = 2011,
+  to_area = "sa2",
+  to_year = 2016,
   value_type = "units"
 )
 ```
@@ -126,10 +126,10 @@ When used with aggregate data, it will split the value amongst the codes of the 
 map_data_with_correspondence(
   codes = c(107011130, 107041149),
   values = c(10, 10),
-  fromArea = "sa2",
-  fromYear = 2011,
-  toArea = "sa2",
-  toYear = 2016,
+  from_area = "sa2",
+  from_year = 2011,
+  to_area = "sa2",
+  to_year = 2016,
   value_type = "aggs"
 )
 ```

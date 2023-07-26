@@ -4,7 +4,7 @@
 \name{reexports}
 \alias{reexports}
 \alias{read_absmap}
-\alias{get_correspondence_absmaps}
+\alias{read_correspondence_tbl}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -12,8 +12,6 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{absmapsdata}{\code{\link[absmapsdata]{get_correspondence_absmaps}}}
-
-  \item{strayr}{\code{\link[strayr]{read_absmap}}}
+  \item{strayr}{\code{\link[strayr]{read_absmap}}, \code{\link[strayr]{read_correspondence_tbl}}}
 }}
 

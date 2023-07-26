@@ -120,10 +120,10 @@ proportions (as probabiilties) on the relevant correspondence table.
 map_data_with_correspondence(
   codes = c(107011130, 107041149),
   values = c(10, 10),
-  fromArea = "sa2",
-  fromYear = 2011,
-  toArea = "sa2",
-  toYear = 2016,
+  from_area = "sa2",
+  from_year = 2011,
+  to_area = "sa2",
+  to_year = 2016,
   value_type = "units"
 )
 #> # A tibble: 2 × 2
@@ -142,16 +142,19 @@ the relevant correspondence table.
 map_data_with_correspondence(
   codes = c(107011130, 107041149),
   values = c(10, 10),
-  fromArea = "sa2",
-  fromYear = 2011,
-  toArea = "sa2",
-  toYear = 2016,
+  from_area = "sa2",
+  from_year = 2011,
+  to_area = "sa2",
+  to_year = 2016,
   value_type = "aggs"
 )
-#>   SA2_MAINCODE_2016   values
-#> 1         107011545 4.815592
-#> 2         107011546 3.617311
-#> 3         107011547 1.567096
-#> 4         107041548 4.492751
-#> 5         107041549 5.507249
+#> Reading file found in /tmp/Rtmp3Iv1ty
+#> # A tibble: 5 × 2
+#>   SA2_MAINCODE_2016 values
+#>   <chr>              <dbl>
+#> 1 107011545           4.82
+#> 2 107011546           3.62
+#> 3 107011547           1.57
+#> 4 107041548           4.49
+#> 5 107041549           5.51
 ```

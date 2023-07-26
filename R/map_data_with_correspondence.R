@@ -1,16 +1,16 @@
 #' Map data between editions using correspondence tables from the ABS.
 #'
-#' @param codes codes representing locations relevant to the \code{fromArea}.
+#' @param codes codes representing locations relevant to the \code{from_area}.
 #' SA1 or SA2, for example.
 #' @param values values associated with codes to be alloocated to newly mapped
 #' codes.
-#' @param fromArea The area you want to correspond FROM (ie the areas your data
+#' @param from_area The area you want to correspond FROM (ie the areas your data
 #' are currently in). For example: "sa1", "sa2, "sa3", "sa4".
-#' @param fromYear The year you want to correspond FROM. For example: 2011,
+#' @param from_year The year you want to correspond FROM. For example: 2011,
 #' 2016.
-#' @param toArea The area you want to correspond TO (ie the areas you want your
+#' @param to_area The area you want to correspond TO (ie the areas you want your
 #' data to be in).
-#' @param toYear The year you want to correspond TO.
+#' @param to_year The year you want to correspond TO.
 #' @param value_type Whether the data are unit level or aggregate level data.
 #' Unit level data is randomly allocated to new locations based on proportions
 #' in the correspondence table, aggregate data is dispersed based on the
@@ -26,41 +26,41 @@
 #' map_data_with_correspondence(
 #'   codes = c(107011130, 107041149),
 #'   values = c(10, 10),
-#'   fromArea = "sa2",
-#'   fromYear = 2011,
-#'   toArea = "sa2",
-#'   toYear = 2016,
+#'   from_area = "sa2",
+#'   from_year = 2011,
+#'   to_area = "sa2",
+#'   to_year = 2016,
 #'   value_type = "units"
 #' )
 #' map_data_with_correspondence(
 #'   codes = c(107011130, 107041149),
 #'   values = c(10, 10),
-#'   fromArea = "sa2",
-#'   fromYear = 2011,
-#'   toArea = "sa2",
-#'   toYear = 2016,
+#'   from_area = "sa2",
+#'   from_year = 2011,
+#'   to_area = "sa2",
+#'   to_year = 2016,
 #'   value_type = "aggs"
 #' )
 #'
 map_data_with_correspondence <- function(codes,
                                          values,
-                                         fromArea,
-                                         fromYear,
-                                         toArea,
-                                         toYear,
+                                         from_area,
+                                         from_year,
+                                         to_area,
+                                         to_year,
                                          value_type = c("units", "aggs"),
                                          round = FALSE) {
   value_type <- match.arg(value_type)
   stopifnot(length(codes) == length(values))
 
-  if (is_SA(fromArea) & is_SA(toArea) & clean_year(fromYear) == clean_year(toYear)) {
+  if (is_SA(from_area) & is_SA(to_area) & clean_year(from_year) == clean_year(to_year)) {
     # if the areas are both SA's and the year is the same, this is the process
     # of aggregating up (i.e. from SA2 to SA3) and can be done without
     # correspondence tables but just with the asgs tables.
     asgs_tbl <- get_asgs_table(
-      fromArea = clean_sa(fromArea),
-      toArea = clean_sa(toArea),
-      year = clean_year(fromYear)
+      from_area = clean_sa(from_area),
+      to_area = clean_sa(to_area),
+      year = clean_year(from_year)
     )
 
     mapped_df <- cbind(asgs_tbl[asgs_tbl[[1]] %in% codes, 2, drop = FALSE], values)
@@ -79,24 +79,24 @@ map_data_with_correspondence <- function(codes,
     }
   }
 
-  if (is_SA(fromArea) & is_SA(toArea) &
-    clean_sa(fromArea) != clean_sa(toArea) &
-    clean_year(fromYear) != clean_year(toYear)
+  if (is_SA(from_area) & is_SA(to_area) &
+    clean_sa(from_area) != clean_sa(to_area) &
+    clean_year(from_year) != clean_year(to_year)
   ) {
     # if the areas are both SA's and the years are different, then the user is
     # wanting to both map using the correspondence tables from one edition to another
     # AND aggregate the data assigned to map codes to a new ASGS level (i.e. SA2 to SA3)
 
     # approach... call function recursively to:
-    #     > map editions (fromArea to fromArea)
+    #     > map editions (from_area to from_area)
     #     > aggregate up area levels
     call <- match.call.defaults()
-    call$toArea <- fromArea
+    call$to_area <- from_area
 
     df_edition_mapped <- eval(call, envir = parent.frame())
 
     call <- match.call.defaults()
-    call$fromYear <- toYear
+    call$from_year <- to_year
     call$codes <- df_edition_mapped[[1]]
     call$values <- df_edition_mapped$values
 
@@ -109,7 +109,7 @@ map_data_with_correspondence <- function(codes,
   call$value_type <- NULL
   call$round <- NULL
 
-  call[[1]] <- as.name("get_correspondence_absmaps")
+  call[[1]] <- as.name("read_correspondence_tbl")
   correspondence_tbl <- eval(call, envir = parent.frame())
 
 
@@ -120,11 +120,11 @@ map_data_with_correspondence <- function(codes,
   if (length(bad_codes) != 0) {
     if (length(bad_codes) > 1) {
       message(glue::glue(
-        "\nThe following {length(bad_codes)} codes were passed but are not valid {fromArea} ({fromYear}) codes:"
+        "\nThe following {length(bad_codes)} codes were passed but are not valid {from_area} ({from_year}) codes:"
       ))
     } else {
       message(glue::glue(
-        "\nThe following code was passed but is not a valid {fromArea} ({fromYear}) code:"
+        "\nThe following code was passed but is not a valid {from_area} ({from_year}) code:"
       ))
     }
 
@@ -187,15 +187,15 @@ get_mapping_tbl_col_name <- function(area, year) {
 }
 
 
-get_asgs_table <- function(fromArea, toArea, year) {
+get_asgs_table <- function(from_area, to_area, year) {
   stopifnot(as.character(year) %in% c("2011", "2016", "2021"))
 
   valid_areas <- c("sa1", "sa2", "sa3", "sa4", "gcc")
-  stopifnot(fromArea %in% valid_areas)
-  stopifnot(toArea %in% valid_areas)
-  stopifnot(which(valid_areas == fromArea) < which(valid_areas == toArea))
+  stopifnot(from_area %in% valid_areas)
+  stopifnot(to_area %in% valid_areas)
+  stopifnot(which(valid_areas == from_area) < which(valid_areas == to_area))
 
-  cols <- glue::glue("{tolower(c(fromArea, toArea))}_code_{year}")
+  cols <- glue::glue("{tolower(c(from_area, to_area))}_code_{year}")
 
   get(paste0("asgs_", year)) |>
     dplyr::select(dplyr::all_of(cols)) |>
@@ -216,6 +216,6 @@ clean_year <- function(x) {
 }
 
 
-#' @importFrom absmapsdata get_correspondence_absmaps
+#' @importFrom strayr read_correspondence_tbl
 #' @export
-absmapsdata::get_correspondence_absmaps
+strayr::read_correspondence_tbl
