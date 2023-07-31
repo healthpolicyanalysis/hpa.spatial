@@ -23,12 +23,19 @@ get_polygon <- function(name,
                         .validate_name,
                         simplify_keep = 1,
                         ...) {
-  # call strayr::read_absmap with all args except for `simplify_keep`
+
   call <- match.call.defaults(expand.dots = FALSE)
-  call$simplify_keep <- NULL
-  call$... <- NULL
-  call[[1]] <- as.name("read_absmap")
+  call[[1]] <- as.name("check_for_internal_polygon")
   polygon <- eval(call, envir = parent.frame())
+
+  if(is.null(polygon)) {
+    # call strayr::read_absmap with all args except for `simplify_keep`
+    call <- match.call.defaults(expand.dots = FALSE)
+    call$simplify_keep <- NULL
+    call$... <- NULL
+    call[[1]] <- as.name("read_absmap")
+    polygon <- eval(call, envir = parent.frame())
+  }
 
   # apply smoothing to polygon
   if (simplify_keep != 1) {
@@ -41,3 +48,24 @@ get_polygon <- function(name,
 #' @importFrom strayr read_absmap
 #' @export
 strayr::read_absmap
+
+
+#' check_for_internal_polygon
+#'
+#' @param name a character string names to identify data not kept on absmapsdata.
+#' @param area a character string names to identify data not kept on absmapsdata.
+#' @param year a character string names to identify data not kept on absmapsdata.
+#' @param ... additional, ignored arguments.
+#'
+#' @return a \code{sf} object or, if no pkg data found, \code{NULL}.
+#' @export
+#'
+#' @examples
+#' # hospital and health services (HHS) is the name for the local hospital networks in QLD.
+#' shp <- check_for_internal_polygon(name = "HHS")
+check_for_internal_polygon <- function(name = NULL, area = NULL, year = NULL, ...) {
+  # use non-null arg (of name/area) to identify LHN data
+  if (any(c(name, area) %in% c("QLDLHN", "HHS"))) {
+    return(qld_hhs)
+  }
+}

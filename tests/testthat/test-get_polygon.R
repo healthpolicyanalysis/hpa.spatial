@@ -9,3 +9,10 @@ test_that("get_polygon works", {
   # simplified polygon should be smaller than original
   expect_lt(object.size(sa2_16_simplified), object.size(sa2_16))
 })
+
+
+test_that("get_polygon for internal data works", {
+  hhs <- suppressMessages(get_polygon(area = "QLDLHN"))
+
+  expect_s3_class(hhs, "sf")
+})
