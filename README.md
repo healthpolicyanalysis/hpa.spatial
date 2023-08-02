@@ -107,6 +107,42 @@ sa2_2016_simple |>
 
 <img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
 
+### LHN’s shapefiles
+
+Aside from the built in shapefiles that are hosted by `{absmapsdata}`,
+`get_polygon()` can also access (some) shapefiles for local hospital
+networks (LHNs).
+
+These can be accessed by the `"area"` or `"name"` arguments by
+specifying either the state and “LHN” or the specific local name for
+that LHN (“HHS” in QLD and “LHD” in NSW).
+
+``` r
+qld_hhs <- get_polygon(area = "HHS")
+head(qld_hhs)
+#> Simple feature collection with 6 features and 3 fields
+#> Geometry type: MULTIPOLYGON
+#> Dimension:     XY
+#> Bounding box:  xmin: 140.9993 ymin: -29.17788 xmax: 153.5522 ymax: -19.70546
+#> Geodetic CRS:  GDA2020
+#> # A tibble: 6 × 4
+#>   HHS            SHAPE_Leng SHAPE_Area                                  geometry
+#>   <chr>               <dbl>      <dbl>                        <MULTIPOLYGON [°]>
+#> 1 Darling Downs       22.6       8.07  (((152.4876 -28.2539, 152.4874 -28.25403…
+#> 2 Gold Coast           4.99      0.169 (((153.5477 -28.1663, 153.5477 -28.16631…
+#> 3 Mackay              33.9       7.87  (((146.9052 -21.4686, 146.9056 -21.46814…
+#> 4 Metro South          8.30      0.353 (((152.7999 -27.83483, 152.7999 -27.8348…
+#> 5 South West          31.8      29.1   (((149.4599 -27.97792, 149.4574 -27.9929…
+#> 6 Sunshine Coast       8.99      0.904 (((153.1507 -26.8003, 153.1508 -26.8004,…
+
+qld_hhs |>
+  ggplot() +
+  geom_sf() +
+  theme_bw()
+```
+
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+
 ## Mapping data between ASGS editions
 
 `map_data_with_correspondence()` is used to map data across ASGS
@@ -148,7 +184,7 @@ map_data_with_correspondence(
   to_year = 2016,
   value_type = "aggs"
 )
-#> Reading file found in /tmp/Rtmp3Iv1ty
+#> Reading file found in /tmp/RtmpgcI4Nq
 #> # A tibble: 5 × 2
 #>   SA2_MAINCODE_2016 values
 #>   <chr>              <dbl>
@@ -158,3 +194,49 @@ map_data_with_correspondence(
 #> 4 107041548           4.49
 #> 5 107041549           5.51
 ```
+
+### Example
+
+Suppose we have counts of patients within SA2s (2011) and we want to
+aggregate these up into SA3s (2016 edition). Here is how we could do
+this with `map_data_correspondence()` mapping up both to a higher level
+of ASGS and to a more recent edition.
+
+``` r
+sa2_2011 <- get_polygon("sa22011")
+sa2_2011$patient_counts <- rpois(n = nrow(sa2_2011), lambda = 30)
+
+sa2_2011 |> 
+  ggplot() +
+  geom_sf(aes(fill = patient_counts)) +
+  ggtitle("Patient counts by SA2 (2011)")
+```
+
+<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+
+``` r
+
+
+sa3_counts <- map_data_with_correspondence(
+  codes = sa2_2011$sa2_code_2011,
+  values = sa2_2011$patient_counts,
+  from_area = "sa2",
+  from_year = 2011,
+  to_area = "sa3",
+  to_year = 2016,
+  value_type = "aggs"
+) |> 
+  rename(patient_counts = values)
+#> Reading file found in /tmp/RtmpgcI4Nq
+
+sa3_2016 <- get_polygon("sa32016") |> 
+  left_join(sa3_counts)
+#> Joining with `by = join_by(sa3_code_2016)`
+
+sa3_2016 |> 
+  ggplot() +
+  geom_sf(aes(fill = patient_counts)) +
+  ggtitle("Patient counts by SA3 (2016)")
+```
+
+<img src="man/figures/README-unnamed-chunk-9-2.png" width="100%" />

@@ -46,7 +46,7 @@ library(ggplot2)
 
 `get_polygon()` is used to get shape files from the abs.
 
-```{r}
+```{r, warning=FALSE}
 sa2_2016 <- get_polygon(area = "sa2", year = 2016)
 head(sa2_2016)
 
@@ -79,7 +79,7 @@ sa2_2016_simple |>
 ```
 
 
-```{r, echo=FALSE, message=FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 sa2_2016_simple <- get_polygon(area = "sa2", year = 2016, simplify_keep = 0.1)
 
 p1 <- sa2_2016 |>
@@ -99,6 +99,22 @@ p2 <- sa2_2016_simple |>
   theme_bw()
 
 gridExtra::grid.arrange(p1, p2, ncol = 2)
+```
+
+### LHN's shapefiles
+
+Aside from the built in shapefiles that are hosted by `{absmapsdata}`, `get_polygon()` can also access (some) shapefiles for local hospital networks (LHNs).
+
+These can be accessed by the `"area"` or `"name"` arguments by specifying either the state and "LHN" or the specific local name for that LHN ("HHS" in QLD and "LHD" in NSW).
+
+```{r, warning=FALSE}
+qld_hhs <- get_polygon(area = "HHS")
+head(qld_hhs)
+
+qld_hhs |>
+  ggplot() +
+  geom_sf() +
+  theme_bw()
 ```
 
 
@@ -133,4 +149,41 @@ map_data_with_correspondence(
   value_type = "aggs"
 )
 ```
+
+### Example
+
+Suppose we have counts of patients within SA2s (2011) and we want to aggregate these up into SA3s (2016 edition). Here is how we could do this with `map_data_correspondence()` mapping up both to a higher level of ASGS and to a more recent edition.
+
+```{r, warning=FALSE}
+sa2_2011 <- get_polygon("sa22011")
+sa2_2011$patient_counts <- rpois(n = nrow(sa2_2011), lambda = 30)
+
+sa2_2011 |> 
+  ggplot() +
+  geom_sf(aes(fill = patient_counts)) +
+  ggtitle("Patient counts by SA2 (2011)")
+
+
+sa3_counts <- map_data_with_correspondence(
+  codes = sa2_2011$sa2_code_2011,
+  values = sa2_2011$patient_counts,
+  from_area = "sa2",
+  from_year = 2011,
+  to_area = "sa3",
+  to_year = 2016,
+  value_type = "aggs"
+) |> 
+  rename(patient_counts = values)
+
+sa3_2016 <- get_polygon("sa32016") |> 
+  left_join(sa3_counts)
+
+sa3_2016 |> 
+  ggplot() +
+  geom_sf(aes(fill = patient_counts)) +
+  ggtitle("Patient counts by SA3 (2016)")
+
+```
+
+
 
