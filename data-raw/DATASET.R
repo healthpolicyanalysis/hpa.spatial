@@ -73,8 +73,199 @@ qld_hhs <- sf::read_sf("data-raw/QSC_Extracted_Data_20230724_114923035000-49708/
 
 usethis::use_data(qld_hhs)
 
+library(tidyverse)
+library(leaflet)
+library(sf)
+
+###
+# load NSW LHD data from https://www.google.com/maps/d/u/0/viewer?mid=1Dv1JRTGmzlm83tBv7tb8vQcOQXY
+
+nsw_lhd <- read_sf(file.path(here::here(), "data-raw", "Local Health Districts.kml"))
+nsw_lhd <- st_transform(nsw_lhd, 7844)
+usethis::use_data(nsw_lhd)
 
 
+
+
+####
+
+
+sa_phn_correspondence_tables$sa2
+
+sa2_2016 <- strayr::read_absmap("sa22016")
+
+sa2_qld_codes <- sa2_2016 |>
+  filter(state_name_2016 == "Queensland") |>
+  pull(sa2_code_2016)
+
+
+sa_phn_correspondence_tables$sa2 |>
+  filter(SA2_MAINCODE_2016 %in% sa2_qld_codes)
+
+
+qld_hhs |>
+  ggplot() +
+  geom_sf(aes(fill = HHS), linetype = "dashed", lwd = 0.5, col = "red") +
+  geom_sf(data = filter(sa2_2016, state_name_2016 == "Queensland"), lwd = 0.5, fill = "transparent") +
+  labs(caption = "red dashed boarders are boarders of HHS's that aren't overlapped by an SA1 baorder.")
+
+
+qld_hhs$HHS <- as.factor(qld_hhs$HHS)
+
+f <- function(x) viridis::turbo(length(unique(x)))[x]
+
+# some SA1s are not contained within a single HHS.
+leaflet() |>
+  addPolygons(data = qld_hhs,
+              fillColor = f(qld_hhs$HHS),
+              color = "black",
+              fillOpacity = 0.5,
+              weight = 1) |>
+  addPolygons(data = filter(sa2_2016, state_name_2016 == "Queensland"),
+              fillColor = "black",
+              fillOpacity = 0.5,
+              weight = 2)
+
+
+
+sa1_2016 <- strayr::read_absmap("sa12016")
+
+leaflet() |>
+  addPolygons(data = filter(sa1_2016, state_name_2016 == "Queensland"),
+              fillColor = "black",
+              fillOpacity = 0.5,
+              weight = 2#,
+              # popup = filter(sa1_2016, state_name_2016 == "Queensland") |> pull(sa1_code_2016 )
+  )|>
+  addPolygons(data = qld_hhs,
+              fillColor = f(qld_hhs$HHS),
+              color = "black",
+              fillOpacity = 0.5,
+              weight = 1,
+              popup = qld_hhs$HHS
+              )
+
+
+leaflet() |>
+  addPolygons(data = filter(sa1_2016, sa1_code_2016 == 31503141004), fillColor = "red") |>
+  addPolygons(data = filter(qld_hhs, HHS %in% c("North West", "Central West")), fillColor = "blue")
+
+
+# f_sa1s <- filter(sa1_2016, sa1_code_2016 == 31503141004)
+f_sa1s <- filter(sa1_2016, state_name_2016 == "Queensland") |>
+  st_transform(crs=7844)
+# f_hss <- filter(qld_hhs, HHS %in% c("North West", "Central West"))
+
+# sa1_2016
+# st_intersects(f_sa1s, f_hss)
+#
+# st_intersects(f_sa1s, qld_hhs) |>
+#   map(length) |>
+#   (\(x)do.call("rbind", x))()
+
+
+
+sa1_hhs_ints <-
+  st_intersects(f_sa1s, qld_hhs) |>
+  map(length) |>
+  (\(x)do.call("rbind", x))() |>
+  (\(x) x[,1])()
+
+f_sa1s$n_intersects <- sa1_hhs_ints
+
+# f_sa1s |> filter(n_intersects == 2) |>
+#   head() |>
+#   st_intersects(qld_hhs)
+
+intersects_check <- which(f_sa1s$n_intersects > 1)
+
+intersects_main_area_prop <-
+  intersects_check|>
+  map(\(x){
+    st_intersection(f_sa1s[x,], qld_hhs) |>
+      st_area() |>
+      (\(x) max(x) / sum(x))()
+  }, .progress = list(
+    type = "iterator",
+    format = "Calculating {cli::pb_bar} {cli::pb_percent}",
+    clear = TRUE)) |>
+  unlist()
+
+
+f_sa1s$intersect_main_prop <- 1
+f_sa1s$intersect_main_prop[intersects_check] <- intersects_main_area_prop
+
+# just assign to the largest intersection area
+
+intersects_check_main_hhs <- intersects_check|>
+  map(\(x){
+    intersects <- st_intersection(f_sa1s[x,], qld_hhs)
+    areas <- st_area(intersects)
+    intersects[which(areas == max(areas)), ][["HHS"]]
+  }, .progress = list(
+    type = "iterator",
+    format = "Calculating {cli::pb_bar} {cli::pb_percent}",
+    clear = TRUE)) |>
+  unlist()
+
+
+intersects_single <- which(f_sa1s$n_intersects == 1)
+intersects_single_hhs <-
+  intersects_single |>
+  map(\(x){
+    intersects <- st_intersection(f_sa1s[x,], qld_hhs)
+    intersects[['HHS']]
+  }, .progress = list(
+    type = "iterator",
+    format = "Calculating {cli::pb_bar} {cli::pb_percent}",
+    clear = TRUE)) |>
+  unlist()
+
+f_sa1s$main_hhs <- NA_character_
+f_sa1s$main_hhs[intersects_single] <- as.character(intersects_single_hhs)
+f_sa1s$main_hhs[intersects_check] <- as.character(intersects_check_main_hhs)
+
+
+qld_sa1_2016_to_hhs <- select(as.data.frame(f_sa1s), sa1_code_2016, main_hhs)
+
+usethis::use_data(qld_sa1_2016_to_hhs, overwrite = TRUE)
+
+
+###
+
+## make pop-based correspondence table for ASGS (SA1-3) to HHS
+
+library(tidyverse)
+library(sf)
+devtools::load_all()
+
+# load SA1s and convert to GDA2020
+sa1_2016 <- strayr::read_absmap("sa12016")
+sa1_2016 <- st_transform(sa1_2016, crs = st_crs(qld_hhs))
+
+
+
+make_asgs_hhs_correspondence_data <- function(hhs, asgs) {
+  # step 1: find all SA1s which are solely contained within a HHS
+
+  # problematic SA1: 31503141004
+  # which is within: c("North West", "Central West")
+
+}
+
+
+make_asgs_hhs_correspondence_data(hhs = qld_hhs, asgs = sa1_2016)
+
+sa1_hhs_intersections <- st_within((sa1_2016 |> filter(state_name_2016 == "Queensland")) , qld_hhs)
+
+
+
+
+pt <- sf::st_point(c(153.2300,  -27.53668))
+
+c(152.6741, -25.56848)
+
+st_intersects(st_multipoint(rbind(c(152.6741, -25.56848), c(153.2300,  -27.53668))), qld_hhs)
 
 # library(strayr)
 # library(tidyverse)
