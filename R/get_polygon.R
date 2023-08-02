@@ -66,6 +66,7 @@ strayr::read_absmap
 check_for_internal_polygon <- function(name = NULL, area = NULL, year = NULL, ...) {
   # use non-null arg (of name/area) to identify LHN data
   if (any(c(name, area) %in% c("QLDLHN", "HHS"))) {
+    message("The data for The Hospital and Health Service boundaries (QLD) are from here: <https://qldspatial.information.qld.gov.au/catalogue/custom/detail.page?fid={A4661F6D-0013-46EE-A446-A45F01A64D46}>")
     return(qld_hhs)
   }
 }
