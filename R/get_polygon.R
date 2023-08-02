@@ -34,7 +34,24 @@ get_polygon <- function(name,
     call$simplify_keep <- NULL
     call$... <- NULL
     call[[1]] <- as.name("read_absmap")
-    polygon <- eval(call, envir = parent.frame())
+
+    polygon <- evaluate::try_capture_stack(
+      eval(call, envir = parent.frame()),
+      env = parent.frame()
+    )
+
+    if(evaluate::is.error(polygon)) {
+      if(stringr::str_detect(polygon$message, "Applicable files are:")) {
+        stop(glue::glue(
+          "Error when running '{capture.output(polygon$call)}'\n",
+          "{polygon$message}, ",
+          "{paste0(.get_internal_polygon_names(), collapse = ', ')}
+"
+        ))
+      } else {
+        stop(print(polygon))
+      }
+    }
   }
 
   # apply smoothing to polygon
@@ -69,4 +86,18 @@ check_for_internal_polygon <- function(name = NULL, area = NULL, year = NULL, ..
     message("The data for The Hospital and Health Service boundaries (QLD) are from here: <https://qldspatial.information.qld.gov.au/catalogue/custom/detail.page?fid={A4661F6D-0013-46EE-A446-A45F01A64D46}>")
     return(qld_hhs)
   }
+
+  if (any(c(name, area) %in% c("NSWLHN", "LHD"))) {
+    message("The data for The Local Health Districts boundaries (NSW) are from here: <https://www.google.com/maps/d/u/0/viewer?mid=1Dv1JRTGmzlm83tBv7tb8vQcOQXY>")
+    return(nsw_lhd)
+  }
+}
+
+.get_internal_polygon_names <- function() {
+  c(
+    "QLDLHN",
+    "HHS",
+    "NSWLHN",
+    "LHD"
+  )
 }

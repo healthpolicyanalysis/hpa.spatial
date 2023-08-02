@@ -9,6 +9,7 @@ Description: Data and helpful functions for spatial data analyses.
 License: file LICENSE
 Imports: 
     dplyr,
+    evaluate,
     glue,
     rlang,
     rmapshaper,

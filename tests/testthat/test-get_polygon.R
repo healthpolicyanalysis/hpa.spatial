@@ -12,7 +12,17 @@ test_that("get_polygon works", {
 
 
 test_that("get_polygon for internal data works", {
-  hhs <- suppressMessages(get_polygon(area = "QLDLHN"))
+  for(geo in .get_internal_polygon_names()) {
+    shp <- suppressMessages(get_polygon(area = geo))
+    expect_s3_class(shp, "sf")
+    shp <- suppressMessages(get_polygon(name = geo))
+    expect_s3_class(shp, "sf")
+  }
+})
 
-  expect_s3_class(hhs, "sf")
+test_that("get_polygon messaging for bad names work", {
+  suppressMessages(expect_error(
+    get_polygon(name = "asdasd"),
+    regexp = paste0(.get_internal_polygon_names(), collapse = ", ")
+  ))
 })
