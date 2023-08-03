@@ -88,8 +88,8 @@ check_for_internal_polygon <- function(name = NULL, area = NULL, year = NULL, ..
   }
 
   if (any(c(name, area) %in% c("NSWLHN", "LHD"))) {
-    message("The data for The Local Health Districts boundaries (NSW) are from here: <https://www.google.com/maps/d/u/0/viewer?mid=1Dv1JRTGmzlm83tBv7tb8vQcOQXY>")
-    return(nsw_lhd)
+    message("The data for The Local Health Districts boundaries (NSW) are from here: <https://github.com/wfmackey/absmapsdata/raw/master/data/nsw_lhd2023.rda>")
+    return(read_absmap("nsw_lhd2023"))
   }
 }
 

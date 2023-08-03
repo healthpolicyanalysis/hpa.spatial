@@ -11,9 +11,9 @@ available and include helpful functions for analysis of spatial data.
 
 ## Notes on other packages
 
-Shape files are available within
-[`{absmapsdata}`](https://github.com/wfmackey/absmapsdata) and these can
-be (lazy) loaded using
+Most shape files are available within
+[`{absmapsdata}`](https://github.com/wfmackey/absmapsdata) and can be
+(lazily) loaded using
 [`{strayr}`](https://github.com/runapp-aus/strayr).
 
 ## Installation
@@ -22,8 +22,8 @@ You can install the development version of hpa.spatial from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("healthpolicyanalysis/hpa.spatial")
+# install.packages("remotes")
+remotes::install_github("healthpolicyanalysis/hpa.spatial")
 ```
 
 ``` r
@@ -77,10 +77,44 @@ head(sa2_2016)
 sa2_2016 |>
   ggplot() +
   geom_sf() +
-  theme_bw()
+  theme_bw() +
+  ggtitle("SA2 (2016)")
 ```
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
+
+``` r
+
+lga_2016 <- get_polygon(area = "lga", year = 2016)
+head(lga_2016)
+#> Simple feature collection with 6 features and 7 fields
+#> Geometry type: MULTIPOLYGON
+#> Dimension:     XY
+#> Bounding box:  xmin: 142.4523 ymin: -37.50503 xmax: 153.6076 ymax: -28.7043
+#> Geodetic CRS:  WGS 84
+#>   lga_code_2016         lga_name_2016 state_code_2016 state_name_2016
+#> 1         10050            Albury (C)               1 New South Wales
+#> 2         10130 Armidale Regional (A)               1 New South Wales
+#> 3         10250           Ballina (A)               1 New South Wales
+#> 4         10300         Balranald (A)               1 New South Wales
+#> 5         10470 Bathurst Regional (A)               1 New South Wales
+#> 6         10550       Bega Valley (A)               1 New South Wales
+#>   areasqkm_2016 cent_long  cent_lat                       geometry
+#> 1      305.9459  146.9704 -36.02660 MULTIPOLYGON (((147.0967 -3...
+#> 2     8620.6990  151.8291 -30.33634 MULTIPOLYGON (((150.9923 -3...
+#> 3      484.9389  153.4861 -28.85288 MULTIPOLYGON (((153.4496 -2...
+#> 4    21690.6753  143.6116 -33.95034 MULTIPOLYGON (((143.5525 -3...
+#> 5     3817.8646  149.5256 -33.43010 MULTIPOLYGON (((149.8696 -3...
+#> 6     6278.8811  149.7176 -36.82594 MULTIPOLYGON (((149.9763 -3...
+
+lga_2016 |>
+  ggplot() +
+  geom_sf() +
+  theme_bw() +
+  ggtitle("LGA (2016)")
+```
+
+<img src="man/figures/README-unnamed-chunk-3-2.png" width="100%" />
 
 This is used in the same way as `strayr::read_absmap()` except it also
 includes a `simplify_keep` argument for simplifying the polygon.
@@ -119,6 +153,7 @@ that LHN (“HHS” in QLD and “LHD” in NSW).
 
 ``` r
 qld_hhs <- get_polygon(area = "HHS")
+#> The data for The Hospital and Health Service boundaries (QLD) are from here: <https://qldspatial.information.qld.gov.au/catalogue/custom/detail.page?fid={A4661F6D-0013-46EE-A446-A45F01A64D46}>
 head(qld_hhs)
 #> Simple feature collection with 6 features and 3 fields
 #> Geometry type: MULTIPOLYGON
@@ -142,6 +177,32 @@ qld_hhs |>
 ```
 
 <img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+
+``` r
+
+nsw_lhd <- get_polygon(name = "NSWLHN")
+#> The data for The Local Health Districts boundaries (NSW) are from here: <https://github.com/wfmackey/absmapsdata/raw/master/data/nsw_lhd2023.rda>
+head(nsw_lhd)
+#> Simple feature collection with 6 features and 1 field
+#> Geometry type: MULTIPOLYGON
+#> Dimension:     XY
+#> Bounding box:  xmin: 149.7519 ymin: -34.76958 xmax: 159.1092 ymax: -31.4868
+#> Geodetic CRS:  WGS 84
+#>            nsw_lhd_name                       geometry
+#> 1 Nepean Blue Mountains MULTIPOLYGON (((151.1358 -3...
+#> 2       Northern Sydney MULTIPOLYGON (((151.343 -33...
+#> 3  South Eastern Sydney MULTIPOLYGON (((151.2878 -3...
+#> 4  South Western Sydney MULTIPOLYGON (((151.0755 -3...
+#> 5                Sydney MULTIPOLYGON (((151.2168 -3...
+#> 6        Western Sydney MULTIPOLYGON (((151.0843 -3...
+
+nsw_lhd |>
+  ggplot() +
+  geom_sf() +
+  theme_bw()
+```
+
+<img src="man/figures/README-unnamed-chunk-6-2.png" width="100%" />
 
 ## Mapping data between ASGS editions
 
@@ -184,7 +245,7 @@ map_data_with_correspondence(
   to_year = 2016,
   value_type = "aggs"
 )
-#> Reading file found in /tmp/RtmpgcI4Nq
+#> Reading file found in /tmp/RtmpKQgabH
 #> # A tibble: 5 × 2
 #>   SA2_MAINCODE_2016 values
 #>   <chr>              <dbl>
@@ -227,7 +288,7 @@ sa3_counts <- map_data_with_correspondence(
   value_type = "aggs"
 ) |> 
   rename(patient_counts = values)
-#> Reading file found in /tmp/RtmpgcI4Nq
+#> Reading file found in /tmp/RtmpKQgabH
 
 sa3_2016 <- get_polygon("sa32016") |> 
   left_join(sa3_counts)

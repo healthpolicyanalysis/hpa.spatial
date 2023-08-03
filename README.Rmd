@@ -23,7 +23,7 @@ The goal of hpa.spatial is to make relevant shape files and data easily availabl
 
 ## Notes on other packages
 
-Shape files are available within [`{absmapsdata}`](https://github.com/wfmackey/absmapsdata) and these can be (lazy) loaded using [`{strayr}`](https://github.com/runapp-aus/strayr).
+Most shape files are available within [`{absmapsdata}`](https://github.com/wfmackey/absmapsdata) and can be (lazily) loaded using [`{strayr}`](https://github.com/runapp-aus/strayr).
 
 
 ## Installation
@@ -31,8 +31,8 @@ Shape files are available within [`{absmapsdata}`](https://github.com/wfmackey/a
 You can install the development version of hpa.spatial from [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("healthpolicyanalysis/hpa.spatial")
+# install.packages("remotes")
+remotes::install_github("healthpolicyanalysis/hpa.spatial")
 ```
 
 ```{r, message=FALSE}
@@ -53,7 +53,17 @@ head(sa2_2016)
 sa2_2016 |>
   ggplot() +
   geom_sf() +
-  theme_bw()
+  theme_bw() +
+  ggtitle("SA2 (2016)")
+
+lga_2016 <- get_polygon(area = "lga", year = 2016)
+head(lga_2016)
+
+lga_2016 |>
+  ggplot() +
+  geom_sf() +
+  theme_bw() +
+  ggtitle("LGA (2016)")
 ```
 
 This is used in the same way as `strayr::read_absmap()` except it also includes a `simplify_keep` argument for simplifying the polygon.
@@ -112,6 +122,14 @@ qld_hhs <- get_polygon(area = "HHS")
 head(qld_hhs)
 
 qld_hhs |>
+  ggplot() +
+  geom_sf() +
+  theme_bw()
+
+nsw_lhd <- get_polygon(name = "NSWLHN")
+head(nsw_lhd)
+
+nsw_lhd |>
   ggplot() +
   geom_sf() +
   theme_bw()
