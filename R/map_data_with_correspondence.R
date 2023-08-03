@@ -155,18 +155,29 @@ map_data_with_correspondence <- function(codes,
       dplyr::mutate(codes = f_assign_code(code = codes, mapping_df = correspondence_tbl[, c(1, 3, 5)]))
 
     names(mapped_df)[1] <- names(correspondence_tbl)[3]
+
+    stopifnot(nrow(mapped_df) == length(values[!codes %in% bad_codes]))
   }
 
   if (value_type == "aggs") {
     stopifnot(length(codes) == length(unique(codes)))
+
+    # not all the sum of the ratios add up to 1 in the correspondence tables.
+    # For those that don't, add/subtract the difference from the majority target code by adjust_correspondence_tbl()
+    correspondence_tbl <- adjust_correspodence_tbl(correspondence_tbl)
 
     mapped_df <-
       df |>
       dplyr::left_join(correspondence_tbl, by = c("codes" = names(correspondence_tbl)[1])) |>
       dplyr::mutate(values = values * ratio) |>
       dplyr::group_by(!!rlang::sym(names(correspondence_tbl)[3])) |>
-      dplyr::summarize(values = sum(values)) |>
-      (\(.data) if (round) dplyr::mutate(.data, values = round(values)) else .data)()
+      dplyr::summarize(values = sum(values))
+  }
+
+  stopifnot(all.equal(sum(mapped_df$values), sum(values[!codes %in% bad_codes])))
+
+  if(value_type == "aggs" & round) {
+    mapped_df <- dplyr::mutate(mapped_df, values = round(values))
   }
 
   mapped_df
@@ -200,6 +211,36 @@ get_asgs_table <- function(from_area, to_area, year) {
   get(paste0("asgs_", year)) |>
     dplyr::select(dplyr::all_of(cols)) |>
     dplyr::distinct()
+}
+
+adjust_correspodence_tbl <- function(tbl) {
+  # in some cases, the correspondence table has a 1-to-1 mapping and the ratio = NA.
+  # for these cases, assign the ratio to be 2 before the fixing process
+  # (which will affect the new value and reduce it to be 1- sum(ratio))
+  # this will force the missing ratio to be the remainder of the sum of the other non-NA ratios
+  tbl$ratio[is.na(tbl$ratio)] <- 2
+  code_col <- names(tbl)[1]
+
+  # keep the mappings which have ratios that add up to 1 separate
+  tbl_ok <- tbl |>
+    dplyr::group_by(!!!rlang::syms(code_col)) |>
+    dplyr::filter(sum(ratio) == 1) |>
+    dplyr::ungroup()
+
+  # get the mappings where the ratios do NOT add up to 1
+  tbl_not_ok <- tbl |>
+    dplyr::group_by(!!!rlang::syms(code_col)) |>
+    dplyr::filter(sum(ratio) != 1)
+
+  # add the difference from 1 to the largest correspondence ratio
+  tbl_not_ok_fixed <-
+    tbl_not_ok |>
+    dplyr::arrange(dplyr::desc(ratio)) |>
+    dplyr::mutate(ratio = ifelse(dplyr::row_number() == 1, ratio + 1 - sum(ratio), ratio)) |>
+    dplyr::ungroup()
+
+  rbind(tbl_ok, tbl_not_ok_fixed) |>
+    dplyr::arrange(!!!rlang::syms(code_col))
 }
 
 
