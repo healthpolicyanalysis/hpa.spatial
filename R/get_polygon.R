@@ -91,13 +91,23 @@ check_for_internal_polygon <- function(name = NULL, area = NULL, year = NULL, ..
     message("The data for The Local Health Districts boundaries (NSW) are from here: <https://github.com/wfmackey/absmapsdata/raw/master/data/nsw_lhd2023.rda>")
     return(read_absmap("nsw_lhd2023"))
   }
+
+  if (any(c(name, area) %in% c("SALHN"))) {
+    message("The data for The Local Hospital Network boundaries (SA) are from here: <https://data.gov.au/dataset/ds-sa-120bdc9e-1c96-4ea5-b98c-aa148bb33a10/details?q=primary%20health%20network>")
+    return(sa_lhn)
+  }
+
+  if (any(c(name, area) %in% c("PHN"))) {
+    message("The data for The Primary Health Network (PHN) are from here: <https://data.gov.au/dataset/ds-dga-ef2d28a4-1ed5-47d0-8e3a-46e25bc4f66b/details?q=primary%20health%20network>")
+    return(phn)
+  }
 }
 
 .get_internal_polygon_names <- function() {
   c(
     "QLDLHN",
     "HHS",
-    "NSWLHN",
-    "LHD"
+    "SALHN",
+    "PHN"
   )
 }

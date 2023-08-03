@@ -11,7 +11,7 @@
 "sa_phn_correspondence_tables"
 
 
-#' \code{sf} Multipolygon data for the hospital and health service boundaries within Queensland..
+#' \code{sf} Multipolygon data for the hospital and health service boundaries within Queensland.
 #'
 #'
 #' @format ## `qld_hhs`
@@ -37,14 +37,27 @@
 "qld_sa1_2016_to_hhs"
 
 
-#' \code{sf} Multipolygon data for the local health district boundaries within Queensland..
+#' \code{sf} Multipolygon data for the local hospital network boundaries within South Australia.
 #'
 #'
-#' @format ## `nsw_lhd`
+#' @format ## `sa_lhn`
 #'
 #' A \code{sf} object.
 #'
 #'
-#' shows the boundaries of the local health districts in NSW.
-#' @source <<https://www.google.com/maps/d/u/0/viewer?mid=1Dv1JRTGmzlm83tBv7tb8vQcOQXY>
-"nsw_lhd"
+#' shows the boundaries of the local hospital network in SA.
+#' @source <https://data.gov.au/dataset/ds-sa-120bdc9e-1c96-4ea5-b98c-aa148bb33a10/details?q=primary%20health%20network>
+"sa_lhn"
+
+
+#' \code{sf} Multipolygon data for the Primary Health Network boundaries for Australia.
+#'
+#'
+#' @format ## `phn`
+#'
+#' A \code{sf} object.
+#'
+#'
+#' shows the boundaries of the Primary Health Network in Australia.
+#' @source <https://data.gov.au/dataset/ds-dga-ef2d28a4-1ed5-47d0-8e3a-46e25bc4f66b/details>
+"phn"

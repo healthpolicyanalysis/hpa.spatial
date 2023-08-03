@@ -3,7 +3,7 @@
 \docType{data}
 \name{qld_hhs}
 \alias{qld_hhs}
-\title{\code{sf} Multipolygon data for the hospital and health service boundaries within Queensland..}
+\title{\code{sf} Multipolygon data for the hospital and health service boundaries within Queensland.}
 \format{
 ## `qld_hhs`
 
@@ -19,6 +19,6 @@ shows the boundaries of the hospital and health services in Queensland.
 qld_hhs
 }
 \description{
-\code{sf} Multipolygon data for the hospital and health service boundaries within Queensland..
+\code{sf} Multipolygon data for the hospital and health service boundaries within Queensland.
 }
 \keyword{datasets}

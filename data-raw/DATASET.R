@@ -71,7 +71,7 @@ usethis::use_data(sa_phn_correspondence_tables)
 
 qld_hhs <- sf::read_sf("data-raw/QSC_Extracted_Data_20230724_114923035000-49708/Hospital_and_Health_Service_boundaries.shp")
 
-usethis::use_data(qld_hhs)
+usethis::use_data(qld_hhs, overwrite = TRUE, compress = "xz")
 
 library(tidyverse)
 library(leaflet)
@@ -79,11 +79,17 @@ library(sf)
 
 ###
 # load NSW LHD data from https://www.google.com/maps/d/u/0/viewer?mid=1Dv1JRTGmzlm83tBv7tb8vQcOQXY
+sa_lhn <- sf::read_sf("data-raw/lhn/LocalHealthNetworks_GDA2020.shp")
+sa_lhn <- st_transform(sa_lhn, 7844)
+usethis::use_data(sa_lhn, overwrite = TRUE, compress = "xz")
+# sa_lhn |> ggplot() + geom_sf()
 
-nsw_lhd <- read_sf(file.path(here::here(), "data-raw", "Local Health Districts.kml"))
-nsw_lhd <- st_transform(nsw_lhd, 7844)
-usethis::use_data(nsw_lhd)
-
+phn <- sf::read_sf("data-raw/phn.kml")
+phn <- st_transform(phn, 7844)
+phn <- phn[, colSums(is.na(phn)) < nrow(phn)]
+# usethis::use_data(phn, overwrite = TRUE)
+usethis::use_data(phn, overwrite = TRUE, compress = "xz")
+# phn |> ggplot() + geom_sf()
 
 
 
