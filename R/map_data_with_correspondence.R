@@ -142,7 +142,6 @@ map_data_with_correspondence <- function(codes,
   correspondence_tbl <- eval(call, envir = parent.frame())
 
 
-
   # remove codes that aren't in the correspondence table
   bad_codes <- codes[!codes %in% correspondence_tbl[[1]]]
 
@@ -169,7 +168,7 @@ map_data_with_correspondence <- function(codes,
   if (value_type == "units") {
     # randomly assign codes to new mapped codes based on ratios
     f_assign_code <- function(code, mapping_df) {
-      mapping_df_filtered <- mapping_df[mapping_df[, 1] == code, ]
+      mapping_df_filtered <- dplyr::filter(mapping_df, mapping_df[[1]] == code)
 
       if (any(is.na(mapping_df_filtered[[3]]))) {
         na_count <- sum(is.na(mapping_df_filtered[[3]]))
