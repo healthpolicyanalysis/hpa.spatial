@@ -7,6 +7,7 @@
 map_data_with_correspondence(
   codes,
   values,
+  groups = NULL,
   from_area,
   from_year,
   to_area,
@@ -21,6 +22,12 @@ SA1 or SA2, for example.}
 
 \item{values}{values associated with codes to be alloocated to newly mapped
 codes.}
+
+\item{groups}{values associated with codes/values specifying a grouping
+structure. For example, if there are codes/values for several age groups,
+then groups will be the grouping variable for the age group associated with
+the code and value of the same position. Defaults to \code{NULL} (no
+grouping).}
 
 \item{from_area}{The area you want to correspond FROM (ie the areas your data
 are currently in). For example: "sa1", "sa2, "sa3", "sa4".}

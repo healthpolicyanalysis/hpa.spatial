@@ -4,6 +4,11 @@
 #' SA1 or SA2, for example.
 #' @param values values associated with codes to be alloocated to newly mapped
 #' codes.
+#' @param groups values associated with codes/values specifying a grouping
+#' structure. For example, if there are codes/values for several age groups,
+#' then groups will be the grouping variable for the age group associated with
+#' the code and value of the same position. Defaults to \code{NULL} (no
+#' grouping).
 #' @param from_area The area you want to correspond FROM (ie the areas your data
 #' are currently in). For example: "sa1", "sa2, "sa3", "sa4".
 #' @param from_year The year you want to correspond FROM. For example: 2011,
@@ -44,12 +49,35 @@
 #'
 map_data_with_correspondence <- function(codes,
                                          values,
+                                         groups = NULL,
                                          from_area,
                                          from_year,
                                          to_area,
                                          to_year,
                                          value_type = c("units", "aggs"),
                                          round = FALSE) {
+
+  if(!is.null(groups)) {
+    stopifnot(length(codes) == length(groups))
+    stopifnot(length(codes) == length(values))
+    call <- match.call()
+
+    df_res <- split(
+      data.frame(codes = codes, values = values, groups = groups),
+      f = groups
+    ) |>
+      lapply(\(x) {
+               call$codes <- x$codes
+               call$values <- x$values
+               call$groups <- NULL
+               eval(call, envir = parent.frame()) |>
+                 dplyr::mutate(grp = x$groups[1])
+               }) |>
+      (\(x) do.call("rbind", x))()
+
+    return(df_res)
+  }
+
   value_type <- match.arg(value_type)
   stopifnot(length(codes) == length(values))
 
@@ -108,6 +136,7 @@ map_data_with_correspondence <- function(codes,
   call$values <- NULL
   call$value_type <- NULL
   call$round <- NULL
+  call <- rlang::call_modify(call, !!!list("groups" = rlang::zap()))
 
   call[[1]] <- as.name("read_correspondence_tbl")
   correspondence_tbl <- eval(call, envir = parent.frame())
