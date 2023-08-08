@@ -139,8 +139,9 @@ map_data_with_correspondence <- function(codes,
   call <- rlang::call_modify(call, !!!list("groups" = rlang::zap()))
 
   call[[1]] <- as.name("read_correspondence_tbl")
-  correspondence_tbl <- eval(call, envir = parent.frame())
 
+  correspondence_tbl <- eval(call, envir = parent.frame()) |>
+    dplyr::mutate(dplyr::across(1:4, as.character))
 
   # remove codes that aren't in the correspondence table
   bad_codes <- codes[!codes %in% correspondence_tbl[[1]]]
@@ -193,7 +194,6 @@ map_data_with_correspondence <- function(codes,
     # not all the sum of the ratios add up to 1 in the correspondence tables.
     # For those that don't, add/subtract the difference from the majority target code by adjust_correspondence_tbl()
     correspondence_tbl <- adjust_correspodence_tbl(correspondence_tbl)
-
     mapped_df <-
       df |>
       dplyr::left_join(correspondence_tbl, by = c("codes" = names(correspondence_tbl)[1])) |>
