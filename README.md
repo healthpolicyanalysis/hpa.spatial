@@ -245,7 +245,7 @@ map_data_with_correspondence(
   to_year = 2016,
   value_type = "aggs"
 )
-#> Reading file found in /tmp/RtmpKQgabH
+#> Reading file found in /tmp/Rtmpo0chOo
 #> # A tibble: 5 × 2
 #>   SA2_MAINCODE_2016 values
 #>   <chr>              <dbl>
@@ -267,7 +267,7 @@ of ASGS and to a more recent edition.
 sa2_2011 <- get_polygon("sa22011")
 sa2_2011$patient_counts <- rpois(n = nrow(sa2_2011), lambda = 30)
 
-sa2_2011 |> 
+sa2_2011 |>
   ggplot() +
   geom_sf(aes(fill = patient_counts)) +
   ggtitle("Patient counts by SA2 (2011)")
@@ -286,15 +286,15 @@ sa3_counts <- map_data_with_correspondence(
   to_area = "sa3",
   to_year = 2016,
   value_type = "aggs"
-) |> 
+) |>
   rename(patient_counts = values)
-#> Reading file found in /tmp/RtmpKQgabH
+#> Reading file found in /tmp/Rtmpo0chOo
 
-sa3_2016 <- get_polygon("sa32016") |> 
+sa3_2016 <- get_polygon("sa32016") |>
   left_join(sa3_counts)
 #> Joining with `by = join_by(sa3_code_2016)`
 
-sa3_2016 |> 
+sa3_2016 |>
   ggplot() +
   geom_sf(aes(fill = patient_counts)) +
   ggtitle("Patient counts by SA3 (2016)")

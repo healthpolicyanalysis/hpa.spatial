@@ -176,7 +176,7 @@ Suppose we have counts of patients within SA2s (2011) and we want to aggregate t
 sa2_2011 <- get_polygon("sa22011")
 sa2_2011$patient_counts <- rpois(n = nrow(sa2_2011), lambda = 30)
 
-sa2_2011 |> 
+sa2_2011 |>
   ggplot() +
   geom_sf(aes(fill = patient_counts)) +
   ggtitle("Patient counts by SA2 (2011)")
@@ -190,17 +190,16 @@ sa3_counts <- map_data_with_correspondence(
   to_area = "sa3",
   to_year = 2016,
   value_type = "aggs"
-) |> 
+) |>
   rename(patient_counts = values)
 
-sa3_2016 <- get_polygon("sa32016") |> 
+sa3_2016 <- get_polygon("sa32016") |>
   left_join(sa3_counts)
 
-sa3_2016 |> 
+sa3_2016 |>
   ggplot() +
   geom_sf(aes(fill = patient_counts)) +
   ggtitle("Patient counts by SA3 (2016)")
-
 ```
 
 

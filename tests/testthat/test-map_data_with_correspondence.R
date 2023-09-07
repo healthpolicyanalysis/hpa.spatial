@@ -8,7 +8,7 @@ test_that("grouping works", {
       sa2_to_sa3_2011_mapped_grped_aggs <- map_data_with_correspondence(
         codes = sample(sa2_2011$sa2_code_2011, size = n_sample),
         values = rnorm(n = n_sample),
-        groups = sample(LETTERS[1:5], size = n_sample, replace=TRUE),
+        groups = sample(LETTERS[1:5], size = n_sample, replace = TRUE),
         from_area = "sa2",
         from_year = 2011,
         to_area = "sa3",

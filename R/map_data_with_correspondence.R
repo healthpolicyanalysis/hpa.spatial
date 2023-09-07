@@ -56,8 +56,7 @@ map_data_with_correspondence <- function(codes,
                                          to_year,
                                          value_type = c("units", "aggs"),
                                          round = FALSE) {
-
-  if(!is.null(groups)) {
+  if (!is.null(groups)) {
     stopifnot(length(codes) == length(groups))
     stopifnot(length(codes) == length(values))
     call <- match.call()
@@ -67,12 +66,12 @@ map_data_with_correspondence <- function(codes,
       f = groups
     ) |>
       lapply(\(x) {
-               call$codes <- x$codes
-               call$values <- x$values
-               call$groups <- NULL
-               eval(call, envir = parent.frame()) |>
-                 dplyr::mutate(grp = x$groups[1])
-               }) |>
+        call$codes <- x$codes
+        call$values <- x$values
+        call$groups <- NULL
+        eval(call, envir = parent.frame()) |>
+          dplyr::mutate(grp = x$groups[1])
+      }) |>
       (\(x) do.call("rbind", x))()
 
     return(df_res)
@@ -204,7 +203,7 @@ map_data_with_correspondence <- function(codes,
 
   stopifnot(all.equal(sum(mapped_df$values), sum(values[!codes %in% bad_codes])))
 
-  if(value_type == "aggs" & round) {
+  if (value_type == "aggs" & round) {
     mapped_df <- dplyr::mutate(mapped_df, values = round(values))
   }
 
