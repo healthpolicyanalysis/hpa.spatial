@@ -2,7 +2,7 @@ Type: Package
 Package: hpa.spatial
 Title: Data and helpful functions for spatial data analyses for Australian
     geometries
-Version: 0.1.1
+Version: 0.1.1.9000
 Authors@R: 
     person("Rex", "Parsons", , "rex.parsons@healthpolicy.com", role = c("aut", "cre"))
 Description: Data and helpful functions for spatial data analyses.
@@ -14,13 +14,14 @@ Imports:
     rlang,
     rmapshaper,
     strayr,
-    stringr
+    stringr,
+    withr
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
 Depends: 
     R (>= 4.1.0)
 Suggests: 
-    testthat (>= 3.0.0),
-    withr
+    callr,
+    testthat (>= 3.0.0)
 Config/testthat/edition: 3

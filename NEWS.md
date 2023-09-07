@@ -1,3 +1,5 @@
+# hpa.spatial (development version)
+
 # hpa.spatial 0.1.1
 
 * initial release with two main functions:

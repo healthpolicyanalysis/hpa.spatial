@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 set.seed(42)
 ```
 
-# hpa.spatial
+# hpa.spatial 
 
 <!-- badges: start -->
 <!-- badges: end -->
