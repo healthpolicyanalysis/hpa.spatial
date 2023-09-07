@@ -40,7 +40,6 @@ get_polygon <- function(name,
     call <- match.call.defaults(expand.dots = FALSE)
     call$simplify_keep <- NULL
     call$... <- NULL
-    read_absmap <- strayr::read_absmap
     call[[1]] <- as.name("read_absmap")
 
 
