@@ -23,25 +23,39 @@ get_polygon <- function(name,
                         .validate_name,
                         simplify_keep = 1,
                         ...) {
-
   call <- match.call.defaults(expand.dots = FALSE)
   call[[1]] <- as.name("check_for_internal_polygon")
-  polygon <- eval(call, envir = parent.frame())
 
-  if(is.null(polygon)) {
+  p_env <- rlang::env_clone(parent.frame())
+
+  withr::with_environment(p_env, {
+    withr::with_package(
+      "hpa.spatial",
+      polygon <- eval(call, envir = rlang::current_env())
+    )
+  })
+
+  if (is.null(polygon)) {
     # call strayr::read_absmap with all args except for `simplify_keep`
     call <- match.call.defaults(expand.dots = FALSE)
     call$simplify_keep <- NULL
     call$... <- NULL
+    read_absmap <- strayr::read_absmap
     call[[1]] <- as.name("read_absmap")
 
-    polygon <- evaluate::try_capture_stack(
-      eval(call, envir = parent.frame()),
-      env = parent.frame()
-    )
 
-    if(evaluate::is.error(polygon)) {
-      if(stringr::str_detect(polygon$message, "Applicable files are:")) {
+    withr::with_environment(p_env, {
+      withr::with_package(
+        "strayr",
+        polygon <- evaluate::try_capture_stack(
+          eval(call, envir = rlang::current_env()),
+          rlang::current_env()
+        )
+      )
+    })
+
+    if (evaluate::is.error(polygon)) {
+      if (stringr::str_detect(polygon$message, "Applicable files are:")) {
         stop(glue::glue(
           "Error when running '{capture.output(polygon$call)}'\n",
           "{polygon$message}, ",
@@ -61,10 +75,6 @@ get_polygon <- function(name,
 
   polygon
 }
-
-#' @importFrom strayr read_absmap
-#' @export
-strayr::read_absmap
 
 
 #' check_for_internal_polygon
@@ -89,7 +99,7 @@ check_for_internal_polygon <- function(name = NULL, area = NULL, year = NULL, ..
 
   if (any(c(name, area) %in% c("NSWLHN", "LHD"))) {
     message("The data for The Local Health Districts boundaries (NSW) are from here: <https://github.com/wfmackey/absmapsdata/raw/master/data/nsw_lhd2023.rda>")
-    return(read_absmap("nsw_lhd2023"))
+    return(strayr::read_absmap("nsw_lhd2023"))
   }
 
   if (any(c(name, area) %in% c("SALHN"))) {

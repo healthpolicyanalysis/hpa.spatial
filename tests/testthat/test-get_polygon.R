@@ -12,7 +12,7 @@ test_that("get_polygon works", {
 
 
 test_that("get_polygon for internal data works", {
-  for(geo in .get_internal_polygon_names()) {
+  for (geo in .get_internal_polygon_names()) {
     shp <- suppressMessages(get_polygon(area = geo))
     expect_s3_class(shp, "sf")
     shp <- suppressMessages(get_polygon(name = geo))
@@ -25,4 +25,13 @@ test_that("get_polygon messaging for bad names work", {
     get_polygon(name = "asdasd"),
     regexp = paste0(.get_internal_polygon_names(), collapse = ", ")
   ))
+})
+
+
+test_that("get_polygon works when called without hpa.spatial loaded", {
+  p <- callr::r(function() hpa.spatial::get_polygon("sa22016"))
+  expect_s3_class(p, "sf")
+
+  p <- callr::r(function() hpa.spatial::get_polygon("HHS"))
+  expect_s3_class(p, "sf")
 })

@@ -1,5 +1,9 @@
 # hpa.spatial (development version)
 
+* bug fix (#2): use `withr::with_package()` and `withr::with_environment()` to 
+  evaluate calls in `get_polygon()` with hpa.spatial namespace within copy of 
+  parent environment.
+
 # hpa.spatial 0.1.1
 
 * initial release with two main functions:
