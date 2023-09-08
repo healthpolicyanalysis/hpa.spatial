@@ -113,23 +113,15 @@ gridExtra::grid.arrange(p1, p2, ncol = 2)
 
 ### LHN's shapefiles
 
-Aside from the built in shapefiles that are hosted by `{absmapsdata}`, `get_polygon()` can also access (some) shapefiles for local hospital networks (LHNs).
+Aside from the built in shapefiles that are hosted by `{absmapsdata}`, `get_polygon()` can also access (most) shapefiles for local hospital networks (LHNs).
 
-These can be accessed by the `"area"` or `"name"` arguments by specifying either the state and "LHN" or the specific local name for that LHN ("HHS" in QLD and "LHD" in NSW).
+These can be accessed by the `"area"` or `"name"` arguments by "LHN".
 
 ```{r, warning=FALSE}
-qld_hhs <- get_polygon(area = "HHS")
+qld_hhs <- get_polygon(area = "LHN") |> filter(state == "QLD")
 head(qld_hhs)
 
 qld_hhs |>
-  ggplot() +
-  geom_sf() +
-  theme_bw()
-
-nsw_lhd <- get_polygon(name = "NSWLHN")
-head(nsw_lhd)
-
-nsw_lhd |>
   ggplot() +
   geom_sf() +
   theme_bw()

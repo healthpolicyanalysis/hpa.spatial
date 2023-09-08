@@ -1,5 +1,9 @@
 # hpa.spatial (development version)
 
+* create an `lhn` dataset to replace the independent state datasets (`qld_hhs`,
+  `nsw_lhd`, `sa_lhn`). Currently missing Victoria (needing to find a separate 
+  source).
+
 * bug fix (#2): use `withr::with_package()` and `withr::with_environment()` to 
   evaluate calls in `get_polygon()` with hpa.spatial namespace within copy of 
   parent environment.

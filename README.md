@@ -144,31 +144,29 @@ sa2_2016_simple |>
 ### LHN’s shapefiles
 
 Aside from the built in shapefiles that are hosted by `{absmapsdata}`,
-`get_polygon()` can also access (some) shapefiles for local hospital
+`get_polygon()` can also access (most) shapefiles for local hospital
 networks (LHNs).
 
-These can be accessed by the `"area"` or `"name"` arguments by
-specifying either the state and “LHN” or the specific local name for
-that LHN (“HHS” in QLD and “LHD” in NSW).
+These can be accessed by the `"area"` or `"name"` arguments by “LHN”.
 
 ``` r
-qld_hhs <- get_polygon(area = "HHS")
-#> The data for The Hospital and Health Service boundaries (QLD) are from here: <https://qldspatial.information.qld.gov.au/catalogue/custom/detail.page?fid={A4661F6D-0013-46EE-A446-A45F01A64D46}>
+qld_hhs <- get_polygon(area = "LHN") |> filter(state == "QLD")
+#> The data for the Local Hospital Networks (LHN) are from here: <https://hub.arcgis.com/datasets/ACSQHC::local-hospital-networks/explore>
 head(qld_hhs)
-#> Simple feature collection with 6 features and 3 fields
+#> Simple feature collection with 6 features and 4 fields
 #> Geometry type: MULTIPOLYGON
 #> Dimension:     XY
-#> Bounding box:  xmin: 140.9993 ymin: -29.17788 xmax: 153.5522 ymax: -19.70546
+#> Bounding box:  xmin: 141.1318 ymin: -28.36396 xmax: 153.5522 ymax: -15.90277
 #> Geodetic CRS:  GDA2020
-#> # A tibble: 6 × 4
-#>   HHS            SHAPE_Leng SHAPE_Area                                  geometry
-#>   <chr>               <dbl>      <dbl>                        <MULTIPOLYGON [°]>
-#> 1 Darling Downs       22.6       8.07  (((152.4876 -28.2539, 152.4874 -28.25403…
-#> 2 Gold Coast           4.99      0.169 (((153.5477 -28.1663, 153.5477 -28.16631…
-#> 3 Mackay              33.9       7.87  (((146.9052 -21.4686, 146.9056 -21.46814…
-#> 4 Metro South          8.30      0.353 (((152.7999 -27.83483, 152.7999 -27.8348…
-#> 5 South West          31.8      29.1   (((149.4599 -27.97792, 149.4574 -27.9929…
-#> 6 Sunshine Coast       8.99      0.904 (((153.1507 -26.8003, 153.1508 -26.8004,…
+#> # A tibble: 6 × 5
+#>   LHN_Name              LHN_Code state STATE_CODE                       geometry
+#>   <chr>                 <chr>    <chr> <chr>                  <MULTIPOLYGON [°]>
+#> 1 Cairns and Hinterland 312      QLD   3          (((146.1522 -17.99844, 146.15…
+#> 2 Metro North (Qld)     320      QLD   3          (((152.4362 -26.46019, 152.44…
+#> 3 Metro South (Qld)     322      QLD   3          (((153.2022 -27.35289, 153.19…
+#> 4 Gold Coast            323      QLD   3          (((153.4123 -27.9313, 153.412…
+#> 5 Sunshine Coast        319      QLD   3          (((151.8027 -25.75822, 151.80…
+#> 6 West Moreton          324      QLD   3          (((152.2818 -26.45192, 152.28…
 
 qld_hhs |>
   ggplot() +
@@ -177,32 +175,6 @@ qld_hhs |>
 ```
 
 <img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
-
-``` r
-
-nsw_lhd <- get_polygon(name = "NSWLHN")
-#> The data for The Local Health Districts boundaries (NSW) are from here: <https://github.com/wfmackey/absmapsdata/raw/master/data/nsw_lhd2023.rda>
-head(nsw_lhd)
-#> Simple feature collection with 6 features and 1 field
-#> Geometry type: MULTIPOLYGON
-#> Dimension:     XY
-#> Bounding box:  xmin: 149.7519 ymin: -34.76958 xmax: 159.1092 ymax: -31.4868
-#> Geodetic CRS:  WGS 84
-#>            nsw_lhd_name                       geometry
-#> 1 Nepean Blue Mountains MULTIPOLYGON (((151.1358 -3...
-#> 2       Northern Sydney MULTIPOLYGON (((151.343 -33...
-#> 3  South Eastern Sydney MULTIPOLYGON (((151.2878 -3...
-#> 4  South Western Sydney MULTIPOLYGON (((151.0755 -3...
-#> 5                Sydney MULTIPOLYGON (((151.2168 -3...
-#> 6        Western Sydney MULTIPOLYGON (((151.0843 -3...
-
-nsw_lhd |>
-  ggplot() +
-  geom_sf() +
-  theme_bw()
-```
-
-<img src="man/figures/README-unnamed-chunk-6-2.png" width="100%" />
 
 ## Mapping data between ASGS editions
 
@@ -245,7 +217,7 @@ map_data_with_correspondence(
   to_year = 2016,
   value_type = "aggs"
 )
-#> Reading file found in /tmp/Rtmpo0chOo
+#> Reading file found in /tmp/Rtmp7qsyPa
 #> # A tibble: 5 × 2
 #>   SA2_MAINCODE_2016 values
 #>   <chr>              <dbl>
@@ -288,7 +260,7 @@ sa3_counts <- map_data_with_correspondence(
   value_type = "aggs"
 ) |>
   rename(patient_counts = values)
-#> Reading file found in /tmp/Rtmpo0chOo
+#> Reading file found in /tmp/Rtmp7qsyPa
 
 sa3_2016 <- get_polygon("sa32016") |>
   left_join(sa3_counts)

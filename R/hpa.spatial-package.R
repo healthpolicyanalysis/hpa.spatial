@@ -7,7 +7,6 @@ NULL
 
 utils::globalVariables(c(
   "ratio",
-  "qld_hhs",
-  "sa_lhn",
-  "phn"
+  "phn",
+  "lhn"
 ))
