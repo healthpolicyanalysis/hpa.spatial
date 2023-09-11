@@ -1,4 +1,4 @@
-# hpa.spatial (development version)
+# hpa.spatial 0.2.0
 
 * create an `lhn` dataset to replace the independent state datasets (`qld_hhs`,
   `nsw_lhd`, `sa_lhn` etc...).
