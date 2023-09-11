@@ -71,8 +71,6 @@ usethis::use_data(sa_phn_correspondence_tables)
 
 qld_hhs <- sf::read_sf("data-raw/QSC_Extracted_Data_20230724_114923035000-49708/Hospital_and_Health_Service_boundaries.shp")
 
-usethis::use_data(qld_hhs, overwrite = TRUE, compress = "xz")
-
 library(tidyverse)
 library(leaflet)
 library(sf)
@@ -93,16 +91,31 @@ usethis::use_data(phn, overwrite = TRUE, compress = "xz")
 
 
 ### create a complete dataset for LHNs (exception: Vic for now)
+vic_lhn <- sf::read_sf("data-raw/vic-lhn/DHHS_Service_Areas.shp") |>
+  select(LHN_Name = ServiceAre) |>
+  add_column(STATE_CODE = "2")
 
-all_lhn <- sf::read_sf("data-raw/LHN/Local_Hospital_Networks.shp")
 
-all_lhn$state <- toupper(strayr::clean_state(all_lhn$STATE_CODE))
-lhn <- all_lhn |> select(LHN_Name, LHN_Code, state, STATE_CODE)
 
-lhn <- st_transform(lhn, 7844)
+all_lhn <- sf::read_sf("data-raw/LHN/Local_Hospital_Networks.shp") |>
+  select(LHN_Name, STATE_CODE) |>
+  bind_rows(vic_lhn) |>
+  mutate(
+    state = toupper(strayr::clean_state(STATE_CODE)),
+    state = factor(
+      state,
+      levels = data.frame(state = unique(state), STATE_CODE = unique(STATE_CODE)) |>
+        arrange(STATE_CODE) |>
+        pull(state)
+      )
+    ) |>
+  select(LHN_Name, state, STATE_CODE)
+
+lhn <- st_transform(all_lhn, 7844)
 usethis::use_data(lhn, overwrite = TRUE, compress = "xz")
 
-
+ggplot() +
+  geom_sf(data = lhn, aes(fill = state))
 ####
 
 
