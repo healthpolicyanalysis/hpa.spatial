@@ -107,8 +107,8 @@ all_lhn <- sf::read_sf("data-raw/LHN/Local_Hospital_Networks.shp") |>
       levels = data.frame(state = unique(state), STATE_CODE = unique(STATE_CODE)) |>
         arrange(STATE_CODE) |>
         pull(state)
-      )
-    ) |>
+    )
+  ) |>
   select(LHN_Name, state, STATE_CODE)
 
 lhn <- st_transform(all_lhn, 7844)
