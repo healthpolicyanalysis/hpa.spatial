@@ -1,5 +1,7 @@
 # hpa.spatial (development version)
 
+* add tests for (#3) which is a non-issue.
+
 # hpa.spatial 0.2.0
 
 * create an `lhn` dataset to replace the independent state datasets (`qld_hhs`,

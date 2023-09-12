@@ -41,7 +41,6 @@ test_that("get_polygon works when called without hpa.spatial loaded", {
     expect_s3_class(p[[i]], "sf")
   }
 
-
   geos <- c("sa22021", "sa32021")
   p <- lapply(
     geos,
@@ -52,6 +51,8 @@ test_that("get_polygon works when called without hpa.spatial loaded", {
     expect_s3_class(p[[i]], "sf")
   }
 
-  # TODO: currently a failing test >>>
-  # p <- callr::r(function() lapply(geos, hpa.spatial::get_polygon))
+  p <- callr::r(function(){
+    geos <- c("sa22021", "sa32021")
+    lapply(geos, hpa.spatial::get_polygon)
+  })
 })
