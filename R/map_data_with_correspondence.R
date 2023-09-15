@@ -1,5 +1,7 @@
 #' Map data between editions using correspondence tables from the ABS.
 #'
+#' @param .data a \code{data.frame}(-like) object. Can be passed if codes,
+#' values or groups are passed by reference (like in \code{dplyr::mutate()}).
 #' @param codes codes representing locations relevant to the \code{from_area}.
 #' SA1 or SA2, for example.
 #' @param values values associated with codes to be alloocated to newly mapped
@@ -47,7 +49,8 @@
 #'   value_type = "aggs"
 #' )
 #'
-map_data_with_correspondence <- function(codes,
+map_data_with_correspondence <- function(.data = NULL,
+                                         codes,
                                          values,
                                          groups = NULL,
                                          from_area,
@@ -56,6 +59,62 @@ map_data_with_correspondence <- function(codes,
                                          to_year,
                                          value_type = c("units", "aggs"),
                                          round = FALSE) {
+  if (!is.null(.data)) {
+    # if .data is passed, extract the codes and values from the columns of .data
+
+    # get codes
+    codes <- try(eval(substitute(codes), .data), silent = TRUE)
+    if (inherits(codes, "try-error")) {
+      msg <- codes[[1]]
+      codes <- try(codes, silent = TRUE)
+      if (inherits(codes, "try-error")) {
+        stop(msg)
+      }
+    }
+
+    # get values
+    # extract the name of the column used for values
+    values_name <- try(as.character(substitute(values)), silent = FALSE)
+    if (inherits(values_name, "try-error")) {
+      values_name <- NA
+    } else {
+      if(length(values_name) != 1 | !all(values_name %in% names(.data))) {
+        values_name <- NA
+      }
+    }
+    values <- try(eval(substitute(values), .data), silent = TRUE)
+    if (inherits(values, "try-error")) {
+      values_name <- NA # if the value aren't extracted as column from .data, use default
+      msg <- values[[1]]
+      values <- try(values, silent = TRUE)
+      if (inherits(values, "try-error")) {
+        stop(msg)
+      }
+    }
+
+    # get groups
+    groups_name <- try(as.character(substitute(groups)), silent = FALSE)
+    if (inherits(groups_name, "try-error")) {
+      groups_name <- NA
+    } else {
+      if(length(groups_name) != 1 | !all(groups_name %in% names(.data))) {
+        groups_name <- NA
+      }
+    }
+    groups <- try(eval(substitute(groups), .data), silent = TRUE)
+    if (inherits(groups, "try-error")) {
+      groups_name <- NA # if the value aren't extracted as column from .data, use default
+      msg <- groups[[1]]
+      values <- try(groups, silent = TRUE)
+      if (inherits(groups, "try-error")) {
+        stop(msg)
+      }
+    }
+  } else {
+    groups_name <- NA
+    values_name <- NA
+  }
+
   if (!is.null(groups)) {
     stopifnot(length(codes) == length(groups))
     stopifnot(length(codes) == length(values))
@@ -74,7 +133,8 @@ map_data_with_correspondence <- function(codes,
       }) |>
       (\(x) do.call("rbind", x))()
 
-    return(df_res)
+    return(clean_mapped_tbl(df_res, values_name = values_name, groups_name = groups_name))
+    # return(df_res)
   }
 
   value_type <- match.arg(value_type)
@@ -93,7 +153,8 @@ map_data_with_correspondence <- function(codes,
     mapped_df <- cbind(asgs_tbl[asgs_tbl[[1]] %in% codes, 2, drop = FALSE], values)
 
     if (value_type == "units") {
-      return(mapped_df)
+      return(clean_mapped_tbl(mapped_df, values_name = values_name, groups_name = groups_name))
+      # return(mapped_df)
     }
 
     if (value_type == "aggs") {
@@ -102,7 +163,8 @@ map_data_with_correspondence <- function(codes,
         dplyr::summarize(values = sum(values)) |>
         (\(.data) if (round) dplyr::mutate(.data, values = round(values)) else .data)()
 
-      return(mapped_df)
+      return(clean_mapped_tbl(mapped_df, values_name = values_name, groups_name = groups_name))
+      # return(mapped_df)
     }
   }
 
@@ -127,7 +189,8 @@ map_data_with_correspondence <- function(codes,
     call$codes <- df_edition_mapped[[1]]
     call$values <- df_edition_mapped$values
 
-    return(eval(call, envir = parent.frame()))
+
+    return(clean_mapped_tbl(eval(call, envir = parent.frame()), values_name = values_name, groups_name = groups_name))
   }
 
   call <- match.call.defaults()
@@ -135,6 +198,7 @@ map_data_with_correspondence <- function(codes,
   call$values <- NULL
   call$value_type <- NULL
   call$round <- NULL
+  call$.data <- NULL
   call <- rlang::call_modify(call, !!!list("groups" = rlang::zap()))
 
   call[[1]] <- as.name("read_correspondence_tbl")
@@ -207,7 +271,8 @@ map_data_with_correspondence <- function(codes,
     mapped_df <- dplyr::mutate(mapped_df, values = round(values))
   }
 
-  mapped_df
+
+  clean_mapped_tbl(mapped_df, values_name = values_name, groups_name = groups_name)
 }
 
 
@@ -268,6 +333,19 @@ adjust_correspodence_tbl <- function(tbl) {
 
   rbind(tbl_ok, tbl_not_ok_fixed) |>
     dplyr::arrange(!!!rlang::syms(code_col))
+}
+
+
+clean_mapped_tbl <- function(.data, values_name, groups_name) {
+  if(!is.na(values_name)) {
+    .data <- dplyr::rename(.data, !!values_name := values)
+  }
+  if(!is.na(groups_name)) {
+    .data <- dplyr::rename(.data, !!groups_name := grp)
+  }
+  .data |>
+    tibble::remove_rownames() |>
+    tibble::as_tibble()
 }
 
 

@@ -5,6 +5,7 @@
 \title{Map data between editions using correspondence tables from the ABS.}
 \usage{
 map_data_with_correspondence(
+  .data = NULL,
   codes,
   values,
   groups = NULL,
@@ -17,6 +18,9 @@ map_data_with_correspondence(
 )
 }
 \arguments{
+\item{.data}{a \code{data.frame}(-like) object. Can be passed if codes,
+values or groups are passed by reference (like in \code{dplyr::mutate()}).}
+
 \item{codes}{codes representing locations relevant to the \code{from_area}.
 SA1 or SA2, for example.}
 

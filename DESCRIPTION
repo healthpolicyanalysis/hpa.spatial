@@ -15,6 +15,7 @@ Imports:
     rmapshaper,
     strayr,
     stringr,
+    tibble,
     withr
 Encoding: UTF-8
 LazyData: true

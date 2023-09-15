@@ -8,5 +8,8 @@ NULL
 utils::globalVariables(c(
   "ratio",
   "phn",
-  "lhn"
+  "lhn",
+  ":=",
+  "values",
+  "grp"
 ))

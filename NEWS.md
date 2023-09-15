@@ -1,5 +1,11 @@
 # hpa.spatial (development version)
 
+* added a `.data` argument to `map_data_with_correspondence()` so that `codes`,
+  `values` and `groups` can be passed by reference (like in `dplyr::mutate()`).
+  
+* always returna a tibble from `map_data_with_correspondence()` (just for 
+  consistency).
+
 * add tests for (#3) which is a non-issue.
 
 # hpa.spatial 0.2.0
