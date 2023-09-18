@@ -1,5 +1,9 @@
 # hpa.spatial (development version)
 
+* add `make_correspondence_tbl()` to create a correspondence table between two
+  given geographies and a `POINT` geometry (`sf`) with population counts 
+  (`Person` as is standard in mesh blocks data).
+
 * added a `.data` argument to `map_data_with_correspondence()` so that `codes`,
   `values` and `groups` can be passed by reference (like in `dplyr::mutate()`).
   

@@ -7,6 +7,7 @@
 #' @param export_dir path to a directory to store the desired sf object. tempdir() by default.
 #' @param .validate_name logical defaulting to TRUE, which checks the name input (or area year combination) against a list of available objects in the absmapsdata package.
 #' @param simplify_keep proportion of points to retain (0-1; default 1 - no simplification).
+#' @param crs whether to update the crs (if necessary) of the returned polygon.
 #' @param ... arguments passed to \code{rmapshaper::ms_simplify()} (other than \code{keep}).
 #'
 #' @return a polygon of class \code{sf}.
@@ -22,6 +23,7 @@ get_polygon <- function(name,
                         export_dir,
                         .validate_name,
                         simplify_keep = 1,
+                        crs = NULL,
                         ...) {
   call <- match.call.defaults(expand.dots = FALSE)
   call[[1]] <- as.name("check_for_internal_polygon")
@@ -39,6 +41,7 @@ get_polygon <- function(name,
     # call strayr::read_absmap with all args except for `simplify_keep`
     call <- match.call.defaults(expand.dots = FALSE)
     call$simplify_keep <- NULL
+    call$crs <- NULL
     call$... <- NULL
     call[[1]] <- as.name("read_absmap")
 
@@ -71,7 +74,17 @@ get_polygon <- function(name,
     polygon <- rmapshaper::ms_simplify(polygon, keep = simplify_keep, ...)
   }
 
-  polygon
+  update_crs(polygon, crs = crs)
+}
+
+
+update_crs <- function(geo, crs = NULL) {
+  if (!is.null(crs)) {
+    if(sf::st_crs(crs)$input != sf::st_crs(geo)$input) {
+      geo <- sf::st_transform(geo, crs)
+    }
+  }
+  geo
 }
 
 

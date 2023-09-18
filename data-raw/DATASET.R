@@ -114,8 +114,33 @@ all_lhn <- sf::read_sf("data-raw/LHN/Local_Hospital_Networks.shp") |>
 lhn <- st_transform(all_lhn, 7844)
 usethis::use_data(lhn, overwrite = TRUE, compress = "xz")
 
-ggplot() +
-  geom_sf(data = lhn, aes(fill = state))
+
+
+# create qld meshblocks dataset with column for population for testing make_correspondence_tbl()
+
+aus_mb21 <- read_sf("data-raw/mb/MB_2021_AUST_GDA2020.shp")
+aus_mb21_points <- st_point_on_surface (aus_mb21)
+
+aus_mb21_pops <- lapply(2:13, \(x) {
+  readxl::read_xlsx("data-raw/mb/Mesh Block Counts, 2021.xlsx", skip = 6, sheet = x)
+}) |>
+  (\(x) do.call("rbind", x))()
+
+
+aus_mb21_points_test <- left_join(
+  aus_mb21_points,
+  aus_mb21_pops,
+  by = c("MB_CODE21" = "MB_CODE_2021")
+)
+
+sum(is.na(aus_mb21_points_test$Dwelling))
+aus_mb21_points_test |>
+  filter(is.na(Dwelling))
+
+aus_mb21_points_test |>
+  filter(STE_NAME21 == "Queensland") |>
+  saveRDS(file.path(here::here(), "tests", "testthat", "fixtures", "mb21_qld.rds"))
+
 ####
 
 

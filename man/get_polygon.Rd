@@ -12,6 +12,7 @@ get_polygon(
   export_dir,
   .validate_name,
   simplify_keep = 1,
+  crs = NULL,
   ...
 )
 }
@@ -29,6 +30,8 @@ get_polygon(
 \item{.validate_name}{logical defaulting to TRUE, which checks the name input (or area year combination) against a list of available objects in the absmapsdata package.}
 
 \item{simplify_keep}{proportion of points to retain (0-1; default 1 - no simplification).}
+
+\item{crs}{whether to update the crs (if necessary) of the returned polygon.}
 
 \item{...}{arguments passed to \code{rmapshaper::ms_simplify()} (other than \code{keep}).}
 }

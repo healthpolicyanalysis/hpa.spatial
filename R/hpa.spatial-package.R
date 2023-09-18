@@ -11,5 +11,11 @@ utils::globalVariables(c(
   "lhn",
   ":=",
   "values",
-  "grp"
+  "grp",
+  "Person",
+  "pop",
+  "mb_code",
+  "from_code",
+  "to_code",
+  "pop_sum"
 ))
