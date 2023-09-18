@@ -128,6 +128,8 @@ map_data_with_correspondence <- function(.data = NULL,
     stopifnot(length(codes) == length(groups))
     stopifnot(length(codes) == length(values))
     call <- match.call()
+    call$groups <- NULL
+    call$.data <- NULL
 
     df_res <- split(
       data.frame(codes = codes, values = values, groups = groups),
@@ -136,14 +138,12 @@ map_data_with_correspondence <- function(.data = NULL,
       lapply(\(x) {
         call$codes <- x$codes
         call$values <- x$values
-        call$groups <- NULL
         eval(call, envir = parent.frame()) |>
           dplyr::mutate(grp = x$groups[1])
       }) |>
       (\(x) do.call("rbind", x))()
 
     return(clean_mapped_tbl(df_res, values_name = values_name, groups_name = groups_name))
-    # return(df_res)
   }
 
   value_type <- match.arg(value_type)
@@ -163,7 +163,6 @@ map_data_with_correspondence <- function(.data = NULL,
 
     if (value_type == "units") {
       return(clean_mapped_tbl(mapped_df, values_name = values_name, groups_name = groups_name))
-      # return(mapped_df)
     }
 
     if (value_type == "aggs") {
@@ -173,7 +172,6 @@ map_data_with_correspondence <- function(.data = NULL,
         (\(.data) if (round) dplyr::mutate(.data, values = round(values)) else .data)()
 
       return(clean_mapped_tbl(mapped_df, values_name = values_name, groups_name = groups_name))
-      # return(mapped_df)
     }
   }
 
@@ -249,7 +247,6 @@ map_data_with_correspondence <- function(.data = NULL,
         sum_ratio <- sum(mapping_df_filtered[[3]], na.rm = TRUE)
         mapping_df_filtered[is.na(mapping_df_filtered[[3]]), 3] <- (1 - sum_ratio) / na_count
       }
-      # sample(mapping_df_filtered[[2]], size = 1, prob = mapping_df_filtered[[3]])
       if(is.null(seed)) {
         sample(mapping_df_filtered[[2]], size = 1, prob = mapping_df_filtered[[3]])
       } else {

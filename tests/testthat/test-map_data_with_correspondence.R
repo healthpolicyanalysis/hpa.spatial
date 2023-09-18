@@ -28,8 +28,6 @@ test_that("passing dataframe and retaining column names works", {
     value_type = "aggs"
   )
 
-
-
   mapped_df_without_data <- map_data_with_correspondence(
     codes = sa2_2011_sample_with_groups$sa2_code_2011,
     values = sa2_2011_sample_with_groups$test_outcome,
