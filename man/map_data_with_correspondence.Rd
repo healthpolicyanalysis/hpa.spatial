@@ -14,7 +14,8 @@ map_data_with_correspondence(
   to_area,
   to_year,
   value_type = c("units", "aggs"),
-  round = FALSE
+  round = FALSE,
+  seed = NULL
 )
 }
 \arguments{
@@ -52,6 +53,11 @@ proportion across the (potentially multiple) mapped codes.}
 \item{round}{Whether or not to round the resulting mapped values to be whole
 numbers (maybe be useful when mapping count, aggregate values which may
 otherwise return decimal values in the mapped areas).}
+
+\item{seed}{A random seed (integer). May be useful for ensuring mappings of
+unit level data are reproducible (as these use the mapping probabilities
+for randomly allocating observations to the new geographies and may be
+different between runs with the same data/inputs).}
 }
 \value{
 A \code{data.frame}.

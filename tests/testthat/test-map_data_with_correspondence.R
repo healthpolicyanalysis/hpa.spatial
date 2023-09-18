@@ -13,33 +13,32 @@ test_that("passing dataframe and retaining column names works", {
         (\(x) do.call("rbind", x))()
 
       sa2_2011_sample_with_groups$test_outcome <- rnorm(nrow(sa2_2011_sample_with_groups))
-
-
-      mapped_df_with_data <- map_data_with_correspondence(
-        sa2_2011_sample_with_groups,
-        codes = sa2_code_2011,
-        values = test_outcome,
-        groups = letter_group,
-        from_area = "sa2",
-        from_year = 2011,
-        to_area = "sa3",
-        to_year = 2011,
-        value_type = "aggs"
-      )
-
-
-
-      mapped_df_without_data <- map_data_with_correspondence(
-        codes = sa2_2011_sample_with_groups$sa2_code_2011,
-        values = sa2_2011_sample_with_groups$test_outcome,
-        groups = sa2_2011_sample_with_groups$letter_group,
-        from_area = "sa2",
-        from_year = 2011,
-        to_area = "sa3",
-        to_year = 2011,
-        value_type = "aggs"
-      )
     }
+  )
+
+  mapped_df_with_data <- map_data_with_correspondence(
+    sa2_2011_sample_with_groups,
+    codes = sa2_code_2011,
+    values = test_outcome,
+    groups = letter_group,
+    from_area = "sa2",
+    from_year = 2011,
+    to_area = "sa3",
+    to_year = 2011,
+    value_type = "aggs"
+  )
+
+
+
+  mapped_df_without_data <- map_data_with_correspondence(
+    codes = sa2_2011_sample_with_groups$sa2_code_2011,
+    values = sa2_2011_sample_with_groups$test_outcome,
+    groups = sa2_2011_sample_with_groups$letter_group,
+    from_area = "sa2",
+    from_year = 2011,
+    to_area = "sa3",
+    to_year = 2011,
+    value_type = "aggs"
   )
   expect_equal(names(mapped_df_with_data), c("sa3_code_2011", "test_outcome", "letter_group"))
   expect_equal(
@@ -115,37 +114,41 @@ test_that("mapping across SAs and editions together works", {
     {
       n_sample <- 200
       sa2_2011_sample <- dplyr::sample_n(sa2_2011, n_sample)
-      sa2_to_sa3_2011_to_2016_mapped_unit_ref_col <- map_data_with_correspondence(
-        .data = sa2_2011_sample,
-        codes = sa2_code_2011,
-        values = rnorm(n = n_sample),
-        from_area = "sa2",
-        from_year = 2011,
-        to_area = "sa3",
-        to_year = 2016
-      )
-
-
-      sa2_to_sa3_2011_to_2016_mapped_unit <- map_data_with_correspondence(
-        codes = sample(sa2_2011$sa2_code_2011, size = n_sample),
-        values = rnorm(n = n_sample),
-        from_area = "sa2",
-        from_year = 2011,
-        to_area = "sa3",
-        to_year = 2016
-      )
-
-
-      sa2_to_sa3_2011_to_2016_mapped_aggs <- map_data_with_correspondence(
-        codes = sample(sa2_2011$sa2_code_2011, size = n_sample),
-        values = rnorm(n = n_sample),
-        from_area = "sa2",
-        from_year = 2011,
-        to_area = "sa3",
-        to_year = 2016,
-        value_type = "aggs"
-      )
+      random_vals <- rnorm(n = n_sample)
+      sample_codes <- sample(sa2_2011$sa2_code_2011, size = n_sample)
     }
+  )
+
+  sa2_to_sa3_2011_to_2016_mapped_unit_ref_col <- map_data_with_correspondence(
+    .data = sa2_2011_sample,
+    codes = sa2_code_2011,
+    values = random_vals,
+    from_area = "sa2",
+    from_year = 2011,
+    to_area = "sa3",
+    to_year = 2016,
+    seed = 42
+  )
+
+  sa2_to_sa3_2011_to_2016_mapped_unit <- map_data_with_correspondence(
+    codes = sample_codes,
+    values = random_vals,
+    from_area = "sa2",
+    from_year = 2011,
+    to_area = "sa3",
+    to_year = 2016,
+    seed = 42
+  )
+
+
+  sa2_to_sa3_2011_to_2016_mapped_aggs <- map_data_with_correspondence(
+    codes = sample_codes,
+    values = random_vals,
+    from_area = "sa2",
+    from_year = 2011,
+    to_area = "sa3",
+    to_year = 2016,
+    value_type = "aggs"
   )
   expect_snapshot(sa2_to_sa3_2011_to_2016_mapped_unit_ref_col)
   expect_snapshot(sa2_to_sa3_2011_to_2016_mapped_unit)

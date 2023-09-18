@@ -13,6 +13,7 @@ Imports:
     glue,
     rlang,
     rmapshaper,
+    sf,
     strayr,
     stringr,
     tibble,

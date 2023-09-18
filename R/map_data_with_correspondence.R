@@ -25,6 +25,10 @@
 #' @param round Whether or not to round the resulting mapped values to be whole
 #' numbers (maybe be useful when mapping count, aggregate values which may
 #' otherwise return decimal values in the mapped areas).
+#' @param seed A random seed (integer). May be useful for ensuring mappings of
+#' unit level data are reproducible (as these use the mapping probabilities
+#' for randomly allocating observations to the new geographies and may be
+#' different between runs with the same data/inputs).
 #'
 #' @return A \code{data.frame}.
 #' @export
@@ -58,7 +62,9 @@ map_data_with_correspondence <- function(.data = NULL,
                                          to_area,
                                          to_year,
                                          value_type = c("units", "aggs"),
-                                         round = FALSE) {
+                                         round = FALSE,
+                                         seed = NULL
+                                         ) {
   if (!is.null(.data)) {
     # if .data is passed, extract the codes and values from the columns of .data
 
@@ -82,14 +88,17 @@ map_data_with_correspondence <- function(.data = NULL,
         values_name <- NA
       }
     }
-    values <- try(eval(substitute(values), .data), silent = TRUE)
-    if (inherits(values, "try-error")) {
+    # browser()
+    values_col <- try(eval(substitute(values), .data), silent = TRUE)
+    if (inherits(values_col, "try-error")) {
       values_name <- NA # if the value aren't extracted as column from .data, use default
-      msg <- values[[1]]
+      msg <- values_col[[1]]
       values <- try(values, silent = TRUE)
       if (inherits(values, "try-error")) {
         stop(msg)
       }
+    } else {
+      values <- values_col
     }
 
     # get groups
@@ -199,6 +208,7 @@ map_data_with_correspondence <- function(.data = NULL,
   call$value_type <- NULL
   call$round <- NULL
   call$.data <- NULL
+  call$seed <- NULL
   call <- rlang::call_modify(call, !!!list("groups" = rlang::zap()))
 
   call[[1]] <- as.name("read_correspondence_tbl")
@@ -239,7 +249,14 @@ map_data_with_correspondence <- function(.data = NULL,
         sum_ratio <- sum(mapping_df_filtered[[3]], na.rm = TRUE)
         mapping_df_filtered[is.na(mapping_df_filtered[[3]]), 3] <- (1 - sum_ratio) / na_count
       }
-      sample(mapping_df_filtered[[2]], size = 1, prob = mapping_df_filtered[[3]])
+      # sample(mapping_df_filtered[[2]], size = 1, prob = mapping_df_filtered[[3]])
+      if(is.null(seed)) {
+        sample(mapping_df_filtered[[2]], size = 1, prob = mapping_df_filtered[[3]])
+      } else {
+        withr::with_seed(seed, {
+          sample(mapping_df_filtered[[2]], size = 1, prob = mapping_df_filtered[[3]])
+        })
+      }
     }
 
     mapped_df <- df |>
