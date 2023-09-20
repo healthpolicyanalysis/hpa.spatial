@@ -49,3 +49,15 @@
 #' @source <https://hub.arcgis.com/datasets/ACSQHC::local-hospital-networks/explore>
 #' and <https://discover.data.vic.gov.au/dataset/dhhs-service-areas> for Victoria.
 "lhn"
+
+
+#' \code{sf} Coordinates data (centroids) for the meshblocks (2021 edition) for Australia including population counts (\code{Person}).
+#'
+#'
+#' @format ## `mb21_pop`
+#'
+#' A \code{sf} object.
+#'
+#'
+#' @source Mesh Blocks 2021 shapefile <https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026/access-and-downloads/digital-boundary-files> and population data <https://www.abs.gov.au/census/guide-census-data/mesh-block-counts/latest-release>.
+"mb21_pop"

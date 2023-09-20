@@ -127,18 +127,20 @@ aus_mb21_pops <- lapply(2:13, \(x) {
   (\(x) do.call("rbind", x))()
 
 
-aus_mb21_points_test <- left_join(
+mb21_pop <- left_join(
   aus_mb21_points,
   aus_mb21_pops,
   by = c("MB_CODE21" = "MB_CODE_2021")
 )
 
-sum(is.na(aus_mb21_points_test$Dwelling))
-aus_mb21_points_test |>
+sum(is.na(mb21_pop$Dwelling))
+mb21_pop |>
   filter(is.na(Dwelling))
 
-aus_mb21_points_test |>
+mb21_pop |>
   saveRDS(file.path(here::here(), "tests", "testthat", "fixtures", "mb21.rds"))
+
+usethis::use_data(mb21_pop, overwrite = TRUE, compress = "xz")
 
 ####
 

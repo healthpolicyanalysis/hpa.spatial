@@ -10,6 +10,12 @@
 #'
 #' @return a \code{tibble}.
 #' @export
+#' @examples
+#' make_correspondence_tbl(
+#'   from_geo = get_polygon("sa22016", crs = 7844),
+#'   to_geo = get_polygon("sa22021", crs = 7844),
+#'   mb_geo = mb21_pop
+#' )
 make_correspondence_tbl <- function(from_geo, to_geo, mb_geo) {
   mb_geo <- mb_geo |>
     dplyr::select(mb_code = 1, pop = Person) |>

@@ -22,3 +22,10 @@ a \code{tibble}.
 \description{
 Create a correspondence table between any two geographies.
 }
+\examples{
+make_correspondence_tbl(
+  from_geo = get_polygon("sa22016", crs = 7844),
+  to_geo = get_polygon("sa22021", crs = 7844),
+  mb_geo = mb21_pop
+)
+}
