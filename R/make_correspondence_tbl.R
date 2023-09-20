@@ -1,5 +1,16 @@
+#' Create a correspondence table between any two geographies.
+#'
+#'
+#' @param from_geo an \code{{sf}} POLYGON object.
+#' @param to_geo an \code{{sf}} POLYGON object.
+#' @param mb_geo an \code{{sf}} POINT object where the points are the centroids
+#' of a small area (intended to be mesh blocks but can be any other space that's
+#' small enough to be useful. Should also include a column, \code{Person},
+#' with the population within that area.
+#'
+#' @return a \code{tibble}.
+#' @export
 make_correspondence_tbl <- function(from_geo, to_geo, mb_geo) {
-
   mb_geo <- mb_geo |>
     dplyr::select(mb_code = 1, pop = Person) |>
     dplyr::filter(pop != 0)

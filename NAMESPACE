@@ -2,6 +2,7 @@
 
 export(check_for_internal_polygon)
 export(get_polygon)
+export(make_correspondence_tbl)
 export(map_data_with_correspondence)
 export(read_correspondence_tbl)
 importFrom(strayr,read_correspondence_tbl)

@@ -138,8 +138,7 @@ aus_mb21_points_test |>
   filter(is.na(Dwelling))
 
 aus_mb21_points_test |>
-  filter(STE_NAME21 == "Queensland") |>
-  saveRDS(file.path(here::here(), "tests", "testthat", "fixtures", "mb21_qld.rds"))
+  saveRDS(file.path(here::here(), "tests", "testthat", "fixtures", "mb21.rds"))
 
 ####
 
