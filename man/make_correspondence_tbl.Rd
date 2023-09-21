@@ -4,7 +4,7 @@
 \alias{make_correspondence_tbl}
 \title{Create a correspondence table between any two geographies.}
 \usage{
-make_correspondence_tbl(from_geo, to_geo, mb_geo = get_mb21_pop())
+make_correspondence_tbl(from_geo, to_geo, mb_geo = get_mb21_pop(), ...)
 }
 \arguments{
 \item{from_geo}{an \code{{sf}} POLYGON object.}
@@ -16,6 +16,8 @@ of a small area (intended to be mesh blocks but can be any other space that's
 small enough to be useful. Should also include a column, \code{Person},
 with the population within that area. Defaults to use Mesh Blocks (2021) and
 with 2021 census data. See \code{hpa.spatial::mb21_pop}.}
+
+\item{...}{other, ignored arguments.}
 }
 \value{
 a \code{tibble}.

@@ -1,3 +1,25 @@
+test_that("mapping using created correspondence tables when abs ones aren't available", {
+  sa2_2021 <- suppressMessages(get_polygon(area = "sa2", year = 2021))
+  withr::with_seed(
+    42,
+    {
+      sa2_2021$test_outcome <- rnorm(nrow(sa2_2021))
+    }
+  )
+
+  mapped_df_with_data <- map_data_with_correspondence(
+    codes = sa2_2021$sa2_code_2021,
+    values = sa2_2021$test_outcome,
+    from_area = "sa2",
+    from_year = 2021,
+    to_area = "LHN",
+    value_type = "aggs"
+  )
+
+  expect_s3_class(mapped_df_with_data, "tbl")
+  expect_snapshot(mapped_df_with_data)
+})
+
 test_that("passing dataframe and retaining column names works", {
   sa2_2011 <- suppressMessages(get_polygon(area = "sa2", year = 2011))
   withr::with_seed(

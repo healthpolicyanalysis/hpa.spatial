@@ -26,7 +26,7 @@ test_that("test mapping is similar to published correspondence tables", {
       sa2_2016_qld <- sa2_2016[sa2_2016$state_name_2016 == "Queensland", ]
       sa2_2021 <- suppressWarnings(hpa.spatial::get_polygon("sa22021", crs = 7844))
       sa2_2021_qld <- sa2_2021[sa2_2021$state_name_2021 == "Queensland", ]
-      hpa.spatial::make_correspondence_tbl(from_geo = sa2_2016_qld, sa2_2021_qld)
+      hpa.spatial::make_correspondence_tbl(from_geo = sa2_2016_qld, to_geo = sa2_2021_qld)
     }
   )
 
@@ -43,3 +43,49 @@ test_that("test mapping is similar to published correspondence tables", {
 
   expect_snapshot(tbl_test)
 })
+
+
+test_that("test mapping is similar to published correspondence tables", {
+  to_poly <- get_polygon(area = "LHN", crs = 7844)
+  from_poly <- get_polygon(area = "sa2", year = 2021, crs = 7844)
+
+  # test creation of correspondence table on non-standard geography
+  sa2_to_lhn_tbl <- make_correspondence_tbl(from_poly, to_poly)
+
+  expect_snapshot(sa2_to_lhn_tbl)
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

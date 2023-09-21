@@ -18,6 +18,11 @@
 #' @param to_area The area you want to correspond TO (ie the areas you want your
 #' data to be in).
 #' @param to_year The year you want to correspond TO.
+#' @param mb_geo an \code{{sf}} POINT object where the points are the centroids
+#' of a small area (intended to be mesh blocks but can be any other space that's
+#' small enough to be useful. Should also include a column, \code{Person},
+#' with the population within that area. Defaults to use Mesh Blocks (2021) and
+#' with 2021 census data. See \code{hpa.spatial::mb21_pop}.
 #' @param value_type Whether the data are unit level or aggregate level data.
 #' Unit level data is randomly allocated to new locations based on proportions
 #' in the correspondence table, aggregate data is dispersed based on the
@@ -61,6 +66,7 @@ map_data_with_correspondence <- function(.data = NULL,
                                          from_year,
                                          to_area,
                                          to_year,
+                                         mb_geo = get_mb21_pop(),
                                          value_type = c("units", "aggs"),
                                          round = FALSE,
                                          seed = NULL
@@ -149,57 +155,68 @@ map_data_with_correspondence <- function(.data = NULL,
   value_type <- match.arg(value_type)
   stopifnot(length(codes) == length(values))
 
-  if (is_SA(from_area) & is_SA(to_area) & clean_year(from_year) == clean_year(to_year)) {
-    # if the areas are both SA's and the year is the same, this is the process
-    # of aggregating up (i.e. from SA2 to SA3) and can be done without
-    # correspondence tables but just with the asgs tables.
-    asgs_tbl <- get_asgs_table(
-      from_area = clean_sa(from_area),
-      to_area = clean_sa(to_area),
-      year = clean_year(from_year)
-    )
+  if(any(missing(from_year), missing(to_year), missing(from_area), missing(to_area))) {
+    maybe_sa <- TRUE
+  } else {
 
-    mapped_df <- cbind(asgs_tbl[asgs_tbl[[1]] %in% codes, 2, drop = FALSE], values)
+  }
 
-    if (value_type == "units") {
-      return(clean_mapped_tbl(mapped_df, values_name = values_name, groups_name = groups_name))
+  maybe_sa <- all(!missing(from_year), !missing(to_year), !missing(from_area), !missing(to_area))
+
+  if (maybe_sa) {
+    if (is_SA(from_area) & is_SA(to_area) & clean_year(from_year) == clean_year(to_year)) {
+      # if the areas are both SA's and the year is the same, this is the process
+      # of aggregating up (i.e. from SA2 to SA3) and can be done without
+      # correspondence tables but just with the asgs tables.
+      asgs_tbl <- get_asgs_table(
+        from_area = clean_sa(from_area),
+        to_area = clean_sa(to_area),
+        year = clean_year(from_year)
+      )
+
+      mapped_df <- cbind(asgs_tbl[asgs_tbl[[1]] %in% codes, 2, drop = FALSE], values)
+
+      if (value_type == "units") {
+        return(clean_mapped_tbl(mapped_df, values_name = values_name, groups_name = groups_name))
+      }
+
+      if (value_type == "aggs") {
+        mapped_df <- mapped_df |>
+          dplyr::group_by(!!rlang::sym(names(mapped_df)[1])) |>
+          dplyr::summarize(values = sum(values)) |>
+          (\(.data) if (round) dplyr::mutate(.data, values = round(values)) else .data)()
+
+        return(clean_mapped_tbl(mapped_df, values_name = values_name, groups_name = groups_name))
+      }
     }
 
-    if (value_type == "aggs") {
-      mapped_df <- mapped_df |>
-        dplyr::group_by(!!rlang::sym(names(mapped_df)[1])) |>
-        dplyr::summarize(values = sum(values)) |>
-        (\(.data) if (round) dplyr::mutate(.data, values = round(values)) else .data)()
+    if (is_SA(from_area) & is_SA(to_area) &
+        clean_sa(from_area) != clean_sa(to_area) &
+        clean_year(from_year) != clean_year(to_year)
+    ) {
+      # if the areas are both SA's and the years are different, then the user is
+      # wanting to both map using the correspondence tables from one edition to another
+      # AND aggregate the data assigned to map codes to a new ASGS level (i.e. SA2 to SA3)
 
-      return(clean_mapped_tbl(mapped_df, values_name = values_name, groups_name = groups_name))
+      # approach... call function recursively to:
+      #     > map editions (from_area to from_area)
+      #     > aggregate up area levels
+      call <- match.call.defaults()
+      call$to_area <- from_area
+
+      df_edition_mapped <- eval(call, envir = parent.frame())
+
+      call <- match.call.defaults()
+      call$from_year <- to_year
+      call$codes <- df_edition_mapped[[1]]
+      call$values <- df_edition_mapped$values
+
+
+      return(clean_mapped_tbl(eval(call, envir = parent.frame()), values_name = values_name, groups_name = groups_name))
     }
   }
 
-  if (is_SA(from_area) & is_SA(to_area) &
-    clean_sa(from_area) != clean_sa(to_area) &
-    clean_year(from_year) != clean_year(to_year)
-  ) {
-    # if the areas are both SA's and the years are different, then the user is
-    # wanting to both map using the correspondence tables from one edition to another
-    # AND aggregate the data assigned to map codes to a new ASGS level (i.e. SA2 to SA3)
-
-    # approach... call function recursively to:
-    #     > map editions (from_area to from_area)
-    #     > aggregate up area levels
-    call <- match.call.defaults()
-    call$to_area <- from_area
-
-    df_edition_mapped <- eval(call, envir = parent.frame())
-
-    call <- match.call.defaults()
-    call$from_year <- to_year
-    call$codes <- df_edition_mapped[[1]]
-    call$values <- df_edition_mapped$values
-
-
-    return(clean_mapped_tbl(eval(call, envir = parent.frame()), values_name = values_name, groups_name = groups_name))
-  }
-
+  # browser()
   call <- match.call.defaults()
   call$codes <- NULL
   call$values <- NULL
@@ -209,10 +226,26 @@ map_data_with_correspondence <- function(.data = NULL,
   call$seed <- NULL
   call <- rlang::call_modify(call, !!!list("groups" = rlang::zap()))
 
-  call[[1]] <- as.name("read_correspondence_tbl")
+  call[[1]] <- as.name("get_correspondence_tbl")
 
-  correspondence_tbl <- eval(call, envir = parent.frame()) |>
-    dplyr::mutate(dplyr::across(1:4, as.character))
+
+
+  # call$codes <- NULL
+  # call$values <- NULL
+  # call$value_type <- NULL
+  # call$round <- NULL
+  # call$.data <- NULL
+  # call$seed <- NULL
+  # call$mb_geo <- NULL
+  # call <- rlang::call_modify(call, !!!list("groups" = rlang::zap()))
+  # call[[1]] <- as.name("read_correspondence_tbl")
+
+  withr::with_package(
+    "hpa.spatial",
+    correspondence_tbl <- eval(call, envir = parent.frame())
+  )
+
+  # |> dplyr::mutate(dplyr::across(1:4, as.character))
 
   # remove codes that aren't in the correspondence table
   bad_codes <- codes[!codes %in% correspondence_tbl[[1]]]
@@ -379,3 +412,41 @@ clean_year <- function(x) {
 #' @importFrom strayr read_correspondence_tbl
 #' @export
 strayr::read_correspondence_tbl
+
+
+get_correspondence_tbl <- function(from_area,
+                                   from_year,
+                                   to_area,
+                                   to_year,
+                                   export_dir = tempdir(),
+                                   mb_geo) {
+  call <- match.call.defaults()
+  call$mb_geo <- NULL
+  call[[1]] <- as.name("read_correspondence_tbl")
+  cg <- try(eval(call, envir = parent.frame()), silent = TRUE)
+  if (inherits(cg, "try-error")) {
+    message('Failed to retrieve correspondence table through {strayr}, making correspondence table')
+
+    if(!missing(from_year)) {
+      from_polygon <- get_polygon(area = from_area, year = from_year, crs = 7844)
+    } else {
+      from_polygon <- get_polygon(area = from_area, crs = 7844)
+    }
+
+    if(!missing(to_year)) {
+      to_polygon <- get_polygon(area = to_area, year = to_year, crs = 7844)
+    } else {
+      to_polygon <- get_polygon(area = to_area, crs = 7844)
+    }
+
+    make_correspondence_tbl(from_geo = from_polygon, to_geo = to_polygon, mb_geo = mb_geo)
+  } else {
+    correspondence_tbl <- cg |>
+      dplyr::mutate(dplyr::across(1:4, as.character))
+  }
+}
+
+
+
+
+

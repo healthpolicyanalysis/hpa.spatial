@@ -13,6 +13,7 @@ map_data_with_correspondence(
   from_year,
   to_area,
   to_year,
+  mb_geo = get_mb21_pop(),
   value_type = c("units", "aggs"),
   round = FALSE,
   seed = NULL
@@ -44,6 +45,12 @@ are currently in). For example: "sa1", "sa2, "sa3", "sa4".}
 data to be in).}
 
 \item{to_year}{The year you want to correspond TO.}
+
+\item{mb_geo}{an \code{{sf}} POINT object where the points are the centroids
+of a small area (intended to be mesh blocks but can be any other space that's
+small enough to be useful. Should also include a column, \code{Person},
+with the population within that area. Defaults to use Mesh Blocks (2021) and
+with 2021 census data. See \code{hpa.spatial::mb21_pop}.}
 
 \item{value_type}{Whether the data are unit level or aggregate level data.
 Unit level data is randomly allocated to new locations based on proportions

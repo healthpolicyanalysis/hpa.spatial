@@ -133,10 +133,6 @@ mb21_pop <- left_join(
   by = c("MB_CODE21" = "MB_CODE_2021")
 )
 
-sum(is.na(mb21_pop$Dwelling))
-mb21_pop |>
-  filter(is.na(Dwelling))
-
 mb21_pop |>
   saveRDS(file.path(here::here(), "tests", "testthat", "fixtures", "mb21.rds"))
 

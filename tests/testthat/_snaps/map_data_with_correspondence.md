@@ -1,3 +1,23 @@
+# mapping using created correspondence tables when abs ones aren't available
+
+    Code
+      mapped_df_with_data
+    Output
+      # A tibble: 163 x 2
+            ratio       values
+            <dbl>        <dbl>
+       1 0.000203 -0.000119   
+       2 0.000220 -0.000285   
+       3 0.000246 -0.0000211  
+       4 0.000246  0.000238   
+       5 0.000247 -0.0000719  
+       6 0.000272  0.000158   
+       7 0.000315 -0.000524   
+       8 0.000319 -0.000000581
+       9 0.000356  0.000222   
+      10 0.000357 -0.000514   
+      # i 153 more rows
+
 # grouping works
 
     Code
