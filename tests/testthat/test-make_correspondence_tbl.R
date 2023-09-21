@@ -18,6 +18,20 @@ test_that("test mapping is similar to published correspondence tables", {
     dplyr::filter(STE_NAME21 == "Queensland")
 
   tbl_test <- make_correspondence_tbl(from_geo = sa2_2016_qld, sa2_2021_qld, mb_geo = qld_mb21)
+  tbl_test2 <- make_correspondence_tbl(from_geo = sa2_2016_qld, sa2_2021_qld)
+
+  tbl_test3 <- callr::r(
+    function() {
+      sa2_2016 <- suppressWarnings(hpa.spatial::get_polygon("sa22016", crs = 7844))
+      sa2_2016_qld <- sa2_2016[sa2_2016$state_name_2016 == "Queensland", ]
+      sa2_2021 <- suppressWarnings(hpa.spatial::get_polygon("sa22021", crs = 7844))
+      sa2_2021_qld <- sa2_2021[sa2_2021$state_name_2021 == "Queensland", ]
+      hpa.spatial::make_correspondence_tbl(from_geo = sa2_2016_qld, sa2_2021_qld)
+    }
+  )
+
+  expect_identical(tbl_test, tbl_test2) # use default mb_geo
+  expect_identical(tbl_test, tbl_test3) # use default mb_geo when hpa.spatial isn't loaded
 
   # TODO: come up with a good test of approx. equivalence to the correspondence files from abs...
   dplyr::full_join(

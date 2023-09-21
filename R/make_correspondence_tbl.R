@@ -6,7 +6,8 @@
 #' @param mb_geo an \code{{sf}} POINT object where the points are the centroids
 #' of a small area (intended to be mesh blocks but can be any other space that's
 #' small enough to be useful. Should also include a column, \code{Person},
-#' with the population within that area.
+#' with the population within that area. Defaults to use Mesh Blocks (2021) and
+#' with 2021 census data. See \code{hpa.spatial::mb21_pop}.
 #'
 #' @return a \code{tibble}.
 #' @export
@@ -16,7 +17,8 @@
 #'   to_geo = get_polygon("sa22021", crs = 7844),
 #'   mb_geo = mb21_pop
 #' )
-make_correspondence_tbl <- function(from_geo, to_geo, mb_geo) {
+make_correspondence_tbl <- function(from_geo, to_geo, mb_geo = get_mb21_pop()) {
+  # TODO: accept character for from_geo and to_geo to be used in get_polygon() and then use that as the polygon thereon
   mb_geo <- mb_geo |>
     dplyr::select(mb_code = 1, pop = Person) |>
     dplyr::filter(pop != 0)
@@ -48,4 +50,8 @@ make_correspondence_tbl <- function(from_geo, to_geo, mb_geo) {
       !!rlang::sym(from_geo_codename) := 1,
       !!rlang::sym(to_geo_codename) := 2,
     )
+}
+
+get_mb21_pop <- function() {
+  hpa.spatial::mb21_pop
 }
