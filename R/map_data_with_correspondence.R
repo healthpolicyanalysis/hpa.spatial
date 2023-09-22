@@ -228,10 +228,13 @@ map_data_with_correspondence <- function(.data = NULL,
 
   call[[1]] <- as.name("get_correspondence_tbl")
 
-  withr::with_package(
-    "hpa.spatial",
-    correspondence_tbl <- eval(call, envir = parent.frame())
-  )
+  p_env <- rlang::env_clone(parent.frame())
+  withr::with_environment(p_env, {
+    withr::with_package(
+      "hpa.spatial",
+      correspondence_tbl <- eval(call, envir = rlang::current_env())
+    )
+  })
 
   # remove codes that aren't in the correspondence table
   bad_codes <- codes[!codes %in% correspondence_tbl[[1]]]
