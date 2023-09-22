@@ -1,3 +1,5 @@
+# hpa.spatial (development version)
+
 # hpa.spatial 0.2.1
 
 * add `get_correspondence_tbl()` which calls `strayr::read_correspondence_tbl()`
