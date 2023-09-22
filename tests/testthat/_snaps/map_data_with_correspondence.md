@@ -3,20 +3,20 @@
     Code
       mapped_df_with_data
     Output
-      # A tibble: 163 x 2
-            ratio       values
-            <dbl>        <dbl>
-       1 0.000203 -0.000119   
-       2 0.000220 -0.000285   
-       3 0.000246 -0.0000211  
-       4 0.000246  0.000238   
-       5 0.000247 -0.0000719  
-       6 0.000272  0.000158   
-       7 0.000315 -0.000524   
-       8 0.000319 -0.000000581
-       9 0.000356  0.000222   
-      10 0.000357 -0.000514   
-      # i 153 more rows
+      # A tibble: 61 x 2
+         LHN_Name                       values
+         <chr>                           <dbl>
+       1 Australian Capital Territory  10.7   
+       2 Barwon                       -10.1   
+       3 Bayside Peninsula             -7.31  
+       4 Brimbank Melton              -10.0   
+       5 Cairns and Hinterland         -5.73  
+       6 Central Adelaide               0.0546
+       7 Central Australia (NT)        -1.71  
+       8 Central Coast (NSW)           -1.21  
+       9 Central Highlands             -8.69  
+      10 Central Queensland            -5.94  
+      # i 51 more rows
 
 # grouping works
 

@@ -94,7 +94,6 @@ map_data_with_correspondence <- function(.data = NULL,
         values_name <- NA
       }
     }
-    # browser()
     values_col <- try(eval(substitute(values), .data), silent = TRUE)
     if (inherits(values_col, "try-error")) {
       values_name <- NA # if the value aren't extracted as column from .data, use default
@@ -216,7 +215,6 @@ map_data_with_correspondence <- function(.data = NULL,
     }
   }
 
-  # browser()
   call <- match.call.defaults()
   call$codes <- NULL
   call$values <- NULL
@@ -228,24 +226,10 @@ map_data_with_correspondence <- function(.data = NULL,
 
   call[[1]] <- as.name("get_correspondence_tbl")
 
-
-
-  # call$codes <- NULL
-  # call$values <- NULL
-  # call$value_type <- NULL
-  # call$round <- NULL
-  # call$.data <- NULL
-  # call$seed <- NULL
-  # call$mb_geo <- NULL
-  # call <- rlang::call_modify(call, !!!list("groups" = rlang::zap()))
-  # call[[1]] <- as.name("read_correspondence_tbl")
-
   withr::with_package(
     "hpa.spatial",
     correspondence_tbl <- eval(call, envir = parent.frame())
   )
-
-  # |> dplyr::mutate(dplyr::across(1:4, as.character))
 
   # remove codes that aren't in the correspondence table
   bad_codes <- codes[!codes %in% correspondence_tbl[[1]]]
@@ -291,9 +275,9 @@ map_data_with_correspondence <- function(.data = NULL,
 
     mapped_df <- df |>
       dplyr::rowwise() |>
-      dplyr::mutate(codes = f_assign_code(code = codes, mapping_df = correspondence_tbl[, c(1, 3, 5)]))
+      dplyr::mutate(codes = f_assign_code(code = codes, mapping_df = correspondence_tbl))
 
-    names(mapped_df)[1] <- names(correspondence_tbl)[3]
+    names(mapped_df)[1] <- names(correspondence_tbl)[2]
 
     stopifnot(nrow(mapped_df) == length(values[!codes %in% bad_codes]))
   }
@@ -308,7 +292,7 @@ map_data_with_correspondence <- function(.data = NULL,
       df |>
       dplyr::left_join(correspondence_tbl, by = c("codes" = names(correspondence_tbl)[1])) |>
       dplyr::mutate(values = values * ratio) |>
-      dplyr::group_by(!!rlang::sym(names(correspondence_tbl)[3])) |>
+      dplyr::group_by(!!rlang::sym(names(correspondence_tbl)[2])) |>
       dplyr::summarize(values = sum(values))
   }
 
@@ -414,16 +398,40 @@ clean_year <- function(x) {
 strayr::read_correspondence_tbl
 
 
+#' get a correspondence table, either via \code{strayr::read_correspondence_tbl}
+#' or by creating one with \code{make_correspondence_tbl}.
+#'
+#' @param from_area The area you want to correspond FROM (ie the areas your data
+#' are currently in). For example: "sa1", "sa2, "sa3", "sa4".
+#' @param from_year The year you want to correspond FROM. For example: 2011,
+#' 2016.
+#' @param to_area The area you want to correspond TO (ie the areas you want your
+#' data to be in).
+#' @param to_year The year you want to correspond TO.
+#' @param export_dir The directory to store the downloaded data.
+#' @param mb_geo mesh blocks data with census population. Defaults to using the
+#' 2021 edition mesh blocks and 2021 census data (see
+#' \code{hpa.spatial::mb21_pop}).
+#'
+#' @return a \code{tibble}.
+#' @export
+#'
+#' @examples
+#' get_correspondence_tbl(from_area = "sa2", from_year = 2021, to_area = "LHN")
 get_correspondence_tbl <- function(from_area,
                                    from_year,
                                    to_area,
                                    to_year,
                                    export_dir = tempdir(),
-                                   mb_geo) {
+                                   mb_geo = get_mb21_pop()) {
+
   call <- match.call.defaults()
   call$mb_geo <- NULL
   call[[1]] <- as.name("read_correspondence_tbl")
-  cg <- try(eval(call, envir = parent.frame()), silent = TRUE)
+  withr::with_package("hpa.spatial", {
+    cg <- try(eval(call, envir = parent.frame()), silent = TRUE)
+  })
+
   if (inherits(cg, "try-error")) {
     message('Failed to retrieve correspondence table through {strayr}, making correspondence table')
 
@@ -441,12 +449,8 @@ get_correspondence_tbl <- function(from_area,
 
     make_correspondence_tbl(from_geo = from_polygon, to_geo = to_polygon, mb_geo = mb_geo)
   } else {
-    correspondence_tbl <- cg |>
-      dplyr::mutate(dplyr::across(1:4, as.character))
+    cg |>
+      dplyr::select(1, 3, ratio) |>
+      dplyr::mutate(dplyr::across(1:2, as.character))
   }
 }
-
-
-
-
-

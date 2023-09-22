@@ -20,8 +20,7 @@
 #' )
 make_correspondence_tbl <- function(from_geo, to_geo, mb_geo = get_mb21_pop(), ...) {
   mb_geo <- mb_geo |>
-    dplyr::select(mb_code = 1, pop = Person) #|>
-    # dplyr::filter(pop != 0)
+    dplyr::select(mb_code = 1, pop = Person)
 
   from_geo_codename <- names(from_geo)[1]
   to_geo_codename <- names(to_geo)[1]
@@ -44,7 +43,6 @@ make_correspondence_tbl <- function(from_geo, to_geo, mb_geo = get_mb21_pop(), .
     dplyr::as_tibble() |>
     dplyr::select(mb_code, to_code)
 
-  # browser()
   dplyr::inner_join(mb_geo_from, mb_geo_to) |>
     dplyr::group_by(from_code, to_code) |>
     dplyr::summarize(pop_sum = sum(pop)) |>
