@@ -1,5 +1,11 @@
 # hpa.spatial (development version)
 
+* add `get_correspondence_tbl()` which calls `strayr::read_correspondence_tbl()`
+  and if it fails to find one, it uses `make_correspondence_tbl()` to create 
+  one. Takes the same args as `strayr::read_correspondence_tbl()` but with the 
+  option to use a different mesh blocks edition/population data for 
+  `make_correspondence_tbl()`.
+
 * add `make_correspondence_tbl()` to create a correspondence table between two
   given geographies and a `POINT` geometry (`sf`) with population counts 
   (`Person` as is standard in mesh blocks data).
