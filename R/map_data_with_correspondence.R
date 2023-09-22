@@ -66,11 +66,13 @@ map_data_with_correspondence <- function(.data = NULL,
                                          from_year,
                                          to_area,
                                          to_year,
-                                         mb_geo = get_mb21_pop(),
+                                         mb_geo,
                                          value_type = c("units", "aggs"),
                                          round = FALSE,
-                                         seed = NULL
-                                         ) {
+                                         seed = NULL) {
+  if (missing(mb_geo)) {
+    mb_geo <- get_mb21_pop()
+  }
   if (!is.null(.data)) {
     # if .data is passed, extract the codes and values from the columns of .data
 

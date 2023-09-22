@@ -18,6 +18,27 @@ test_that("mapping using created correspondence tables when abs ones aren't avai
 
   expect_s3_class(mapped_df_with_data, "tbl")
   expect_snapshot(mapped_df_with_data)
+
+  mapped_df_with_data2 <- callr::r(function(){
+    sa2_2021 <- suppressMessages(hpa.spatial::get_polygon(area = "sa2", year = 2021))
+    withr::with_seed(
+      42,
+      {
+        sa2_2021$test_outcome <- rnorm(nrow(sa2_2021))
+      }
+    )
+
+    suppressWarnings(hpa.spatial::map_data_with_correspondence(
+      codes = sa2_2021$sa2_code_2021,
+      values = sa2_2021$test_outcome,
+      from_area = "sa2",
+      from_year = 2021,
+      to_area = "LHN",
+      value_type = "aggs"
+    ))
+  })
+
+  expect_identical(mapped_df_with_data, mapped_df_with_data2)
 })
 
 test_that("passing dataframe and retaining column names works", {
