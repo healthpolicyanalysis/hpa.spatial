@@ -1,4 +1,4 @@
-# hpa.spatial (development version)
+# hpa.spatial 0.2.2
 
 * default mb_geo in `map_data_with_correspondence()` as missing and apply 
   default within function code. Using a hpa.spatial function as a default arg 
