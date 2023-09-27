@@ -43,7 +43,7 @@ make_correspondence_tbl <- function(from_geo, to_geo, mb_geo = get_mb21_pop(), .
     dplyr::as_tibble() |>
     dplyr::select(mb_code, to_code)
 
-  dplyr::inner_join(mb_geo_from, mb_geo_to) |>
+  dplyr::inner_join(mb_geo_from, mb_geo_to, by = "mb_code") |>
     dplyr::group_by(from_code, to_code) |>
     dplyr::summarize(pop_sum = sum(pop)) |>
     dplyr::ungroup() |>

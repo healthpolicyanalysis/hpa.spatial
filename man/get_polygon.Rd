@@ -5,9 +5,9 @@
 \title{Get shapefiles from ABS}
 \usage{
 get_polygon(
-  name,
-  area,
-  year,
+  name = NULL,
+  area = NULL,
+  year = NULL,
   remove_year_suffix,
   export_dir,
   .validate_name,

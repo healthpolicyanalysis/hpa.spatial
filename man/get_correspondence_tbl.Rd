@@ -6,10 +6,10 @@
 or by creating one with \code{make_correspondence_tbl}.}
 \usage{
 get_correspondence_tbl(
-  from_area,
-  from_year,
-  to_area,
-  to_year,
+  from_area = NULL,
+  from_year = NULL,
+  to_area = NULL,
+  to_year = NULL,
   export_dir = tempdir(),
   mb_geo = get_mb21_pop()
 )
