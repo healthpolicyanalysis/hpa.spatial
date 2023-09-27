@@ -3,6 +3,10 @@
 * use tidy evaluation on quosures to avoid problems with accessing objects 
   passed to hpa.spatial functions that evaluate calls.
 
+* save and read correspondence tables to save time particularly when a 
+  correspondence table that's being created is being created many times over
+  within `map_data_with_correspondence()` (say, when `groups` is being used)
+
 # hpa.spatial 0.2.3
 
 * bug fix: call `get_correspondence_tbl()` from parent environment in 
