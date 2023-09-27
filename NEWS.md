@@ -1,5 +1,8 @@
 # hpa.spatial (development version)
 
+* use tidy evaluation on quosures to avoid problems with accessing objects 
+  passed to hpa.spatial functions that evaluate calls.
+
 # hpa.spatial 0.2.3
 
 * bug fix: call `get_correspondence_tbl()` from parent environment in 

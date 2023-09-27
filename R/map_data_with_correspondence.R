@@ -77,13 +77,12 @@ map_data_with_correspondence <- function(.data = NULL,
     # if .data is passed, extract the codes and values from the columns of .data
 
     # get codes
-    codes <- try(eval(substitute(codes), .data), silent = TRUE)
-    if (inherits(codes, "try-error")) {
-      msg <- codes[[1]]
-      codes <- try(codes, silent = TRUE)
-      if (inherits(codes, "try-error")) {
-        stop(msg)
-      }
+
+    codes_quo <- try(rlang::eval_tidy(rlang::quo(codes), data = .data), silent = TRUE)
+    if(inherits(codes_quo, "try-error")) {
+      codes <- rlang::eval_tidy(rlang::enexpr(codes), data = .data)
+    } else {
+      codes <- codes_quo
     }
 
     # get values
@@ -94,38 +93,42 @@ map_data_with_correspondence <- function(.data = NULL,
     } else {
       if(length(values_name) != 1 | !all(values_name %in% names(.data))) {
         values_name <- NA
+      } else {
+        values_name <- values_name[values_name %in% names(.data)][1]
       }
     }
-    values_col <- try(eval(substitute(values), .data), silent = TRUE)
-    if (inherits(values_col, "try-error")) {
-      values_name <- NA # if the value aren't extracted as column from .data, use default
-      msg <- values_col[[1]]
-      values <- try(values, silent = TRUE)
-      if (inherits(values, "try-error")) {
-        stop(msg)
-      }
+    # browser()
+
+    # values <- get_vec(values, .data)
+    values_quo <- try(rlang::eval_tidy(rlang::quo(values), data = .data), silent = TRUE)
+    if(inherits(values_quo, "try-error")) {
+      values <- rlang::eval_tidy(rlang::enexpr(values), data = .data)
     } else {
-      values <- values_col
+      values <- values_quo
     }
+    # values <- rlang::eval_tidy(rlang::quo(values), data = .data)
 
     # get groups
     groups_name <- try(as.character(substitute(groups)), silent = FALSE)
     if (inherits(groups_name, "try-error")) {
       groups_name <- NA
     } else {
-      if(length(groups_name) != 1 | !all(groups_name %in% names(.data))) {
+      if(length(groups_name[groups_name %in% names(.data)]) == 1){
+        groups_name <- groups_name[groups_name %in% names(.data)][1]
+      } else {
         groups_name <- NA
       }
     }
-    groups <- try(eval(substitute(groups), .data), silent = TRUE)
-    if (inherits(groups, "try-error")) {
-      groups_name <- NA # if the value aren't extracted as column from .data, use default
-      msg <- groups[[1]]
-      values <- try(groups, silent = TRUE)
-      if (inherits(groups, "try-error")) {
-        stop(msg)
-      }
+
+    # groups <- get_vec(groups, .data)
+    groups_quo <- try(rlang::eval_tidy(rlang::quo(groups), data = .data), silent = TRUE)
+    if(inherits(groups, "try-error")) {
+      groups <- rlang::eval_tidy(rlang::enexpr(groups), data = .data)
+    }else {
+      groups <- groups_quo
     }
+    # groups <- rlang::eval_tidy(rlang::quo(groups), data = .data)
+
   } else {
     groups_name <- NA
     values_name <- NA
@@ -134,19 +137,23 @@ map_data_with_correspondence <- function(.data = NULL,
   if (!is.null(groups)) {
     stopifnot(length(codes) == length(groups))
     stopifnot(length(codes) == length(values))
-    call <- match.call()
-    call$groups <- NULL
-    call$.data <- NULL
 
     df_res <- split(
       data.frame(codes = codes, values = values, groups = groups),
       f = groups
     ) |>
       lapply(\(x) {
-        call$codes <- x$codes
-        call$values <- x$values
-        eval(call, envir = parent.frame()) |>
-          dplyr::mutate(grp = x$groups[1])
+
+        call <- rlang::expr(map_data_with_correspondence(
+          codes = x$codes,
+          values = x$values,
+          from_area = !!rlang::quo(from_area),
+          to_area = !!rlang::quo(to_area),
+          from_year = !!rlang::quo(from_year),
+          to_year = !!rlang::quo(to_year),
+        ))
+
+        rlang::eval_tidy(call) |> dplyr::mutate(grp = x$groups[1])
       }) |>
       (\(x) do.call("rbind", x))()
 
@@ -154,6 +161,7 @@ map_data_with_correspondence <- function(.data = NULL,
   }
 
   value_type <- match.arg(value_type)
+  # browser()
   stopifnot(length(codes) == length(values))
 
   if(any(missing(from_year), missing(to_year), missing(from_area), missing(to_area))) {
@@ -205,6 +213,7 @@ map_data_with_correspondence <- function(.data = NULL,
       call <- match.call.defaults()
       call$to_area <- from_area
 
+      # TODO: remove use of eval(call)...
       df_edition_mapped <- eval(call, envir = parent.frame())
 
       call <- match.call.defaults()
@@ -217,24 +226,19 @@ map_data_with_correspondence <- function(.data = NULL,
     }
   }
 
-  call <- match.call.defaults()
-  call$codes <- NULL
-  call$values <- NULL
-  call$value_type <- NULL
-  call$round <- NULL
-  call$.data <- NULL
-  call$seed <- NULL
-  call <- rlang::call_modify(call, !!!list("groups" = rlang::zap()))
+  call <- rlang::expr(get_correspondence_tbl(
+    from_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_area))),
+    to_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_area)))
+  ))
 
-  call[[1]] <- as.name("get_correspondence_tbl")
+  if(!missing(to_year)) {
+    call$to_year <- rlang::eval_tidy(rlang::expr(!!rlang::quo(to_year)))
+  }
+  if(!missing(to_year)) {
+    call$from_year <- rlang::eval_tidy(rlang::expr(!!rlang::quo(from_year)))
+  }
 
-  p_env <- rlang::env_clone(parent.frame())
-  withr::with_environment(p_env, {
-    withr::with_package(
-      "hpa.spatial",
-      correspondence_tbl <- eval(call, envir = rlang::current_env())
-    )
-  })
+  correspondence_tbl <- rlang::eval_tidy(call)
 
   # remove codes that aren't in the correspondence table
   bad_codes <- codes[!codes %in% correspondence_tbl[[1]]]

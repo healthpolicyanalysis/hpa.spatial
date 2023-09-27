@@ -28,6 +28,8 @@ get_polygon <- function(name,
   call <- match.call.defaults(expand.dots = FALSE)
   call[[1]] <- as.name("check_for_internal_polygon")
 
+  # browser()
+
   p_env <- rlang::env_clone(parent.frame())
 
   withr::with_environment(p_env, {
