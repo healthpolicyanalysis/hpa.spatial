@@ -1,3 +1,23 @@
+# mapping using created correspondence tables when abs ones aren't available
+
+    Code
+      mapped_df_with_data
+    Output
+      # A tibble: 61 x 2
+         LHN_Name                       values
+         <chr>                           <dbl>
+       1 Australian Capital Territory  10.7   
+       2 Barwon                       -10.1   
+       3 Bayside Peninsula             -7.31  
+       4 Brimbank Melton              -10.0   
+       5 Cairns and Hinterland         -5.73  
+       6 Central Adelaide               0.0546
+       7 Central Australia (NT)        -1.71  
+       8 Central Coast (NSW)           -1.21  
+       9 Central Highlands             -8.69  
+      10 Central Queensland            -5.94  
+      # i 51 more rows
+
 # grouping works
 
     Code
@@ -103,20 +123,20 @@
     Code
       sa2_to_sa3_2011_to_2016_mapped_aggs
     Output
-      # A tibble: 154 x 2
-         sa3_code_2016  values
-         <chr>           <dbl>
-       1 10102          0.760 
-       2 10104         -1.50  
-       3 10201         -5.24  
-       4 10202         -0.942 
-       5 10301         -1.10  
-       6 10302         -0.0579
-       7 10303         -1.63  
-       8 10304         -1.09  
-       9 10701          0.724 
-      10 10704         -1.39  
-      # i 144 more rows
+      # A tibble: 151 x 2
+         sa3_code_2016   values
+         <chr>            <dbl>
+       1 10102          0.896  
+       2 10104          0.607  
+       3 10201          0.809  
+       4 10202         -0.151  
+       5 10301         -1.45   
+       6 10302          0.643  
+       7 10303          0.483  
+       8 10304         -0.00636
+       9 10701          0.151  
+      10 10704         -0.584  
+      # i 141 more rows
 
 # mapping data works
 

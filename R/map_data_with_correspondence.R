@@ -62,10 +62,10 @@ map_data_with_correspondence <- function(.data = NULL,
                                          codes,
                                          values,
                                          groups = NULL,
-                                         from_area,
-                                         from_year,
-                                         to_area,
-                                         to_year,
+                                         from_area = NULL,
+                                         from_year = NULL,
+                                         to_area = NULL,
+                                         to_year = NULL,
                                          mb_geo,
                                          value_type = c("units", "aggs"),
                                          round = FALSE,
@@ -77,7 +77,6 @@ map_data_with_correspondence <- function(.data = NULL,
     # if .data is passed, extract the codes and values from the columns of .data
 
     # get codes
-
     codes_quo <- try(rlang::eval_tidy(rlang::quo(codes), data = .data), silent = TRUE)
     if(inherits(codes_quo, "try-error")) {
       codes <- rlang::eval_tidy(rlang::enexpr(codes), data = .data)
@@ -97,16 +96,13 @@ map_data_with_correspondence <- function(.data = NULL,
         values_name <- values_name[values_name %in% names(.data)][1]
       }
     }
-    # browser()
 
-    # values <- get_vec(values, .data)
     values_quo <- try(rlang::eval_tidy(rlang::quo(values), data = .data), silent = TRUE)
     if(inherits(values_quo, "try-error")) {
       values <- rlang::eval_tidy(rlang::enexpr(values), data = .data)
     } else {
       values <- values_quo
     }
-    # values <- rlang::eval_tidy(rlang::quo(values), data = .data)
 
     # get groups
     groups_name <- try(as.character(substitute(groups)), silent = FALSE)
@@ -120,14 +116,12 @@ map_data_with_correspondence <- function(.data = NULL,
       }
     }
 
-    # groups <- get_vec(groups, .data)
     groups_quo <- try(rlang::eval_tidy(rlang::quo(groups), data = .data), silent = TRUE)
     if(inherits(groups, "try-error")) {
       groups <- rlang::eval_tidy(rlang::enexpr(groups), data = .data)
     }else {
       groups <- groups_quo
     }
-    # groups <- rlang::eval_tidy(rlang::quo(groups), data = .data)
 
   } else {
     groups_name <- NA
@@ -164,13 +158,13 @@ map_data_with_correspondence <- function(.data = NULL,
   # browser()
   stopifnot(length(codes) == length(values))
 
-  if(any(missing(from_year), missing(to_year), missing(from_area), missing(to_area))) {
+  if(any(is.null(from_year), is.null(to_year), is.null(from_area), is.null(to_area))) {
     maybe_sa <- TRUE
   } else {
 
   }
 
-  maybe_sa <- all(!missing(from_year), !missing(to_year), !missing(from_area), !missing(to_area))
+  maybe_sa <- all(!is.null(from_year), !is.null(to_year), !is.null(from_area), !is.null(to_area))
 
   if (maybe_sa) {
     if (is_SA(from_area) & is_SA(to_area) & clean_year(from_year) == clean_year(to_year)) {
@@ -210,33 +204,40 @@ map_data_with_correspondence <- function(.data = NULL,
       # approach... call function recursively to:
       #     > map editions (from_area to from_area)
       #     > aggregate up area levels
-      call <- match.call.defaults()
-      call$to_area <- from_area
 
-      # TODO: remove use of eval(call)...
-      df_edition_mapped <- eval(call, envir = parent.frame())
+      call <- rlang::expr(map_data_with_correspondence(
+        codes = codes,
+        values = values,
+        from_area = !!rlang::quo(from_area),
+        to_area = !!rlang::quo(from_area),
+        from_year = !!rlang::quo(from_year),
+        to_year = !!rlang::quo(to_year),
+      ))
 
-      call <- match.call.defaults()
-      call$from_year <- to_year
-      call$codes <- df_edition_mapped[[1]]
-      call$values <- df_edition_mapped$values
+      df_edition_mapped <- rlang::eval_tidy(call)
 
+      call <- rlang::expr(map_data_with_correspondence(
+        codes = df_edition_mapped[[1]],
+        values = df_edition_mapped[[2]],
+        from_area = !!rlang::quo(from_area),
+        to_area = !!rlang::quo(to_area),
+        from_year = !!rlang::quo(to_year), # have already mapped edition
+        to_year = !!rlang::quo(to_year),
+        value_type = !!rlang::quo(value_type)
+      ))
 
-      return(clean_mapped_tbl(eval(call, envir = parent.frame()), values_name = values_name, groups_name = groups_name))
+      mapped_df <- rlang::eval_tidy(call)
+
+      return(clean_mapped_tbl(mapped_df, values_name = values_name, groups_name = groups_name))
     }
   }
 
   call <- rlang::expr(get_correspondence_tbl(
     from_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_area))),
-    to_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_area)))
+    to_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_area))),
+    to_year = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_year))),
+    from_year = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_year)))
   ))
-
-  if(!missing(to_year)) {
-    call$to_year <- rlang::eval_tidy(rlang::expr(!!rlang::quo(to_year)))
-  }
-  if(!missing(to_year)) {
-    call$from_year <- rlang::eval_tidy(rlang::expr(!!rlang::quo(from_year)))
-  }
 
   correspondence_tbl <- rlang::eval_tidy(call)
 
@@ -427,34 +428,28 @@ strayr::read_correspondence_tbl
 #'
 #' @examples
 #' get_correspondence_tbl(from_area = "sa2", from_year = 2021, to_area = "LHN")
-get_correspondence_tbl <- function(from_area,
-                                   from_year,
-                                   to_area,
-                                   to_year,
+get_correspondence_tbl <- function(from_area = NULL,
+                                   from_year = NULL,
+                                   to_area = NULL,
+                                   to_year = NULL,
                                    export_dir = tempdir(),
                                    mb_geo = get_mb21_pop()) {
 
-  call <- match.call.defaults()
-  call$mb_geo <- NULL
-  call[[1]] <- as.name("read_correspondence_tbl")
-  withr::with_package("hpa.spatial", {
-    cg <- try(eval(call, envir = parent.frame()), silent = TRUE)
-  })
+  call <- rlang::expr(read_correspondence_tbl(
+    from_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_area))),
+    from_year = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_year))),
+    to_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_area))),
+    to_year = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_year)))
+  ))
+
+  cg <- try(suppressMessages(suppressWarnings(rlang::eval_tidy(call))), silent = TRUE)
 
   if (inherits(cg, "try-error")) {
     message('Failed to retrieve correspondence table through {strayr}, making correspondence table')
 
-    if(!missing(from_year)) {
-      from_polygon <- get_polygon(area = from_area, year = from_year, crs = 7844)
-    } else {
-      from_polygon <- get_polygon(area = from_area, crs = 7844)
-    }
 
-    if(!missing(to_year)) {
-      to_polygon <- get_polygon(area = to_area, year = to_year, crs = 7844)
-    } else {
-      to_polygon <- get_polygon(area = to_area, crs = 7844)
-    }
+    from_polygon <- get_polygon(area = from_area, year = from_year, crs = 7844)
+    to_polygon <- get_polygon(area = to_area, year = to_year, crs = 7844)
 
     make_correspondence_tbl(from_geo = from_polygon, to_geo = to_polygon, mb_geo = mb_geo)
   } else {

@@ -16,47 +16,36 @@
 #' @examples
 #' get_polygon(area = "sa2", year = 2016)
 #' get_polygon(name = "sa22016", simplify_keep = 0.05)
-get_polygon <- function(name,
-                        area,
-                        year,
+get_polygon <- function(name = NULL,
+                        area = NULL,
+                        year = NULL,
                         remove_year_suffix,
                         export_dir,
                         .validate_name,
                         simplify_keep = 1,
                         crs = NULL,
                         ...) {
-  call <- match.call.defaults(expand.dots = FALSE)
-  call[[1]] <- as.name("check_for_internal_polygon")
+  call <- rlang::expr(check_for_internal_polygon(
+    name = rlang::eval_tidy(rlang::expr(!!rlang::quo(name))),
+    area = rlang::eval_tidy(rlang::expr(!!rlang::quo(area))),
+    year = rlang::eval_tidy(rlang::expr(!!rlang::quo(year)))
+  ))
 
-  # browser()
-
-  p_env <- rlang::env_clone(parent.frame())
-
-  withr::with_environment(p_env, {
-    withr::with_package(
-      "hpa.spatial",
-      polygon <- eval(call, envir = rlang::current_env())
-    )
-  })
+  polygon <- rlang::eval_tidy(call)
 
   if (is.null(polygon)) {
-    # call strayr::read_absmap with all args except for `simplify_keep`
-    call <- match.call.defaults(expand.dots = FALSE)
-    call$simplify_keep <- NULL
-    call$crs <- NULL
-    call$... <- NULL
-    call[[1]] <- as.name("read_absmap")
-
-
-    withr::with_environment(p_env, {
-      withr::with_package(
-        "strayr",
-        polygon <- evaluate::try_capture_stack(
-          eval(call, envir = rlang::current_env()),
-          rlang::current_env()
-        )
+    call <- rlang::expr(
+      strayr::read_absmap(
+        name = rlang::eval_tidy(rlang::expr(!!rlang::quo(name))),
+        area = rlang::eval_tidy(rlang::expr(!!rlang::quo(area))),
+        year = rlang::eval_tidy(rlang::expr(!!rlang::quo(year)))
       )
-    })
+    )
+
+    polygon <- evaluate::try_capture_stack(
+      rlang::eval_tidy(call),
+      env = rlang::current_env()
+    )
 
     if (evaluate::is.error(polygon)) {
       if (stringr::str_detect(polygon$message, "Applicable files are:")) {
