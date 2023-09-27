@@ -1,3 +1,5 @@
+# hpa.spatial (development version)
+
 # hpa.spatial 0.2.3
 
 * bug fix: call `get_correspondence_tbl()` from parent environment in 
