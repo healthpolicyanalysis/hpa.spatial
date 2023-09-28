@@ -19,7 +19,7 @@ test_that("mapping using created correspondence tables when abs ones aren't avai
   expect_s3_class(mapped_df_with_data, "tbl")
   expect_snapshot(mapped_df_with_data)
 
-  mapped_df_with_data2 <- callr::r(function(){
+  mapped_df_with_data2 <- callr::r(function() {
     sa2_2021 <- suppressMessages(hpa.spatial::get_polygon(area = "sa2", year = 2021))
     withr::with_seed(
       42,
@@ -46,7 +46,7 @@ test_that("passing dataframe and retaining column names works", {
   withr::with_seed(
     42,
     {
-      sa2_2011_sample <- sa2_2011[1:100,]
+      sa2_2011_sample <- sa2_2011[1:100, ]
 
       sa2_2011_sample_with_groups <-
         lapply(

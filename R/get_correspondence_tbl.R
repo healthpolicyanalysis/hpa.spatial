@@ -24,7 +24,6 @@ get_correspondence_tbl <- function(from_area = NULL,
                                    to_year = NULL,
                                    export_dir = tempdir(),
                                    mb_geo = get_mb21_pop()) {
-
   if (!dir.exists(export_dir)) {
     stop("export_dir provided does not exist: ", export_dir)
   }
@@ -55,7 +54,7 @@ get_correspondence_tbl <- function(from_area = NULL,
 
 
   if (inherits(cg, "try-error")) { # not a correspondence table accessible via strayr...
-    message('Failed to retrieve correspondence table through {strayr}, making correspondence table')
+    message("Failed to retrieve correspondence table through {strayr}, making correspondence table")
 
 
     from_polygon <- get_polygon(area = from_area, year = from_year, crs = 7844)

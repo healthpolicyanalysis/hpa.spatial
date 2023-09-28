@@ -36,7 +36,7 @@ make_correspondence_tbl <- function(from_geo, to_geo, mb_geo = get_mb21_pop(), .
     dplyr::as_tibble() |>
     dplyr::select(mb_code, from_code, pop)
 
-  mapped_from_mb_codes <-unique(mb_geo_from$from_code)
+  mapped_from_mb_codes <- unique(mb_geo_from$from_code)
 
   mb_geo_to <- mb_geo |>
     sf::st_join(to_geo) |>
@@ -67,15 +67,15 @@ get_mb21_pop <- function() {
 remove_empty_geographies <- function(geo, print_removed_codes = FALSE) {
   idx_empty <- sf::st_is_empty(geo)
   if (any(idx_empty)) {
-    if(print_removed_codes) {
+    if (print_removed_codes) {
       message(glue::glue(
         "There were {sum(idx_empty)} empty geometries in the geo provided ",
         "({names(geo)[1]}). These will be removed."
       ))
-      for(c in geo[[1]][idx_empty]) {
+      for (c in geo[[1]][idx_empty]) {
         message(c)
       }
     }
   }
-  geo[!idx_empty,]
+  geo[!idx_empty, ]
 }

@@ -78,7 +78,7 @@ map_data_with_correspondence <- function(.data = NULL,
 
     # get codes
     codes_quo <- try(rlang::eval_tidy(rlang::quo(codes), data = .data), silent = TRUE)
-    if(inherits(codes_quo, "try-error")) {
+    if (inherits(codes_quo, "try-error")) {
       codes <- rlang::eval_tidy(rlang::enexpr(codes), data = .data)
     } else {
       codes <- codes_quo
@@ -90,7 +90,7 @@ map_data_with_correspondence <- function(.data = NULL,
     if (inherits(values_name, "try-error")) {
       values_name <- NA
     } else {
-      if(length(values_name) != 1 | !all(values_name %in% names(.data))) {
+      if (length(values_name) != 1 | !all(values_name %in% names(.data))) {
         values_name <- NA
       } else {
         values_name <- values_name[values_name %in% names(.data)][1]
@@ -98,7 +98,7 @@ map_data_with_correspondence <- function(.data = NULL,
     }
 
     values_quo <- try(rlang::eval_tidy(rlang::quo(values), data = .data), silent = TRUE)
-    if(inherits(values_quo, "try-error")) {
+    if (inherits(values_quo, "try-error")) {
       values <- rlang::eval_tidy(rlang::enexpr(values), data = .data)
     } else {
       values <- values_quo
@@ -109,7 +109,7 @@ map_data_with_correspondence <- function(.data = NULL,
     if (inherits(groups_name, "try-error")) {
       groups_name <- NA
     } else {
-      if(length(groups_name[groups_name %in% names(.data)]) == 1){
+      if (length(groups_name[groups_name %in% names(.data)]) == 1) {
         groups_name <- groups_name[groups_name %in% names(.data)][1]
       } else {
         groups_name <- NA
@@ -117,12 +117,11 @@ map_data_with_correspondence <- function(.data = NULL,
     }
 
     groups_quo <- try(rlang::eval_tidy(rlang::quo(groups), data = .data), silent = TRUE)
-    if(inherits(groups, "try-error")) {
+    if (inherits(groups, "try-error")) {
       groups <- rlang::eval_tidy(rlang::enexpr(groups), data = .data)
-    }else {
+    } else {
       groups <- groups_quo
     }
-
   } else {
     groups_name <- NA
     values_name <- NA
@@ -137,7 +136,6 @@ map_data_with_correspondence <- function(.data = NULL,
       f = groups
     ) |>
       lapply(\(x) {
-
         call <- rlang::expr(map_data_with_correspondence(
           codes = x$codes,
           values = x$values,
@@ -158,7 +156,7 @@ map_data_with_correspondence <- function(.data = NULL,
   # browser()
   stopifnot(length(codes) == length(values))
 
-  if(any(is.null(from_year), is.null(to_year), is.null(from_area), is.null(to_area))) {
+  if (any(is.null(from_year), is.null(to_year), is.null(from_area), is.null(to_area))) {
     maybe_sa <- TRUE
   } else {
 
@@ -194,8 +192,8 @@ map_data_with_correspondence <- function(.data = NULL,
     }
 
     if (is_SA(from_area) & is_SA(to_area) &
-        clean_sa(from_area) != clean_sa(to_area) &
-        clean_year(from_year) != clean_year(to_year)
+      clean_sa(from_area) != clean_sa(to_area) &
+      clean_year(from_year) != clean_year(to_year)
     ) {
       # if the areas are both SA's and the years are different, then the user is
       # wanting to both map using the correspondence tables from one edition to another
@@ -274,7 +272,7 @@ map_data_with_correspondence <- function(.data = NULL,
         sum_ratio <- sum(mapping_df_filtered[[3]], na.rm = TRUE)
         mapping_df_filtered[is.na(mapping_df_filtered[[3]]), 3] <- (1 - sum_ratio) / na_count
       }
-      if(is.null(seed)) {
+      if (is.null(seed)) {
         sample(mapping_df_filtered[[2]], size = 1, prob = mapping_df_filtered[[3]])
       } else {
         withr::with_seed(seed, {
@@ -378,10 +376,10 @@ adjust_correspodence_tbl <- function(tbl) {
 
 
 clean_mapped_tbl <- function(.data, values_name, groups_name) {
-  if(!is.na(values_name)) {
+  if (!is.na(values_name)) {
     .data <- dplyr::rename(.data, !!values_name := values)
   }
-  if(!is.na(groups_name)) {
+  if (!is.na(groups_name)) {
     .data <- dplyr::rename(.data, !!groups_name := grp)
   }
   .data |>

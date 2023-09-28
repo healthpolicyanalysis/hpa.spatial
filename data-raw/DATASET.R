@@ -119,7 +119,7 @@ usethis::use_data(lhn, overwrite = TRUE, compress = "xz")
 # create qld meshblocks dataset with column for population for testing make_correspondence_tbl()
 
 aus_mb21 <- read_sf("data-raw/mb/MB_2021_AUST_GDA2020.shp")
-aus_mb21_points <- st_point_on_surface (aus_mb21)
+aus_mb21_points <- st_point_on_surface(aus_mb21)
 
 aus_mb21_pops <- lapply(2:13, \(x) {
   readxl::read_xlsx("data-raw/mb/Mesh Block Counts, 2021.xlsx", skip = 6, sheet = x)
