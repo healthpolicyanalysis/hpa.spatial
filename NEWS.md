@@ -1,3 +1,5 @@
+# hpa.spatial (development version)
+
 # hpa.spatial 0.2.4
 
 * use tidy evaluation on quosures to avoid problems with accessing objects 
