@@ -1,5 +1,7 @@
 # hpa.spatial (development version)
 
+* move PHN_CODE to be first col of `phn` to be consistent with other pkg data.
+
 # hpa.spatial 0.2.4
 
 * use tidy evaluation on quosures to avoid problems with accessing objects 

@@ -84,8 +84,10 @@ usethis::use_data(sa_lhn, overwrite = TRUE, compress = "xz")
 
 phn <- sf::read_sf("data-raw/phn.kml")
 phn <- st_transform(phn, 7844)
-phn <- phn[, colSums(is.na(phn)) < nrow(phn)]
+phn <- phn[, colSums(is.na(phn)) < nrow(phn)] |>
+  select(PHN_CODE = FIRST_PHN_, PHN_NAME, everything())
 # usethis::use_data(phn, overwrite = TRUE)
+
 usethis::use_data(phn, overwrite = TRUE, compress = "xz")
 # phn |> ggplot() + geom_sf()
 
