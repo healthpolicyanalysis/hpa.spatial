@@ -1,3 +1,18 @@
+get_mb21_poly <- function(export_dir = tempdir()) {
+  read_hpa_spatial_data("mb21_poly", export_dir = export_dir)
+}
+
+#' Read a dataset from github.com/healthpolicyanalysis/hpa.spatial.data/
+#'
+#' @param name The name of dataset in \code{hpa.spatial.data} repo.
+#' Valid names are those within \code{get_data_file_list()}.
+#' @param export_dir The directory to store the downloaded data.
+#'
+#' @return a \code{sf} object.
+#' @export
+#'
+#' @examples
+#' read_hpa_spatial_data("lhn")
 read_hpa_spatial_data <- function(name, export_dir = tempdir()) {
   # adapted from strayr::read_absmap()
 
@@ -26,18 +41,19 @@ read_hpa_spatial_data <- function(name, export_dir = tempdir()) {
         download_data(url = urls[i], dest = out_paths[i])
       }
 
-      # read and combine the datasets
-      paste0(name, "<- purrr::map2(name_download, out_paths, function(name, path) {",
-        "load(path);",
-        "get(name)",
-      "}) |>",
-        "dplyr::bind_rows()") |>
-        (\(x) parse(text = x))() |>
-        eval()
+      eval(
+        expr(
+          !!rlang::sym(name) <- purrr::map2(name_download, out_paths, function(name, path) {
+            load(path)
+            get(name)
+          })|>
+            dplyr::bind_rows()
+        )
+      )
 
       # save as combined dataset at original out_path
-      eval(parse(text = glue::glue("save({name}, file = out_path)")))
-      eval(parse(text = glue::glue("return({name})")))
+      eval(expr(save(!!rlang::sym(name), file = out_path)))
+      eval(expr(return(!!rlang::sym(name))))
     } else {
       url <- paste0(base_url, name, ".rda")
       download_data(url = paste0(base_url, name, ".rda"), dest = out_path)
@@ -63,11 +79,13 @@ get_data_file_list <- function() {
     unique()
 }
 
+
 get_split_files <- function() {
   list(
     "mb21_poly" = c("mb21_poly_A", "mb21_poly_B")
   )
 }
+
 
 download_data <- function(url, dest) {
   tryCatch(

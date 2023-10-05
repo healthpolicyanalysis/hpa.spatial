@@ -53,6 +53,3 @@ create_child_geo <- function(child_geo,
 
 }
 
-get_mb21_poly <- function() {
-  sf::sf_read("")
-}

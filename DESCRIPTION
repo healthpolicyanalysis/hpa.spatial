@@ -11,6 +11,7 @@ Imports:
     dplyr,
     evaluate,
     glue,
+    httr,
     rlang,
     rmapshaper,
     sf,
