@@ -7,7 +7,7 @@
 #' of a small area (intended to be mesh blocks but can be any other space that's
 #' small enough to be useful. Should also include a column, \code{Person},
 #' with the population within that area. Defaults to use Mesh Blocks (2021) and
-#' with 2021 census data. See \code{hpa.spatial::mb21_pop}.
+#' with 2021 census data. See \code{get_mb21_pop()}.
 #' @param ... other, ignored arguments.
 #'
 #' @return a \code{tibble}.
@@ -16,7 +16,7 @@
 #' make_correspondence_tbl(
 #'   from_geo = get_polygon("sa22016", crs = 7844),
 #'   to_geo = get_polygon("sa22021", crs = 7844),
-#'   mb_geo = mb21_pop
+#'   mb_geo = get_mb21_pop()
 #' )
 make_correspondence_tbl <- function(from_geo, to_geo, mb_geo = get_mb21_pop(), ...) {
   mb_geo <- mb_geo |>
@@ -58,10 +58,6 @@ make_correspondence_tbl <- function(from_geo, to_geo, mb_geo = get_mb21_pop(), .
       !!rlang::sym(from_geo_codename) := 1,
       !!rlang::sym(to_geo_codename) := 2,
     )
-}
-
-get_mb21_pop <- function() {
-  hpa.spatial::mb21_pop
 }
 
 remove_empty_geographies <- function(geo, print_removed_codes = FALSE) {

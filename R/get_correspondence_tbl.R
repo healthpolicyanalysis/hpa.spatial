@@ -11,7 +11,7 @@
 #' @param export_dir The directory to store the downloaded data.
 #' @param mb_geo mesh blocks data with census population. Defaults to using the
 #' 2021 edition mesh blocks and 2021 census data (see
-#' \code{hpa.spatial::mb21_pop}).
+#' \code{get_mb21_pop()}).
 #'
 #' @return a \code{tibble}.
 #' @export

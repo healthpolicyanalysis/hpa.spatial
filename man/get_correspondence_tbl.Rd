@@ -30,7 +30,7 @@ data to be in).}
 
 \item{mb_geo}{mesh blocks data with census population. Defaults to using the
 2021 edition mesh blocks and 2021 census data (see
-\code{hpa.spatial::mb21_pop}).}
+\code{get_mb21_pop()}).}
 }
 \value{
 a \code{tibble}.

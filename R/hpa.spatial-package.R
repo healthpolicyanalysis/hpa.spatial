@@ -10,11 +10,13 @@ utils::globalVariables(c(
   "phn",
   "lhn",
   ":=",
+  "!<-",
   "values",
   "grp",
   "Person",
   "pop",
   "mb_code",
+  "max_ratio",
   "from_code",
   "to_code",
   "pop_sum"

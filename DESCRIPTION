@@ -8,16 +8,18 @@ Authors@R:
 Description: Data and helpful functions for spatial data analyses.
 License: file LICENSE
 Imports: 
+    assertthat,
     dplyr,
     evaluate,
     glue,
-    httr,
+    purrr,
     rlang,
     rmapshaper,
     sf,
     strayr,
     stringr,
     tibble,
+    utils,
     withr
 Encoding: UTF-8
 LazyData: true

@@ -1,5 +1,13 @@
 # hpa.spatial (development version)
 
+* move datasets that are used to 
+[hpa.spatial.data](https://github.com/healthpolicyanalysis/hpa.spatial.data) pkg
+and access them just int he same way that `{strayr}` reads in data from 
+`{absmapsdata}`.
+
+* remove all internal data and rely only on data from
+  [hpa.spatial.data](https://github.com/healthpolicyanalysis/hpa.spatial.data).
+
 # hpa.spatial 0.2.5
 
 * move PHN_CODE to be first col of `phn` to be consistent with other pkg data.

@@ -41,295 +41,295 @@ save(
 
 
 # download and save make SA-PHN correspondence tables
-get_sa_phn_correspondence <- function(url) {
-  # download file
-  tfile <- tempfile()
-  download.file(url = url, destfile = tfile)
-
-  # read data and check n_rows that are not trash at the end of the sheet
-  df_check <- readxl::read_xlsx(tfile, sheet = "Table 3", skip = 4)
-  n_max <- which(is.na(df_check[[1]]))[2]
-
-  df <- readxl::read_xlsx(tfile, sheet = "Table 3", skip = 4, n_max = n_max)
-
-
-  df |>
-    dplyr::filter(!is.na(!!rlang::sym(names(df)[1]))) |> # remove any empty rows between header and data
-    dplyr::rename("ratio" = "RATIO")
-}
-
-
-sa_phn_correspondence_tables <- c(
-  "sa1" = "https://www.health.gov.au/sites/default/files/documents/2021/06/primary-health-networks-phn-concordance-files-australian-statistical-geography-standards-statistical-area-level-1-2017-primary-health-networks-phn-concordance-files-australian-statistical-geography-standards-statistical-a.xlsx",
-  "sa2" = "https://www.health.gov.au/sites/default/files/documents/2021/06/primary-health-networks-phn-concordance-files-australian-statistical-geography-standards-statistical-area-level-2-2017-primary-health-networks-phn-concordance-files-australian-statistical-geography-standards-statistical-a.xlsx",
-  "sa3" = "https://www.health.gov.au/sites/default/files/documents/2021/06/primary-health-networks-phn-concordance-files-australian-statistical-geography-standards-statistical-area-level-3-2017-primary-health-networks-phn-concordance-files-australian-statistical-geography-standards-statistical-a.xlsx"
-) |>
-  lapply(get_sa_phn_correspondence)
-
-usethis::use_data(sa_phn_correspondence_tables)
-
-
-qld_hhs <- sf::read_sf("data-raw/QSC_Extracted_Data_20230724_114923035000-49708/Hospital_and_Health_Service_boundaries.shp")
-
-library(tidyverse)
-library(leaflet)
-library(sf)
-
-###
-# load NSW LHD data from https://www.google.com/maps/d/u/0/viewer?mid=1Dv1JRTGmzlm83tBv7tb8vQcOQXY
-sa_lhn <- sf::read_sf("data-raw/lhn/LocalHealthNetworks_GDA2020.shp")
-sa_lhn <- st_transform(sa_lhn, 7844)
-usethis::use_data(sa_lhn, overwrite = TRUE, compress = "xz")
-# sa_lhn |> ggplot() + geom_sf()
-
-phn <- sf::read_sf("data-raw/phn.kml")
-phn <- st_transform(phn, 7844)
-phn <- phn[, colSums(is.na(phn)) < nrow(phn)] |>
-  select(PHN_CODE = FIRST_PHN_, PHN_NAME, everything())
-# usethis::use_data(phn, overwrite = TRUE)
-
-usethis::use_data(phn, overwrite = TRUE, compress = "xz")
-# phn |> ggplot() + geom_sf()
-
-
-### create a complete dataset for LHNs (exception: Vic for now)
-vic_lhn <- sf::read_sf("data-raw/vic-lhn/DHHS_Service_Areas.shp") |>
-  select(LHN_Name = ServiceAre) |>
-  add_column(STATE_CODE = "2")
-
-
-
-all_lhn <- sf::read_sf("data-raw/LHN/Local_Hospital_Networks.shp") |>
-  select(LHN_Name, STATE_CODE) |>
-  bind_rows(vic_lhn) |>
-  mutate(
-    state = toupper(strayr::clean_state(STATE_CODE)),
-    state = factor(
-      state,
-      levels = data.frame(state = unique(state), STATE_CODE = unique(STATE_CODE)) |>
-        arrange(STATE_CODE) |>
-        pull(state)
-    )
-  ) |>
-  select(LHN_Name, state, STATE_CODE)
-
-lhn <- st_transform(all_lhn, 7844)
-usethis::use_data(lhn, overwrite = TRUE, compress = "xz")
-
-
-
-# create qld meshblocks dataset with column for population for testing make_correspondence_tbl()
-
-mb21_poly <- read_sf("data-raw/mb/MB_2021_AUST_GDA2020.shp")
-# usethis::use_data(mb21_poly, overwrite = TRUE, compress = "xz")
-
-
-aus_mb21_points <- st_point_on_surface(mb21_poly)
-
-aus_mb21_pops <- lapply(2:13, \(x) {
-  readxl::read_xlsx("data-raw/mb/Mesh Block Counts, 2021.xlsx", skip = 6, sheet = x)
-}) |>
-  (\(x) do.call("rbind", x))()
-
-
-mb21_pop <- left_join(
-  aus_mb21_points,
-  aus_mb21_pops,
-  by = c("MB_CODE21" = "MB_CODE_2021")
-)
-
-mb21_pop |>
-  saveRDS(file.path(here::here(), "tests", "testthat", "fixtures", "mb21.rds"))
-
-usethis::use_data(mb21_pop, overwrite = TRUE, compress = "xz")
-
-####
-
-
-sa_phn_correspondence_tables$sa2
-
-sa2_2016 <- strayr::read_absmap("sa22016")
-
-sa2_qld_codes <- sa2_2016 |>
-  filter(state_name_2016 == "Queensland") |>
-  pull(sa2_code_2016)
-
-
-sa_phn_correspondence_tables$sa2 |>
-  filter(SA2_MAINCODE_2016 %in% sa2_qld_codes)
-
-
-qld_hhs |>
-  ggplot() +
-  geom_sf(aes(fill = HHS), linetype = "dashed", lwd = 0.5, col = "red") +
-  geom_sf(data = filter(sa2_2016, state_name_2016 == "Queensland"), lwd = 0.5, fill = "transparent") +
-  labs(caption = "red dashed boarders are boarders of HHS's that aren't overlapped by an SA1 baorder.")
-
-
-qld_hhs$HHS <- as.factor(qld_hhs$HHS)
-
-f <- function(x) viridis::turbo(length(unique(x)))[x]
-
-# some SA1s are not contained within a single HHS.
-leaflet() |>
-  addPolygons(
-    data = qld_hhs,
-    fillColor = f(qld_hhs$HHS),
-    color = "black",
-    fillOpacity = 0.5,
-    weight = 1
-  ) |>
-  addPolygons(
-    data = filter(sa2_2016, state_name_2016 == "Queensland"),
-    fillColor = "black",
-    fillOpacity = 0.5,
-    weight = 2
-  )
-
-
-
-sa1_2016 <- strayr::read_absmap("sa12016")
-
-leaflet() |>
-  addPolygons(
-    data = filter(sa1_2016, state_name_2016 == "Queensland"),
-    fillColor = "black",
-    fillOpacity = 0.5,
-    weight = 2 # ,
-    # popup = filter(sa1_2016, state_name_2016 == "Queensland") |> pull(sa1_code_2016 )
-  ) |>
-  addPolygons(
-    data = qld_hhs,
-    fillColor = f(qld_hhs$HHS),
-    color = "black",
-    fillOpacity = 0.5,
-    weight = 1,
-    popup = qld_hhs$HHS
-  )
-
-
-leaflet() |>
-  addPolygons(data = filter(sa1_2016, sa1_code_2016 == 31503141004), fillColor = "red") |>
-  addPolygons(data = filter(qld_hhs, HHS %in% c("North West", "Central West")), fillColor = "blue")
-
-
-# f_sa1s <- filter(sa1_2016, sa1_code_2016 == 31503141004)
-f_sa1s <- filter(sa1_2016, state_name_2016 == "Queensland") |>
-  st_transform(crs = 7844)
-# f_hss <- filter(qld_hhs, HHS %in% c("North West", "Central West"))
-
-# sa1_2016
-# st_intersects(f_sa1s, f_hss)
+# get_sa_phn_correspondence <- function(url) {
+#   # download file
+#   tfile <- tempfile()
+#   download.file(url = url, destfile = tfile)
 #
-# st_intersects(f_sa1s, qld_hhs) |>
+#   # read data and check n_rows that are not trash at the end of the sheet
+#   df_check <- readxl::read_xlsx(tfile, sheet = "Table 3", skip = 4)
+#   n_max <- which(is.na(df_check[[1]]))[2]
+#
+#   df <- readxl::read_xlsx(tfile, sheet = "Table 3", skip = 4, n_max = n_max)
+#
+#
+#   df |>
+#     dplyr::filter(!is.na(!!rlang::sym(names(df)[1]))) |> # remove any empty rows between header and data
+#     dplyr::rename("ratio" = "RATIO")
+# }
+#
+#
+# sa_phn_correspondence_tables <- c(
+#   "sa1" = "https://www.health.gov.au/sites/default/files/documents/2021/06/primary-health-networks-phn-concordance-files-australian-statistical-geography-standards-statistical-area-level-1-2017-primary-health-networks-phn-concordance-files-australian-statistical-geography-standards-statistical-a.xlsx",
+#   "sa2" = "https://www.health.gov.au/sites/default/files/documents/2021/06/primary-health-networks-phn-concordance-files-australian-statistical-geography-standards-statistical-area-level-2-2017-primary-health-networks-phn-concordance-files-australian-statistical-geography-standards-statistical-a.xlsx",
+#   "sa3" = "https://www.health.gov.au/sites/default/files/documents/2021/06/primary-health-networks-phn-concordance-files-australian-statistical-geography-standards-statistical-area-level-3-2017-primary-health-networks-phn-concordance-files-australian-statistical-geography-standards-statistical-a.xlsx"
+# ) |>
+#   lapply(get_sa_phn_correspondence)
+#
+# usethis::use_data(sa_phn_correspondence_tables)
+#
+#
+# qld_hhs <- sf::read_sf("data-raw/QSC_Extracted_Data_20230724_114923035000-49708/Hospital_and_Health_Service_boundaries.shp")
+#
+# library(tidyverse)
+# library(leaflet)
+# library(sf)
+#
+# ###
+# # load NSW LHD data from https://www.google.com/maps/d/u/0/viewer?mid=1Dv1JRTGmzlm83tBv7tb8vQcOQXY
+# sa_lhn <- sf::read_sf("data-raw/lhn/LocalHealthNetworks_GDA2020.shp")
+# sa_lhn <- st_transform(sa_lhn, 7844)
+# usethis::use_data(sa_lhn, overwrite = TRUE, compress = "xz")
+# # sa_lhn |> ggplot() + geom_sf()
+#
+# phn <- sf::read_sf("data-raw/phn.kml")
+# phn <- st_transform(phn, 7844)
+# phn <- phn[, colSums(is.na(phn)) < nrow(phn)] |>
+#   select(PHN_CODE = FIRST_PHN_, PHN_NAME, everything())
+# # usethis::use_data(phn, overwrite = TRUE)
+#
+# usethis::use_data(phn, overwrite = TRUE, compress = "xz")
+# # phn |> ggplot() + geom_sf()
+#
+#
+# ### create a complete dataset for LHNs (exception: Vic for now)
+# vic_lhn <- sf::read_sf("data-raw/vic-lhn/DHHS_Service_Areas.shp") |>
+#   select(LHN_Name = ServiceAre) |>
+#   add_column(STATE_CODE = "2")
+#
+#
+#
+# all_lhn <- sf::read_sf("data-raw/LHN/Local_Hospital_Networks.shp") |>
+#   select(LHN_Name, STATE_CODE) |>
+#   bind_rows(vic_lhn) |>
+#   mutate(
+#     state = toupper(strayr::clean_state(STATE_CODE)),
+#     state = factor(
+#       state,
+#       levels = data.frame(state = unique(state), STATE_CODE = unique(STATE_CODE)) |>
+#         arrange(STATE_CODE) |>
+#         pull(state)
+#     )
+#   ) |>
+#   select(LHN_Name, state, STATE_CODE)
+#
+# lhn <- st_transform(all_lhn, 7844)
+# usethis::use_data(lhn, overwrite = TRUE, compress = "xz")
+#
+#
+#
+# # create qld meshblocks dataset with column for population for testing make_correspondence_tbl()
+#
+# mb21_poly <- read_sf("data-raw/mb/MB_2021_AUST_GDA2020.shp")
+# # usethis::use_data(mb21_poly, overwrite = TRUE, compress = "xz")
+#
+#
+# aus_mb21_points <- st_point_on_surface(mb21_poly)
+#
+# aus_mb21_pops <- lapply(2:13, \(x) {
+#   readxl::read_xlsx("data-raw/mb/Mesh Block Counts, 2021.xlsx", skip = 6, sheet = x)
+# }) |>
+#   (\(x) do.call("rbind", x))()
+#
+#
+# mb21_pop <- left_join(
+#   aus_mb21_points,
+#   aus_mb21_pops,
+#   by = c("MB_CODE21" = "MB_CODE_2021")
+# )
+#
+# mb21_pop |>
+#   saveRDS(file.path(here::here(), "tests", "testthat", "fixtures", "mb21.rds"))
+#
+# usethis::use_data(mb21_pop, overwrite = TRUE, compress = "xz")
+#
+# ####
+#
+#
+# sa_phn_correspondence_tables$sa2
+#
+# sa2_2016 <- strayr::read_absmap("sa22016")
+#
+# sa2_qld_codes <- sa2_2016 |>
+#   filter(state_name_2016 == "Queensland") |>
+#   pull(sa2_code_2016)
+#
+#
+# sa_phn_correspondence_tables$sa2 |>
+#   filter(SA2_MAINCODE_2016 %in% sa2_qld_codes)
+#
+#
+# qld_hhs |>
+#   ggplot() +
+#   geom_sf(aes(fill = HHS), linetype = "dashed", lwd = 0.5, col = "red") +
+#   geom_sf(data = filter(sa2_2016, state_name_2016 == "Queensland"), lwd = 0.5, fill = "transparent") +
+#   labs(caption = "red dashed boarders are boarders of HHS's that aren't overlapped by an SA1 baorder.")
+#
+#
+# qld_hhs$HHS <- as.factor(qld_hhs$HHS)
+#
+# f <- function(x) viridis::turbo(length(unique(x)))[x]
+#
+# # some SA1s are not contained within a single HHS.
+# leaflet() |>
+#   addPolygons(
+#     data = qld_hhs,
+#     fillColor = f(qld_hhs$HHS),
+#     color = "black",
+#     fillOpacity = 0.5,
+#     weight = 1
+#   ) |>
+#   addPolygons(
+#     data = filter(sa2_2016, state_name_2016 == "Queensland"),
+#     fillColor = "black",
+#     fillOpacity = 0.5,
+#     weight = 2
+#   )
+#
+#
+#
+# sa1_2016 <- strayr::read_absmap("sa12016")
+#
+# leaflet() |>
+#   addPolygons(
+#     data = filter(sa1_2016, state_name_2016 == "Queensland"),
+#     fillColor = "black",
+#     fillOpacity = 0.5,
+#     weight = 2 # ,
+#     # popup = filter(sa1_2016, state_name_2016 == "Queensland") |> pull(sa1_code_2016 )
+#   ) |>
+#   addPolygons(
+#     data = qld_hhs,
+#     fillColor = f(qld_hhs$HHS),
+#     color = "black",
+#     fillOpacity = 0.5,
+#     weight = 1,
+#     popup = qld_hhs$HHS
+#   )
+#
+#
+# leaflet() |>
+#   addPolygons(data = filter(sa1_2016, sa1_code_2016 == 31503141004), fillColor = "red") |>
+#   addPolygons(data = filter(qld_hhs, HHS %in% c("North West", "Central West")), fillColor = "blue")
+#
+#
+# # f_sa1s <- filter(sa1_2016, sa1_code_2016 == 31503141004)
+# f_sa1s <- filter(sa1_2016, state_name_2016 == "Queensland") |>
+#   st_transform(crs = 7844)
+# # f_hss <- filter(qld_hhs, HHS %in% c("North West", "Central West"))
+#
+# # sa1_2016
+# # st_intersects(f_sa1s, f_hss)
+# #
+# # st_intersects(f_sa1s, qld_hhs) |>
+# #   map(length) |>
+# #   (\(x)do.call("rbind", x))()
+#
+#
+#
+# sa1_hhs_ints <-
+#   st_intersects(f_sa1s, qld_hhs) |>
 #   map(length) |>
-#   (\(x)do.call("rbind", x))()
-
-
-
-sa1_hhs_ints <-
-  st_intersects(f_sa1s, qld_hhs) |>
-  map(length) |>
-  (\(x)do.call("rbind", x))() |>
-  (\(x) x[, 1])()
-
-f_sa1s$n_intersects <- sa1_hhs_ints
-
-# f_sa1s |> filter(n_intersects == 2) |>
-#   head() |>
-#   st_intersects(qld_hhs)
-
-intersects_check <- which(f_sa1s$n_intersects > 1)
-
-intersects_main_area_prop <-
-  intersects_check |>
-  map(\(x){
-    st_intersection(f_sa1s[x, ], qld_hhs) |>
-      st_area() |>
-      (\(x) max(x) / sum(x))()
-  }, .progress = list(
-    type = "iterator",
-    format = "Calculating {cli::pb_bar} {cli::pb_percent}",
-    clear = TRUE
-  )) |>
-  unlist()
-
-
-f_sa1s$intersect_main_prop <- 1
-f_sa1s$intersect_main_prop[intersects_check] <- intersects_main_area_prop
-
-# just assign to the largest intersection area
-
-intersects_check_main_hhs <- intersects_check |>
-  map(\(x){
-    intersects <- st_intersection(f_sa1s[x, ], qld_hhs)
-    areas <- st_area(intersects)
-    intersects[which(areas == max(areas)), ][["HHS"]]
-  }, .progress = list(
-    type = "iterator",
-    format = "Calculating {cli::pb_bar} {cli::pb_percent}",
-    clear = TRUE
-  )) |>
-  unlist()
-
-
-intersects_single <- which(f_sa1s$n_intersects == 1)
-intersects_single_hhs <-
-  intersects_single |>
-  map(\(x){
-    intersects <- st_intersection(f_sa1s[x, ], qld_hhs)
-    intersects[["HHS"]]
-  }, .progress = list(
-    type = "iterator",
-    format = "Calculating {cli::pb_bar} {cli::pb_percent}",
-    clear = TRUE
-  )) |>
-  unlist()
-
-f_sa1s$main_hhs <- NA_character_
-f_sa1s$main_hhs[intersects_single] <- as.character(intersects_single_hhs)
-f_sa1s$main_hhs[intersects_check] <- as.character(intersects_check_main_hhs)
-
-
-qld_sa1_2016_to_hhs <- select(as.data.frame(f_sa1s), sa1_code_2016, main_hhs)
-
-usethis::use_data(qld_sa1_2016_to_hhs, overwrite = TRUE)
-
-
-###
-
-## make pop-based correspondence table for ASGS (SA1-3) to HHS
-
-library(tidyverse)
-library(sf)
-devtools::load_all()
-
-# load SA1s and convert to GDA2020
-sa1_2016 <- strayr::read_absmap("sa12016")
-sa1_2016 <- st_transform(sa1_2016, crs = st_crs(qld_hhs))
-
-
-
-make_asgs_hhs_correspondence_data <- function(hhs, asgs) {
-  # step 1: find all SA1s which are solely contained within a HHS
-
-  # problematic SA1: 31503141004
-  # which is within: c("North West", "Central West")
-}
-
-
-make_asgs_hhs_correspondence_data(hhs = qld_hhs, asgs = sa1_2016)
-
-sa1_hhs_intersections <- st_within((sa1_2016 |> filter(state_name_2016 == "Queensland")), qld_hhs)
-
-
-
-
-pt <- sf::st_point(c(153.2300, -27.53668))
-
-c(152.6741, -25.56848)
-
-st_intersects(st_multipoint(rbind(c(152.6741, -25.56848), c(153.2300, -27.53668))), qld_hhs)
+#   (\(x)do.call("rbind", x))() |>
+#   (\(x) x[, 1])()
+#
+# f_sa1s$n_intersects <- sa1_hhs_ints
+#
+# # f_sa1s |> filter(n_intersects == 2) |>
+# #   head() |>
+# #   st_intersects(qld_hhs)
+#
+# intersects_check <- which(f_sa1s$n_intersects > 1)
+#
+# intersects_main_area_prop <-
+#   intersects_check |>
+#   map(\(x){
+#     st_intersection(f_sa1s[x, ], qld_hhs) |>
+#       st_area() |>
+#       (\(x) max(x) / sum(x))()
+#   }, .progress = list(
+#     type = "iterator",
+#     format = "Calculating {cli::pb_bar} {cli::pb_percent}",
+#     clear = TRUE
+#   )) |>
+#   unlist()
+#
+#
+# f_sa1s$intersect_main_prop <- 1
+# f_sa1s$intersect_main_prop[intersects_check] <- intersects_main_area_prop
+#
+# # just assign to the largest intersection area
+#
+# intersects_check_main_hhs <- intersects_check |>
+#   map(\(x){
+#     intersects <- st_intersection(f_sa1s[x, ], qld_hhs)
+#     areas <- st_area(intersects)
+#     intersects[which(areas == max(areas)), ][["HHS"]]
+#   }, .progress = list(
+#     type = "iterator",
+#     format = "Calculating {cli::pb_bar} {cli::pb_percent}",
+#     clear = TRUE
+#   )) |>
+#   unlist()
+#
+#
+# intersects_single <- which(f_sa1s$n_intersects == 1)
+# intersects_single_hhs <-
+#   intersects_single |>
+#   map(\(x){
+#     intersects <- st_intersection(f_sa1s[x, ], qld_hhs)
+#     intersects[["HHS"]]
+#   }, .progress = list(
+#     type = "iterator",
+#     format = "Calculating {cli::pb_bar} {cli::pb_percent}",
+#     clear = TRUE
+#   )) |>
+#   unlist()
+#
+# f_sa1s$main_hhs <- NA_character_
+# f_sa1s$main_hhs[intersects_single] <- as.character(intersects_single_hhs)
+# f_sa1s$main_hhs[intersects_check] <- as.character(intersects_check_main_hhs)
+#
+#
+# qld_sa1_2016_to_hhs <- select(as.data.frame(f_sa1s), sa1_code_2016, main_hhs)
+#
+# usethis::use_data(qld_sa1_2016_to_hhs, overwrite = TRUE)
+#
+#
+# ###
+#
+# ## make pop-based correspondence table for ASGS (SA1-3) to HHS
+#
+# library(tidyverse)
+# library(sf)
+# devtools::load_all()
+#
+# # load SA1s and convert to GDA2020
+# sa1_2016 <- strayr::read_absmap("sa12016")
+# sa1_2016 <- st_transform(sa1_2016, crs = st_crs(qld_hhs))
+#
+#
+#
+# make_asgs_hhs_correspondence_data <- function(hhs, asgs) {
+#   # step 1: find all SA1s which are solely contained within a HHS
+#
+#   # problematic SA1: 31503141004
+#   # which is within: c("North West", "Central West")
+# }
+#
+#
+# make_asgs_hhs_correspondence_data(hhs = qld_hhs, asgs = sa1_2016)
+#
+# sa1_hhs_intersections <- st_within((sa1_2016 |> filter(state_name_2016 == "Queensland")), qld_hhs)
+#
+#
+#
+#
+# pt <- sf::st_point(c(153.2300, -27.53668))
+#
+# c(152.6741, -25.56848)
+#
+# st_intersects(st_multipoint(rbind(c(152.6741, -25.56848), c(153.2300, -27.53668))), qld_hhs)
 
 # library(strayr)
 # library(tidyverse)

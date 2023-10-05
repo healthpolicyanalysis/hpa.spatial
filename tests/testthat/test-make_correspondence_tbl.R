@@ -14,7 +14,7 @@ test_that("test mapping is similar to published correspondence tables", {
       mutate(across(!ratio, as.character))
   })
 
-  qld_mb21 <- mb21_pop |>
+  qld_mb21 <- get_mb21_pop() |>
     dplyr::filter(STE_NAME21 == "Queensland")
 
   tbl_test <- make_correspondence_tbl(from_geo = sa2_2016_qld, sa2_2021_qld, mb_geo = qld_mb21)

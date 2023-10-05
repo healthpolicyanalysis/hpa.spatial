@@ -96,12 +96,12 @@ check_for_internal_polygon <- function(name = NULL, area = NULL, year = NULL, ..
   # use non-null arg (of name/area) to identify LHN data
   if (any(c(name, area) %in% c("PHN"))) {
     message("The data for The Primary Health Network (PHN) are from here: <https://data.gov.au/dataset/ds-dga-ef2d28a4-1ed5-47d0-8e3a-46e25bc4f66b/details?q=primary%20health%20network>")
-    return(hpa.spatial::phn)
+    return(read_hpa_spatial_data("phn"))
   }
 
   if (any(c(name, area) %in% c("LHN"))) {
     message("The data for the Local Hospital Networks (LHN) are from here: <https://hub.arcgis.com/datasets/ACSQHC::local-hospital-networks/explore>")
-    return(hpa.spatial::lhn)
+    return(read_hpa_spatial_data("lhn"))
   }
 }
 

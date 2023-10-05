@@ -47,9 +47,9 @@ create_child_geo <- function(child_geo,
     sf::st_join(dplyr::select(child_polygons_for_splitting, !!rlang::sym(child_code_col))) |>
     sf::st_join(dplyr::select(parent_geo, !!rlang::sym(parent_code_col)))
 
-  mb_joined |>
-    dplyr::group_by(!!rlang::sym(child_code_col), !!rlang::sym(parent_code_col)) |>
-    summarize(geometry = st_combine(geometry))
+  # mb_joined |>
+  #   dplyr::group_by(!!rlang::sym(child_code_col), !!rlang::sym(parent_code_col)) |>
+  #   summarize(geometry = st_combine(geometry))
 
 }
 

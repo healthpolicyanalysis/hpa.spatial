@@ -22,7 +22,7 @@
 #' of a small area (intended to be mesh blocks but can be any other space that's
 #' small enough to be useful. Should also include a column, \code{Person},
 #' with the population within that area. Defaults to use Mesh Blocks (2021) and
-#' with 2021 census data. See \code{hpa.spatial::mb21_pop}.
+#' with 2021 census data. See \code{get_mb21_pop()}.
 #' @param value_type Whether the data are unit level or aggregate level data.
 #' Unit level data is randomly allocated to new locations based on proportions
 #' in the correspondence table, aggregate data is dispersed based on the
@@ -153,7 +153,7 @@ map_data_with_correspondence <- function(.data = NULL,
   }
 
   value_type <- match.arg(value_type)
-  # browser()
+
   stopifnot(length(codes) == length(values))
 
   if (any(is.null(from_year), is.null(to_year), is.null(from_area), is.null(to_area))) {

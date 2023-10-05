@@ -1,3 +1,25 @@
+#' Get Mesh Blocks (2021 edition) and population counts.
+#'
+#' @param export_dir The directory to store the downloaded data.
+#'
+#' @return a \code{sf} object.
+#' @export
+#'
+#' @examples
+#' get_mb21_pop()
+get_mb21_pop <- function(export_dir = tempdir()) {
+  read_hpa_spatial_data("mb21_pop", export_dir = export_dir)
+}
+
+#' Get Mesh Blocks (2021 edition) polygons.
+#'
+#' @param export_dir The directory to store the downloaded data.
+#'
+#' @return a \code{sf} object.
+#' @export
+#'
+#' @examples
+#' get_mb21_poly()
 get_mb21_poly <- function(export_dir = tempdir()) {
   read_hpa_spatial_data("mb21_poly", export_dir = export_dir)
 }
@@ -42,7 +64,7 @@ read_hpa_spatial_data <- function(name, export_dir = tempdir()) {
       }
 
       eval(
-        expr(
+        rlang::expr(
           !!rlang::sym(name) <- purrr::map2(name_download, out_paths, function(name, path) {
             load(path)
             get(name)
@@ -52,8 +74,8 @@ read_hpa_spatial_data <- function(name, export_dir = tempdir()) {
       )
 
       # save as combined dataset at original out_path
-      eval(expr(save(!!rlang::sym(name), file = out_path)))
-      eval(expr(return(!!rlang::sym(name))))
+      eval(rlang::expr(save(!!rlang::sym(name), file = out_path)))
+      eval(rlang::expr(return(!!rlang::sym(name))))
     } else {
       url <- paste0(base_url, name, ".rda")
       download_data(url = paste0(base_url, name, ".rda"), dest = out_path)
@@ -69,14 +91,20 @@ read_hpa_spatial_data <- function(name, export_dir = tempdir()) {
 
 
 get_data_file_list <- function() {
-  req <- httr::GET("https://api.github.com/repos/healthpolicyanalysis/hpa.spatial.data/git/trees/main?recursive=1")
-  httr::stop_for_status(req)
-  filelist <- unlist(lapply(httr::content(req)$tree, "[", "path"), use.names = F)
-
-  stringr::str_subset(filelist, "data/") |>
-    stringr::str_remove("data/") |>
-    stringr::str_remove("_?[A-Z]?\\.rda$") |>
-    unique()
+  # req <- httr::GET("https://api.github.com/repos/healthpolicyanalysis/hpa.spatial.data/git/trees/main?recursive=1")
+  # httr::stop_for_status(req)
+  # filelist <- unlist(lapply(httr::content(req)$tree, "[", "path"), use.names = F)
+  #
+  # stringr::str_subset(filelist, "data/") |>
+  #   stringr::str_remove("data/") |>
+  #   stringr::str_remove("_?[A-Z]?\\.rda$") |>
+  #   unique()
+  c(
+    "lhn",
+    "phn",
+    "mb21_poly",
+    "mb21_pop"
+  )
 }
 
 
@@ -89,7 +117,7 @@ get_split_files <- function() {
 
 download_data <- function(url, dest) {
   tryCatch(
-    download.file(url, destfile = dest, mode = "wb"),
+    utils::download.file(url, destfile = dest, mode = "wb"),
     error = glue::glue(
       "Download failed. Check that you have access to the internet and that ",
       "your requested object is one of the following:",
