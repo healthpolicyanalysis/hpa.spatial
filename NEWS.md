@@ -1,4 +1,4 @@
-# hpa.spatial (development version)
+# hpa.spatial 0.2.6
 
 * make `create_child_geo()` which adapts an `sf` polygon (`child_geo`) object by
   splitting polygons which span across multiple polygons within another passed
