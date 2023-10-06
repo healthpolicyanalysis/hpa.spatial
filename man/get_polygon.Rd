@@ -9,7 +9,7 @@ get_polygon(
   area = NULL,
   year = NULL,
   remove_year_suffix,
-  export_dir,
+  export_dir = tempdir(),
   .validate_name,
   simplify_keep = 1,
   crs = NULL,

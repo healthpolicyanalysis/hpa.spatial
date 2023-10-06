@@ -20,7 +20,7 @@ get_polygon <- function(name = NULL,
                         area = NULL,
                         year = NULL,
                         remove_year_suffix,
-                        export_dir,
+                        export_dir = tempdir(),
                         .validate_name,
                         simplify_keep = 1,
                         crs = NULL,
@@ -28,7 +28,8 @@ get_polygon <- function(name = NULL,
   call <- rlang::expr(check_for_internal_polygon(
     name = rlang::eval_tidy(rlang::expr(!!rlang::quo(name))),
     area = rlang::eval_tidy(rlang::expr(!!rlang::quo(area))),
-    year = rlang::eval_tidy(rlang::expr(!!rlang::quo(year)))
+    year = rlang::eval_tidy(rlang::expr(!!rlang::quo(year))),
+    export_dir = rlang::eval_tidy(rlang::expr(!!rlang::quo(export_dir)))
   ))
 
   polygon <- rlang::eval_tidy(call)
@@ -38,7 +39,8 @@ get_polygon <- function(name = NULL,
       strayr::read_absmap(
         name = rlang::eval_tidy(rlang::expr(!!rlang::quo(name))),
         area = rlang::eval_tidy(rlang::expr(!!rlang::quo(area))),
-        year = rlang::eval_tidy(rlang::expr(!!rlang::quo(year)))
+        year = rlang::eval_tidy(rlang::expr(!!rlang::quo(year))),
+        export_dir = rlang::eval_tidy(rlang::expr(!!rlang::quo(export_dir)))
       )
     )
 
@@ -84,6 +86,7 @@ update_crs <- function(geo, crs = NULL) {
 #' @param name a character string names to identify data not kept on absmapsdata.
 #' @param area a character string names to identify data not kept on absmapsdata.
 #' @param year a character string names to identify data not kept on absmapsdata.
+#' @param export_dir The directory to store the downloaded data.
 #' @param ... additional, ignored arguments.
 #'
 #' @return a \code{sf} object or, if no pkg data found, \code{NULL}.
@@ -92,22 +95,53 @@ update_crs <- function(geo, crs = NULL) {
 #' @examples
 #' # hospital and health services (HHS) is the name for the local hospital networks in QLD.
 #' shp <- check_for_internal_polygon(name = "HHS")
-check_for_internal_polygon <- function(name = NULL, area = NULL, year = NULL, ...) {
+check_for_internal_polygon <- function(name = NULL, area = NULL, year = NULL, export_dir = tempdir(), ...) {
   # use non-null arg (of name/area) to identify LHN data
-  if (any(c(name, area) %in% c("PHN"))) {
+  if (any(c(toupper(name), toupper(area)) %in% c("PHN"))) {
     message("The data for The Primary Health Network (PHN) are from here: <https://data.gov.au/dataset/ds-dga-ef2d28a4-1ed5-47d0-8e3a-46e25bc4f66b/details?q=primary%20health%20network>")
-    return(read_hpa_spatial_data("phn"))
+    return(read_hpa_spatial_data("phn", export_dir = export_dir))
   }
 
-  if (any(c(name, area) %in% c("LHN"))) {
+  if (any(c(toupper(name), toupper(area)) %in% c("LHN"))) {
     message("The data for the Local Hospital Networks (LHN) are from here: <https://hub.arcgis.com/datasets/ACSQHC::local-hospital-networks/explore>")
-    return(read_hpa_spatial_data("lhn"))
+    return(read_hpa_spatial_data("lhn", export_dir = export_dir))
   }
+
+  if (any(c(toupper(name), toupper(area)) %in% c("MB21"))) {
+    return(read_hpa_spatial_data("mb21_poly", export_dir = export_dir))
+  }
+}
+
+#' Get Mesh Blocks (2021 edition) and population counts.
+#'
+#' @param export_dir The directory to store the downloaded data.
+#'
+#' @return a \code{sf} object.
+#' @export
+#'
+#' @examples
+#' get_mb21_pop()
+get_mb21_pop <- function(export_dir = tempdir()) {
+  read_hpa_spatial_data("mb21_pop", export_dir = export_dir)
+}
+
+#' Get Mesh Blocks (2021 edition) polygons.
+#'
+#' @param export_dir The directory to store the downloaded data.
+#'
+#' @return a \code{sf} object.
+#' @export
+#'
+#' @examples
+#' get_mb21_poly()
+get_mb21_poly <- function(export_dir = tempdir()) {
+  read_hpa_spatial_data("mb21_poly", export_dir = export_dir)
 }
 
 .get_internal_polygon_names <- function() {
   c(
     "PHN",
-    "LHN"
+    "LHN",
+    "MB21"
   )
 }

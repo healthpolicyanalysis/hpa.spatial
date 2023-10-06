@@ -4,7 +4,13 @@
 \alias{check_for_internal_polygon}
 \title{check_for_internal_polygon}
 \usage{
-check_for_internal_polygon(name = NULL, area = NULL, year = NULL, ...)
+check_for_internal_polygon(
+  name = NULL,
+  area = NULL,
+  year = NULL,
+  export_dir = tempdir(),
+  ...
+)
 }
 \arguments{
 \item{name}{a character string names to identify data not kept on absmapsdata.}
@@ -12,6 +18,8 @@ check_for_internal_polygon(name = NULL, area = NULL, year = NULL, ...)
 \item{area}{a character string names to identify data not kept on absmapsdata.}
 
 \item{year}{a character string names to identify data not kept on absmapsdata.}
+
+\item{export_dir}{The directory to store the downloaded data.}
 
 \item{...}{additional, ignored arguments.}
 }

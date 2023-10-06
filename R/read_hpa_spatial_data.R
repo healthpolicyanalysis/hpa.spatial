@@ -1,29 +1,3 @@
-#' Get Mesh Blocks (2021 edition) and population counts.
-#'
-#' @param export_dir The directory to store the downloaded data.
-#'
-#' @return a \code{sf} object.
-#' @export
-#'
-#' @examples
-#' get_mb21_pop()
-get_mb21_pop <- function(export_dir = tempdir()) {
-  read_hpa_spatial_data("mb21_pop", export_dir = export_dir)
-}
-
-#' Get Mesh Blocks (2021 edition) polygons.
-#'
-#' @param export_dir The directory to store the downloaded data.
-#'
-#' @return a \code{sf} object.
-#' @export
-#'
-#' @examples
-#' get_mb21_poly()
-get_mb21_poly <- function(export_dir = tempdir()) {
-  read_hpa_spatial_data("mb21_poly", export_dir = export_dir)
-}
-
 #' Read a dataset from github.com/healthpolicyanalysis/hpa.spatial.data/
 #'
 #' @param name The name of dataset in \code{hpa.spatial.data} repo.
