@@ -1,9 +1,11 @@
 # hpa.spatial (development version)
 
 * move datasets that are used to 
-[hpa.spatial.data](https://github.com/healthpolicyanalysis/hpa.spatial.data) pkg
-and access them just int he same way that `{strayr}` reads in data from 
-`{absmapsdata}`.
+  [hpa.spatial.data](https://github.com/healthpolicyanalysis/hpa.spatial.data) 
+  pkg and access them just int he same way that `{strayr}` reads in data from 
+  `{absmapsdata}`.
+
+* properly use `export_dir` from `get_polygon()`.
 
 * remove all internal data and rely only on data from
   [hpa.spatial.data](https://github.com/healthpolicyanalysis/hpa.spatial.data).
