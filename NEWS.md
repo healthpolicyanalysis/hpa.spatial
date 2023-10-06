@@ -1,5 +1,10 @@
 # hpa.spatial (development version)
 
+* make `create_child_geo()` which adapts an `sf` polygon (`child_geo`) object by
+  splitting polygons which span across multiple polygons within another passed
+  `sf` polygon object (`parent_geo`). Can be used to adapt, for example, SA3s
+  that span across multiple LHN's so that those that cross are split.
+
 * move datasets that are used to 
   [hpa.spatial.data](https://github.com/healthpolicyanalysis/hpa.spatial.data) 
   pkg and access them just int he same way that `{strayr}` reads in data from 

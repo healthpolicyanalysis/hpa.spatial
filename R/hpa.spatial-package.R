@@ -7,6 +7,7 @@ NULL
 
 utils::globalVariables(c(
   "ratio",
+  "geometry",
   "phn",
   "lhn",
   ":=",
