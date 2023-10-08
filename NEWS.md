@@ -1,5 +1,10 @@
 # hpa.spatial (development version)
 
+* allow `get_correspondence_tbl()` to take a `from_geo` and `to_geo` rather than
+  only areas and years to get the polygons via `get_polygon()`. Also allow user
+  to specify an `export_fname` (filename) to save the correspondence table for 
+  these new tables as they can't be named with `make_fname()`
+
 # hpa.spatial 0.2.6
 
 * make `create_child_geo()` which adapts an `sf` polygon (`child_geo`) object by

@@ -39,3 +39,24 @@
       10 101021008     Southern NSW         1       
       # i 2,228 more rows
 
+# can get CG using input polygons rather than areas/years
+
+    Code
+      tbl
+    Output
+      # A tibble: 433 x 3
+      # Groups:   sa3_code_2016 [340]
+         sa3_code_2016 LHN_Name                ratio
+         <chr>         <chr>                   <dbl>
+       1 10102         Southern NSW         1       
+       2 10103         Southern NSW         1       
+       3 10104         Illawarra Shoalhaven 0.00259 
+       4 10104         Southern NSW         0.997   
+       5 10105         South Western Sydney 0.000157
+       6 10105         Southern NSW         1.00    
+       7 10106         Murrumbidgee         0.504   
+       8 10106         Southern NSW         0.496   
+       9 10201         Central Coast (NSW)  1       
+      10 10202         Central Coast (NSW)  1       
+      # i 423 more rows
+

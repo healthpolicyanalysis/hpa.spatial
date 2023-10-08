@@ -73,6 +73,9 @@ get_polygon <- function(name = NULL,
 
 update_crs <- function(geo, crs = NULL) {
   if (!is.null(crs)) {
+    if (crs == "GDA2020") {
+      crs <- 7844
+    }
     if (sf::st_crs(crs)$input != sf::st_crs(geo)$input) {
       geo <- sf::st_transform(geo, crs)
     }

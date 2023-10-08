@@ -29,3 +29,18 @@ test_that("can get CG via make_correspondence_tbl() and retrieve faster a second
 
   expect_snapshot(res$tbl)
 })
+
+
+test_that("can get CG using input polygons rather than areas/years", {
+
+  from_sa2 <- get_polygon(name = "sa32016")
+  to_lhn <- get_polygon(name = "LHN")
+
+  tbl <- get_correspondence_tbl(
+    from_geo = from_sa2,
+    to_geo = to_lhn,
+    export_fname = "sa2-to-lhn"
+  )
+
+  expect_snapshot(tbl)
+})
