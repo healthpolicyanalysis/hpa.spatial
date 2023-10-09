@@ -18,6 +18,26 @@
       10 Central Queensland             3.94
       # i 51 more rows
 
+# test mapping with custom geo
+
+    Code
+      mapped_data
+    Output
+      # A tibble: 61 x 2
+         LHN_Name                     values
+         <chr>                         <dbl>
+       1 Australian Capital Territory  5.02 
+       2 Barwon                        1.90 
+       3 Bayside Peninsula            -1.76 
+       4 Brimbank Melton               2.07 
+       5 Cairns and Hinterland         2.48 
+       6 Central Adelaide             -1.97 
+       7 Central Australia (NT)       -0.237
+       8 Central Coast (NSW)           1.42 
+       9 Central Highlands            -1.92 
+      10 Central Queensland           -0.649
+      # i 51 more rows
+
 # mapping using created correspondence tables when abs ones aren't available
 
     Code

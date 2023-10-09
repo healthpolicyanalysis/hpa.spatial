@@ -264,11 +264,12 @@ map_data_with_correspondence <- function(.data = NULL,
   if (length(bad_codes) != 0) {
     if (length(bad_codes) > 1) {
       message(glue::glue(
-        "\nThe following {length(bad_codes)} codes were passed but are not valid {from_area} ({from_year}) codes:"
+        "\nThe following {length(bad_codes)} codes were passed but are not ",
+        "valid (within the from geography) codes:"
       ))
     } else {
       message(glue::glue(
-        "\nThe following code was passed but is not a valid {from_area} ({from_year}) code:"
+        "\nThe following code was passed but is not a valid code:"
       ))
     }
 

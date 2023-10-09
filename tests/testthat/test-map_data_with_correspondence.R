@@ -43,6 +43,24 @@ test_that("mapping using user-provided polygons", {
   expect_identical(mapped_df_with_data, mapped_df_with_data2)
 })
 
+
+test_that("test mapping with custom geo", {
+  sa3 <- get_polygon("sa32016")
+  lhns <- get_polygon("LHN")
+  new_sa3s <- create_child_geo(sa3, lhns)
+
+  mapped_data <- map_data_with_correspondence(
+    codes = new_sa3s[[1]],
+    values = withr::with_seed(42, rnorm(n=nrow(new_sa3s))),
+    from_geo = new_sa3s[1],
+    to_geo = lhns,
+    value_type = "aggs",
+    export_fname = "adjusted-sa3s-to-lhns"
+  )
+
+  expect_snapshot(mapped_data)
+})
+
 test_that("mapping using created correspondence tables when abs ones aren't available", {
   sa2_2021 <- suppressMessages(get_polygon(area = "sa2", year = 2021))
   withr::with_seed(
