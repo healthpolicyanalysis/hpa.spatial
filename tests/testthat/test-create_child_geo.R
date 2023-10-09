@@ -14,9 +14,12 @@ test_that("SA3s are adapted when adapted to be within LHNs", {
   new_sa3s <- create_child_geo(sa3, lhns)
 
   gg <- cowplot::plot_grid(
-    ggplot2::ggplot() + ggplot2::geom_sf(data = new_sa3s),
-    ggplot2::ggplot() + ggplot2::geom_sf(data = sa3),
-    ggplot2::ggplot() + ggplot2::geom_sf(data = lhns),
+    ggplot2::ggplot() +
+      ggplot2::geom_sf(data = new_sa3s),
+    ggplot2::ggplot() +
+      ggplot2::geom_sf(data = sa3),
+    ggplot2::ggplot() +
+      ggplot2::geom_sf(data = lhns),
     labels = c("new-sa3s", "old-sa3s", "lhns")
   )
 

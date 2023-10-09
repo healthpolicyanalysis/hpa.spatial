@@ -103,4 +103,3 @@ create_child_geo <- function(child_geo,
   dplyr::bind_rows(non_split_polys, mb_poly_agg) |>
     dplyr::arrange(!!rlang::sym(child_code_col))
 }
-

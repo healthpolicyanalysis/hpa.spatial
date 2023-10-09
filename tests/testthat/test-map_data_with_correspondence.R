@@ -51,7 +51,7 @@ test_that("test mapping with custom geo", {
 
   mapped_data <- map_data_with_correspondence(
     codes = new_sa3s[[1]],
-    values = withr::with_seed(42, rnorm(n=nrow(new_sa3s))),
+    values = withr::with_seed(42, rnorm(n = nrow(new_sa3s))),
     from_geo = new_sa3s[1],
     to_geo = lhns,
     value_type = "aggs",

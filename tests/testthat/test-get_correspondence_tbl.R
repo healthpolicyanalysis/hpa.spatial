@@ -32,7 +32,6 @@ test_that("can get CG via make_correspondence_tbl() and retrieve faster a second
 
 
 test_that("can get CG using input polygons rather than areas/years", {
-
   from_sa2 <- get_polygon(name = "sa32016")
   to_lhn <- get_polygon(name = "LHN")
 

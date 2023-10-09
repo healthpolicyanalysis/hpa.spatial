@@ -63,7 +63,6 @@ get_correspondence_tbl <- function(from_area = NULL,
       to_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_area))),
       to_year = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_year)))
     )
-
   }
 
   out_path <- file.path(export_dir, export_fname)
@@ -89,13 +88,13 @@ get_correspondence_tbl <- function(from_area = NULL,
 
     crs <- sf::st_crs(mb_geo)$input
 
-    if(is.null(from_geo)) {
+    if (is.null(from_geo)) {
       from_geo <- get_polygon(area = from_area, year = from_year, crs = crs)
     } else {
       from_geo <- update_crs(from_geo, crs = crs)
     }
 
-    if(is.null(to_geo)) {
+    if (is.null(to_geo)) {
       to_geo <- get_polygon(area = to_area, year = to_year, crs = crs)
     } else {
       to_geo <- update_crs(to_geo, crs = crs)
@@ -106,7 +105,6 @@ get_correspondence_tbl <- function(from_area = NULL,
       to_geo = to_geo,
       mb_geo = mb_geo
     )
-
   } else {
     cg <- cg |>
       dplyr::select(1, 3, ratio) |>

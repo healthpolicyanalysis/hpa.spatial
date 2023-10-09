@@ -42,7 +42,7 @@ read_hpa_spatial_data <- function(name, export_dir = tempdir()) {
           !!rlang::sym(name) <- purrr::map2(name_download, out_paths, function(name, path) {
             load(path)
             get(name)
-          })|>
+          }) |>
             dplyr::bind_rows()
         )
       )
@@ -99,4 +99,3 @@ download_data <- function(url, dest) {
     )
   )
 }
-
