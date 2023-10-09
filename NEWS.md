@@ -1,4 +1,4 @@
-# hpa.spatial (development version)
+# hpa.spatial 0.2.7
 
 * allow `map_data_with_correspondence()` to take `from_geo` and `to_geo` rather
   than only areas and years. (Also requires adding `export_fname` arg, 
