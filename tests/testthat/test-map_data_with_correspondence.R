@@ -1,3 +1,48 @@
+test_that("mapping using user-provided polygons", {
+  from_sa2s <- suppressMessages(get_polygon("sa22016"))
+  to_lhns <- suppressMessages(get_polygon("LHN"))
+  withr::with_seed(
+    42,
+    {
+      from_sa2s$test_outcome <- rnorm(nrow(from_sa2s))
+    }
+  )
+
+  mapped_df_with_data <- suppressWarnings(map_data_with_correspondence(
+    codes = from_sa2s[[1]],
+    values = from_sa2s$test_outcome,
+    from_geo = from_sa2s,
+    to_geo = to_lhns,
+    export_fname = "sa22016_to_lhns",
+    value_type = "aggs"
+  ))
+
+  expect_s3_class(mapped_df_with_data, "tbl")
+  expect_snapshot(mapped_df_with_data)
+
+  mapped_df_with_data2 <- callr::r(function() {
+    from_sa2s <- suppressMessages(hpa.spatial::get_polygon("sa22016"))
+    to_lhns <- suppressMessages(hpa.spatial::get_polygon("LHN"))
+    withr::with_seed(
+      42,
+      {
+        from_sa2s$test_outcome <- rnorm(nrow(from_sa2s))
+      }
+    )
+
+    suppressWarnings(hpa.spatial::map_data_with_correspondence(
+      codes = from_sa2s[[1]],
+      values = from_sa2s$test_outcome,
+      from_geo = from_sa2s,
+      to_geo = to_lhns,
+      export_fname = "sa22016_to_lhns",
+      value_type = "aggs"
+    ))
+  })
+
+  expect_identical(mapped_df_with_data, mapped_df_with_data2)
+})
+
 test_that("mapping using created correspondence tables when abs ones aren't available", {
   sa2_2021 <- suppressMessages(get_polygon(area = "sa2", year = 2021))
   withr::with_seed(

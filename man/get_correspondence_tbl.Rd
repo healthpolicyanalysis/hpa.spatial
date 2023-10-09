@@ -8,9 +8,12 @@ or by creating one with \code{make_correspondence_tbl}.}
 get_correspondence_tbl(
   from_area = NULL,
   from_year = NULL,
+  from_geo = NULL,
   to_area = NULL,
   to_year = NULL,
+  to_geo = NULL,
   export_dir = tempdir(),
+  export_fname = NULL,
   mb_geo = get_mb21_pop()
 )
 }
@@ -21,12 +24,21 @@ are currently in). For example: "sa1", "sa2, "sa3", "sa4".}
 \item{from_year}{The year you want to correspond FROM. For example: 2011,
 2016.}
 
+\item{from_geo}{The FROM polygon geography. Helpful if it is not available
+using \code{from_year} and \code{from_area} in \code{get_polygon}.}
+
 \item{to_area}{The area you want to correspond TO (ie the areas you want your
 data to be in).}
 
 \item{to_year}{The year you want to correspond TO.}
 
+\item{to_geo}{The TO polygon geography. Helpful if it is not available
+using \code{to_year} and \code{to_area} in \code{get_polygon}.}
+
 \item{export_dir}{The directory to store the downloaded data.}
+
+\item{export_fname}{The file name for the saved file (applicable if
+\code{from_geo}) and \code{to_geo} are used instead of areas and years).}
 
 \item{mb_geo}{mesh blocks data with census population. Defaults to using the
 2021 edition mesh blocks and 2021 census data (see

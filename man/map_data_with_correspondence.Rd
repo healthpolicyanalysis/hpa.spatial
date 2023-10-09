@@ -11,10 +11,13 @@ map_data_with_correspondence(
   groups = NULL,
   from_area = NULL,
   from_year = NULL,
+  from_geo = NULL,
   to_area = NULL,
   to_year = NULL,
-  mb_geo,
+  to_geo = NULL,
+  mb_geo = get_mb21_pop(),
   value_type = c("units", "aggs"),
+  export_fname = NULL,
   round = FALSE,
   seed = NULL
 )
@@ -41,10 +44,16 @@ are currently in). For example: "sa1", "sa2, "sa3", "sa4".}
 \item{from_year}{The year you want to correspond FROM. For example: 2011,
 2016.}
 
+\item{from_geo}{The FROM polygon geography. Helpful if it is not available
+using \code{from_year} and \code{from_area} in \code{get_polygon}.}
+
 \item{to_area}{The area you want to correspond TO (ie the areas you want your
 data to be in).}
 
 \item{to_year}{The year you want to correspond TO.}
+
+\item{to_geo}{The TO polygon geography. Helpful if it is not available
+using \code{to_year} and \code{to_area} in \code{get_polygon}.}
 
 \item{mb_geo}{an \code{{sf}} POINT object where the points are the centroids
 of a small area (intended to be mesh blocks but can be any other space that's
@@ -56,6 +65,10 @@ with 2021 census data. See \code{get_mb21_pop()}.}
 Unit level data is randomly allocated to new locations based on proportions
 in the correspondence table, aggregate data is dispersed based on the
 proportion across the (potentially multiple) mapped codes.}
+
+\item{export_fname}{The file name for the saved correspondence table file
+(applicable if \code{from_geo}) and \code{to_geo} are used instead of areas
+and years).}
 
 \item{round}{Whether or not to round the resulting mapped values to be whole
 numbers (maybe be useful when mapping count, aggregate values which may
@@ -91,5 +104,4 @@ map_data_with_correspondence(
   to_year = 2016,
   value_type = "aggs"
 )
-
 }

@@ -15,9 +15,13 @@
 #' are currently in). For example: "sa1", "sa2, "sa3", "sa4".
 #' @param from_year The year you want to correspond FROM. For example: 2011,
 #' 2016.
+#' @param from_geo The FROM polygon geography. Helpful if it is not available
+#' using \code{from_year} and \code{from_area} in \code{get_polygon}.
 #' @param to_area The area you want to correspond TO (ie the areas you want your
 #' data to be in).
 #' @param to_year The year you want to correspond TO.
+#' @param to_geo The TO polygon geography. Helpful if it is not available
+#' using \code{to_year} and \code{to_area} in \code{get_polygon}.
 #' @param mb_geo an \code{{sf}} POINT object where the points are the centroids
 #' of a small area (intended to be mesh blocks but can be any other space that's
 #' small enough to be useful. Should also include a column, \code{Person},
@@ -27,6 +31,9 @@
 #' Unit level data is randomly allocated to new locations based on proportions
 #' in the correspondence table, aggregate data is dispersed based on the
 #' proportion across the (potentially multiple) mapped codes.
+#' @param export_fname The file name for the saved correspondence table file
+#' (applicable if \code{from_geo}) and \code{to_geo} are used instead of areas
+#' and years).
 #' @param round Whether or not to round the resulting mapped values to be whole
 #' numbers (maybe be useful when mapping count, aggregate values which may
 #' otherwise return decimal values in the mapped areas).
@@ -57,22 +64,21 @@
 #'   to_year = 2016,
 #'   value_type = "aggs"
 #' )
-#'
 map_data_with_correspondence <- function(.data = NULL,
                                          codes,
                                          values,
                                          groups = NULL,
                                          from_area = NULL,
                                          from_year = NULL,
+                                         from_geo = NULL,
                                          to_area = NULL,
                                          to_year = NULL,
-                                         mb_geo,
+                                         to_geo = NULL,
+                                         mb_geo = get_mb21_pop(),
                                          value_type = c("units", "aggs"),
+                                         export_fname = NULL,
                                          round = FALSE,
                                          seed = NULL) {
-  if (missing(mb_geo)) {
-    mb_geo <- get_mb21_pop()
-  }
   if (!is.null(.data)) {
     # if .data is passed, extract the codes and values from the columns of .data
 
@@ -140,9 +146,11 @@ map_data_with_correspondence <- function(.data = NULL,
           codes = x$codes,
           values = x$values,
           from_area = !!rlang::quo(from_area),
-          to_area = !!rlang::quo(to_area),
           from_year = !!rlang::quo(from_year),
+          from_geo = !!rlang::quo(from_geo),
+          to_area = !!rlang::quo(to_area),
           to_year = !!rlang::quo(to_year),
+          to_geo = !!rlang::quo(to_geo)
         ))
 
         rlang::eval_tidy(call) |> dplyr::mutate(grp = x$groups[1])
@@ -153,16 +161,15 @@ map_data_with_correspondence <- function(.data = NULL,
   }
 
   value_type <- match.arg(value_type)
-
   stopifnot(length(codes) == length(values))
-
-  if (any(is.null(from_year), is.null(to_year), is.null(from_area), is.null(to_area))) {
-    maybe_sa <- TRUE
-  } else {
-
-  }
-
-  maybe_sa <- all(!is.null(from_year), !is.null(to_year), !is.null(from_area), !is.null(to_area))
+  maybe_sa <- all(
+    !is.null(from_year),
+    !is.null(to_year),
+    !is.null(from_area),
+    !is.null(to_area),
+    is.null(from_geo),
+    is.null(to_geo)
+  )
 
   if (maybe_sa) {
     if (is_SA(from_area) & is_SA(to_area) & clean_year(from_year) == clean_year(to_year)) {
@@ -178,7 +185,11 @@ map_data_with_correspondence <- function(.data = NULL,
       mapped_df <- cbind(asgs_tbl[asgs_tbl[[1]] %in% codes, 2, drop = FALSE], values)
 
       if (value_type == "units") {
-        return(clean_mapped_tbl(mapped_df, values_name = values_name, groups_name = groups_name))
+        return(clean_mapped_tbl(
+          mapped_df,
+          values_name = values_name,
+          groups_name = groups_name
+        ))
       }
 
       if (value_type == "aggs") {
@@ -187,7 +198,11 @@ map_data_with_correspondence <- function(.data = NULL,
           dplyr::summarize(values = sum(values)) |>
           (\(.data) if (round) dplyr::mutate(.data, values = round(values)) else .data)()
 
-        return(clean_mapped_tbl(mapped_df, values_name = values_name, groups_name = groups_name))
+        return(clean_mapped_tbl(
+          mapped_df,
+          values_name = values_name,
+          groups_name = groups_name
+        ))
       }
     }
 
@@ -207,9 +222,10 @@ map_data_with_correspondence <- function(.data = NULL,
         codes = codes,
         values = values,
         from_area = !!rlang::quo(from_area),
-        to_area = !!rlang::quo(from_area),
         from_year = !!rlang::quo(from_year),
+        to_area = !!rlang::quo(from_area),
         to_year = !!rlang::quo(to_year),
+        value_type = !!rlang::quo(value_type)
       ))
 
       df_edition_mapped <- rlang::eval_tidy(call)
@@ -218,8 +234,8 @@ map_data_with_correspondence <- function(.data = NULL,
         codes = df_edition_mapped[[1]],
         values = df_edition_mapped[[2]],
         from_area = !!rlang::quo(from_area),
-        to_area = !!rlang::quo(to_area),
         from_year = !!rlang::quo(to_year), # have already mapped edition
+        to_area = !!rlang::quo(to_area),
         to_year = !!rlang::quo(to_year),
         value_type = !!rlang::quo(value_type)
       ))
@@ -232,9 +248,12 @@ map_data_with_correspondence <- function(.data = NULL,
 
   call <- rlang::expr(get_correspondence_tbl(
     from_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_area))),
+    from_year = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_year))),
+    from_geo = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_geo))),
     to_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_area))),
     to_year = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_year))),
-    from_year = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_year)))
+    to_geo = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_geo))),
+    export_fname = rlang::eval_tidy(rlang::expr(!!rlang::quo(export_fname)))
   ))
 
   correspondence_tbl <- rlang::eval_tidy(call)
