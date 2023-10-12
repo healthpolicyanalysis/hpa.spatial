@@ -111,7 +111,11 @@ check_for_internal_polygon <- function(name = NULL, area = NULL, year = NULL, ex
   }
 
   if (any(c(toupper(name), toupper(area)) %in% c("MB21"))) {
-    return(read_hpa_spatial_data("mb21_poly", export_dir = export_dir))
+    return(get_mb21_poly(export_dir = export_dir))
+  }
+
+  if (any(c(toupper(name), toupper(area)) %in% c("MMM19"))) {
+    return(get_mmm19_poly(export_dir = export_dir))
   }
 }
 
@@ -141,10 +145,37 @@ get_mb21_poly <- function(export_dir = tempdir()) {
   read_hpa_spatial_data("mb21_poly", export_dir = export_dir)
 }
 
+
+#' Modified Monash Model polygons (SA1, 2016 edition, polygons with MMM, 2019
+#' edition column).
+#'
+#' @param export_dir The directory to store the downloaded data.
+#'
+#' @return a \code{sf} object.
+#' @export
+#'
+#' @examples
+#' get_mmm19_poly()
+get_mmm19_poly <- function(export_dir = tempdir()) {
+  sa1_poly <- get_polygon("sa12016", export_dir = export_dir)
+  mmm19 <- read_hpa_spatial_data("mmm19", export_dir = export_dir)
+  names(sa1_poly)[1] <- names(mmm19)[1]
+  sa1_poly[[1]] <- as.numeric(sa1_poly[[1]])
+  mmm19[[1]] <- as.numeric(mmm19[[1]])
+
+  dplyr::inner_join(
+    sa1_poly,
+    mmm19,
+    by = names(mmm19)[1]
+  )
+}
+
+
 .get_internal_polygon_names <- function() {
   c(
     "PHN",
     "LHN",
-    "MB21"
+    "MB21",
+    "MMM19"
   )
 }

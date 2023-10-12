@@ -1,5 +1,8 @@
 # hpa.spatial (development version)
 
+* allow user to get Modified Monash Model data (for SA1, 2016 ed.) using 
+  `get_polygon(name = "mmm19")` or `get_mmm19_poly()`.
+
 # hpa.spatial 0.2.7
 
 * allow `map_data_with_correspondence()` to take `from_geo` and `to_geo` rather
