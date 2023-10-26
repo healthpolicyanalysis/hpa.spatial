@@ -150,7 +150,8 @@ map_data_with_correspondence <- function(.data = NULL,
           from_geo = !!rlang::quo(from_geo),
           to_area = !!rlang::quo(to_area),
           to_year = !!rlang::quo(to_year),
-          to_geo = !!rlang::quo(to_geo)
+          to_geo = !!rlang::quo(to_geo),
+          value_type = !!rlang::quo(value_type)
         ))
 
         rlang::eval_tidy(call) |> dplyr::mutate(grp = x$groups[1])
