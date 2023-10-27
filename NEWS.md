@@ -1,4 +1,4 @@
-# hpa.spatial (development version)
+# hpa.spatial 0.2.8
 
 * allow user to get Modified Monash Model data (for SA1, 2016 ed.) using 
   `get_polygon(name = "mmm19")` or `get_mmm19_poly()`.
