@@ -83,9 +83,9 @@ map_data_with_correspondence <- function(.data = NULL,
     .data <- dplyr::as_tibble(.data)
 
     values_name <- try(as.character(substitute(values)), silent = FALSE)
-    if(inherits(try(as.character(substitute(values)), silent = FALSE), "character")) {
+    if (inherits(try(as.character(substitute(values)), silent = FALSE), "character")) {
       assertthat::are_equal(length(as.character(substitute(values))), 1)
-      if(values_name %in% names(.data)) {
+      if (values_name %in% names(.data)) {
         values <- dplyr::pull(.data, dplyr::all_of(values_name))
       } else {
         values <- rlang::eval_tidy(rlang::enexpr(values), data = .data)
@@ -94,15 +94,14 @@ map_data_with_correspondence <- function(.data = NULL,
       values <- rlang::eval_tidy(rlang::enexpr(values), data = .data)
     }
 
-    if(inherits(try(as.character(substitute(codes)), silent = FALSE), "character")) {
+    if (inherits(try(as.character(substitute(codes)), silent = FALSE), "character")) {
       assertthat::are_equal(length(as.character(substitute(codes))), 1)
       codes_name <- rlang::eval_tidy(as.character(substitute(codes)))
-      if(codes_name %in% names(.data)) {
+      if (codes_name %in% names(.data)) {
         codes <- dplyr::pull(.data, dplyr::all_of(codes_name))
       } else {
         codes <- rlang::eval_tidy(rlang::enexpr(codes), data = .data)
       }
-
     } else {
       codes <- rlang::eval_tidy(rlang::enexpr(codes), data = .data)
     }
@@ -110,8 +109,8 @@ map_data_with_correspondence <- function(.data = NULL,
     # browser()
     groups_values <- try(groups, silent = TRUE)
     groups_name <- try(as.character(substitute(groups)), silent = FALSE)
-    if(inherits(groups_values, "try-error")) {
-      if(length(substitute(groups)) > 1){
+    if (inherits(groups_values, "try-error")) {
+      if (length(substitute(groups)) > 1) {
         groups_name <- as.list(as.character(substitute(groups))[-1])
       } else {
         groups_name <- as.list(as.character(substitute(groups)))
@@ -122,12 +121,11 @@ map_data_with_correspondence <- function(.data = NULL,
       })
     } else {
       groups <- groups_values
-      if(length(groups_name) - 1 == length(groups)) {
+      if (length(groups_name) - 1 == length(groups)) {
         groups_name <- paste0("grp", 1:(length(groups_name) - 1))
       } else {
         groups_name <- NA
       }
-
     }
   } else {
     groups_name <- NA
@@ -137,12 +135,12 @@ map_data_with_correspondence <- function(.data = NULL,
   multiple_groups <- inherits(groups, "list")
 
   if (!is.null(groups)) {
-    if(multiple_groups) {
+    if (multiple_groups) {
       assertthat::assert_that(inherits(groups, "list"))
     } else {
       groups <- list(groups)
     }
-    for(g in groups) {
+    for (g in groups) {
       stopifnot(length(g) == length(codes))
     }
 
