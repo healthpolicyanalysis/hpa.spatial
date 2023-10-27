@@ -5,6 +5,10 @@
 
 * bug fix: pass `value_type` appropriately when `groups` are used in 
   `map_data_with_correspondence()`.
+  
+* feature: let `map_data_with_correspondence()` take a list of vectors for 
+  groups or, when `.data` is passed, can take a character vector or column names
+  or a vector of symbols.
 
 # hpa.spatial 0.2.7
 

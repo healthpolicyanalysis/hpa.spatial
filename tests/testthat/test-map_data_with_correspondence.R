@@ -1,3 +1,69 @@
+test_that("using multiple groups works", {
+  sa2_2011 <- suppressMessages(get_polygon(area = "sa2", year = 2011))
+  withr::with_seed(
+    42,
+    {
+      n_sample <- 100
+      sa2_2011_sample_with_groups <- sa2_2011[1:n_sample, ] |>
+        (\(x) {
+          x$g1 <- sample(LETTERS[1:5], size = n_sample, replace = TRUE)
+          x$g2 <- sample(letters[1:5], size = n_sample, replace = TRUE)
+          x$test_outcome <- rnorm(n_sample)
+          return(x)
+        })()
+    }
+  )
+
+  mapped_df_with_data1 <- map_data_with_correspondence(
+    sa2_2011_sample_with_groups,
+    codes = sa2_code_2011,
+    values = "test_outcome",
+    groups = list(sa2_2011_sample_with_groups$g1, sa2_2011_sample_with_groups$g2),
+    from_area = "sa2",
+    from_year = 2011,
+    to_area = "sa3",
+    to_year = 2011,
+    value_type = "aggs"
+  )
+
+  mapped_df_with_data2 <- map_data_with_correspondence(
+    sa2_2011_sample_with_groups,
+    codes = sa2_code_2011,
+    values = test_outcome,
+    groups = c(g1, g2),
+    from_area = "sa2",
+    from_year = 2011,
+    to_area = "sa3",
+    to_year = 2011,
+    value_type = "aggs"
+  )
+
+  mapped_df_with_data3 <- map_data_with_correspondence(
+    codes = sa2_2011_sample_with_groups$sa2_code_2011,
+    values = sa2_2011_sample_with_groups$test_outcome,
+    groups = list(sa2_2011_sample_with_groups$g1, sa2_2011_sample_with_groups$g2),
+    from_area = "sa2",
+    from_year = 2011,
+    to_area = "sa3",
+    to_year = 2011,
+    value_type = "aggs"
+  )
+
+
+  expect_snapshot(mapped_df_with_data1)
+  expect_snapshot(mapped_df_with_data2)
+  expect_identical(
+    unname(as.matrix(mapped_df_with_data1)),
+    unname(as.matrix(mapped_df_with_data2))
+  )
+
+  expect_identical(
+    unname(as.matrix(mapped_df_with_data2)),
+    unname(as.matrix(mapped_df_with_data3))
+  )
+})
+
+
 test_that("mapping using user-provided polygons", {
   from_sa2s <- suppressMessages(get_polygon("sa22016"))
   to_lhns <- suppressMessages(get_polygon("LHN"))
@@ -122,10 +188,22 @@ test_that("passing dataframe and retaining column names works", {
     }
   )
 
-  mapped_df_with_data <- map_data_with_correspondence(
+  mapped_df_with_data1 <- map_data_with_correspondence(
     sa2_2011_sample_with_groups,
     codes = sa2_code_2011,
     values = test_outcome,
+    groups = letter_group,
+    from_area = "sa2",
+    from_year = 2011,
+    to_area = "sa3",
+    to_year = 2011,
+    value_type = "aggs"
+  )
+
+  mapped_df_with_data2 <- map_data_with_correspondence(
+    sa2_2011_sample_with_groups,
+    codes = sa2_code_2011,
+    values = "test_outcome",
     groups = sa2_2011_sample_with_groups$letter_group,
     from_area = "sa2",
     from_year = 2011,
@@ -145,10 +223,14 @@ test_that("passing dataframe and retaining column names works", {
     value_type = "aggs"
   )
 
-  expect_equal(names(mapped_df_with_data), c("sa3_code_2011", "test_outcome", "letter_group"))
+  expect_equal(names(mapped_df_with_data1), c("sa3_code_2011", "test_outcome", "letter_group"))
   expect_equal(
-    unname(as.matrix(mapped_df_with_data)),
+    unname(as.matrix(mapped_df_with_data1)),
     unname(as.matrix(mapped_df_without_data))
+  )
+  expect_equal(
+    unname(as.matrix(mapped_df_with_data1)),
+    unname(as.matrix(mapped_df_with_data2))
   )
 })
 

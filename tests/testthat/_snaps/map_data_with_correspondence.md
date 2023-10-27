@@ -1,3 +1,43 @@
+# using multiple groups works
+
+    Code
+      mapped_df_with_data1
+    Output
+      # A tibble: 91 x 4
+         sa3_code_2011 test_outcome grp1  grp2 
+         <chr>                <dbl> <chr> <chr>
+       1 10101              -0.468  A     a    
+       2 10201               0.404  A     a    
+       3 10302               1.48   A     a    
+       4 10303              -0.234  A     a    
+       5 10501               0.704  A     a    
+       6 10502               0.0491 A     a    
+       7 10102              -1.07   B     a    
+       8 10103               0.0849 B     a    
+       9 10201               0.295  B     a    
+      10 10303               0.342  B     a    
+      # i 81 more rows
+
+---
+
+    Code
+      mapped_df_with_data2
+    Output
+      # A tibble: 91 x 4
+         sa3_code_2011 test_outcome g1    g2   
+         <chr>                <dbl> <chr> <chr>
+       1 10101              -0.468  A     a    
+       2 10201               0.404  A     a    
+       3 10302               1.48   A     a    
+       4 10303              -0.234  A     a    
+       5 10501               0.704  A     a    
+       6 10502               0.0491 A     a    
+       7 10102              -1.07   B     a    
+       8 10103               0.0849 B     a    
+       9 10201               0.295  B     a    
+      10 10303               0.342  B     a    
+      # i 81 more rows
+
 # mapping using user-provided polygons
 
     Code
@@ -63,8 +103,8 @@
     Code
       sa2_to_sa3_2011_mapped_grped_aggs
     Output
-      # A tibble: 200 x 3
-         sa3_code_2011  values grp  
+      # A tibble: 190 x 3
+         sa3_code_2011  values grp1 
          <chr>           <dbl> <chr>
        1 10104         -0.193  A    
        2 10202          0.775  A    
@@ -76,7 +116,7 @@
        8 11003         -0.324  A    
        9 11103         -1.36   A    
       10 11303         -2.29   A    
-      # i 190 more rows
+      # i 180 more rows
 
 # aggregating up SA's works
 
@@ -124,18 +164,18 @@
       sa2_to_sa3_2011_to_2016_mapped_unit_ref_col
     Output
       # A tibble: 200 x 2
-         sa3_code_2016 values
-         <chr>          <dbl>
-       1 10103          0.896
-       2 10104         -0.230
-       3 10105          0.837
-       4 10201         -1.75 
-       5 10202          1.69 
-       6 10302          0.865
-       7 10304         -0.151
-       8 10304         -1.45 
-       9 10401          0.643
-      10 10402          0.483
+         sa3_code_2016 random_vals
+         <chr>               <dbl>
+       1 10103               0.896
+       2 10104              -0.230
+       3 10105               0.837
+       4 10201              -1.75 
+       5 10202               1.69 
+       6 10302               0.865
+       7 10304              -0.151
+       8 10304              -1.45 
+       9 10401               0.643
+      10 10402               0.483
       # i 190 more rows
 
 ---

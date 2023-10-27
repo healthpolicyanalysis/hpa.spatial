@@ -80,66 +80,79 @@ map_data_with_correspondence <- function(.data = NULL,
                                          round = FALSE,
                                          seed = NULL) {
   if (!is.null(.data)) {
-    # if .data is passed, extract the codes and values from the columns of .data
+    .data <- dplyr::as_tibble(.data)
 
-    # get codes
-    codes_quo <- try(rlang::eval_tidy(rlang::quo(codes), data = .data), silent = TRUE)
-    if (inherits(codes_quo, "try-error")) {
-      codes <- rlang::eval_tidy(rlang::enexpr(codes), data = .data)
-    } else {
-      codes <- codes_quo
-    }
-
-    # get values
-    # extract the name of the column used for values
     values_name <- try(as.character(substitute(values)), silent = FALSE)
-    if (inherits(values_name, "try-error")) {
-      values_name <- NA
-    } else {
-      if (length(values_name) != 1 | !all(values_name %in% names(.data))) {
-        values_name <- NA
+    if(inherits(try(as.character(substitute(values)), silent = FALSE), "character")) {
+      assertthat::are_equal(length(as.character(substitute(values))), 1)
+      if(values_name %in% names(.data)) {
+        values <- dplyr::pull(.data, dplyr::all_of(values_name))
       } else {
-        values_name <- values_name[values_name %in% names(.data)][1]
+        values <- rlang::eval_tidy(rlang::enexpr(values), data = .data)
       }
-    }
-
-    values_quo <- try(rlang::eval_tidy(rlang::quo(values), data = .data), silent = TRUE)
-    if (inherits(values_quo, "try-error")) {
+    } else {
       values <- rlang::eval_tidy(rlang::enexpr(values), data = .data)
-    } else {
-      values <- values_quo
     }
 
-    # get groups
-    groups_name <- try(as.character(substitute(groups)), silent = FALSE)
-    if (inherits(groups_name, "try-error")) {
-      groups_name <- NA
+    if(inherits(try(as.character(substitute(codes)), silent = FALSE), "character")) {
+      assertthat::are_equal(length(as.character(substitute(codes))), 1)
+      codes_name <- rlang::eval_tidy(as.character(substitute(codes)))
+      if(codes_name %in% names(.data)) {
+        codes <- dplyr::pull(.data, dplyr::all_of(codes_name))
+      } else {
+        codes <- rlang::eval_tidy(rlang::enexpr(codes), data = .data)
+      }
+
     } else {
-      if (length(groups_name[groups_name %in% names(.data)]) == 1) {
-        groups_name <- groups_name[groups_name %in% names(.data)][1]
+      codes <- rlang::eval_tidy(rlang::enexpr(codes), data = .data)
+    }
+
+    # browser()
+    groups_values <- try(groups, silent = TRUE)
+    groups_name <- try(as.character(substitute(groups)), silent = FALSE)
+    if(inherits(groups_values, "try-error")) {
+      if(length(substitute(groups)) > 1){
+        groups_name <- as.list(as.character(substitute(groups))[-1])
+      } else {
+        groups_name <- as.list(as.character(substitute(groups)))
+      }
+
+      groups <- lapply(groups_name, {
+        \(x) dplyr::pull(.data, dplyr::all_of(x))
+      })
+    } else {
+      groups <- groups_values
+      if(length(groups_name) - 1 == length(groups)) {
+        groups_name <- paste0("grp", 1:(length(groups_name) - 1))
       } else {
         groups_name <- NA
       }
-    }
 
-    groups_quo <- try(rlang::eval_tidy(rlang::quo(groups), data = .data), silent = TRUE)
-    if (inherits(groups, "try-error")) {
-      groups <- rlang::eval_tidy(rlang::enexpr(groups), data = .data)
-    } else {
-      groups <- groups_quo
     }
   } else {
     groups_name <- NA
     values_name <- NA
   }
 
+  multiple_groups <- inherits(groups, "list")
+
   if (!is.null(groups)) {
-    stopifnot(length(codes) == length(groups))
+    if(multiple_groups) {
+      assertthat::assert_that(inherits(groups, "list"))
+    } else {
+      groups <- list(groups)
+    }
+    for(g in groups) {
+      stopifnot(length(g) == length(codes))
+    }
+
     stopifnot(length(codes) == length(values))
+    groups_df <- do.call("cbind", groups)
 
     df_res <- split(
-      data.frame(codes = codes, values = values, groups = groups),
-      f = groups
+      cbind(data.frame(codes = codes, values = values), groups_df),
+      f = groups,
+      drop = TRUE
     ) |>
       lapply(\(x) {
         call <- rlang::expr(map_data_with_correspondence(
@@ -154,7 +167,18 @@ map_data_with_correspondence <- function(.data = NULL,
           value_type = !!rlang::quo(value_type)
         ))
 
-        rlang::eval_tidy(call) |> dplyr::mutate(grp = x$groups[1])
+        groups_df <- x |>
+          dplyr::select(-dplyr::all_of(c("codes", "values"))) |>
+          (\(x) {
+            names(x) <- paste0("grp", 1:ncol(x))
+            x
+          })() |>
+          dplyr::slice_head(n = 1)
+
+        dplyr::bind_cols(
+          rlang::eval_tidy(call),
+          groups_df
+        )
       }) |>
       (\(x) do.call("rbind", x))()
 
@@ -400,8 +424,12 @@ clean_mapped_tbl <- function(.data, values_name, groups_name) {
   if (!is.na(values_name)) {
     .data <- dplyr::rename(.data, !!values_name := values)
   }
-  if (!is.na(groups_name)) {
-    .data <- dplyr::rename(.data, !!groups_name := grp)
+
+
+  if (!any(is.na(groups_name))) {
+    rename_vec <- names(.data)[3:ncol(.data)]
+    names(rename_vec) <- groups_name
+    .data <- dplyr::rename(.data, dplyr::all_of(rename_vec))
   }
   .data |>
     tibble::remove_rownames() |>
