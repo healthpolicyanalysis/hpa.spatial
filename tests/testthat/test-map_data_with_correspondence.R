@@ -1,3 +1,23 @@
+test_that("problem case from unmet needs is fixed", {
+  obj <- readRDS(test_path("fixtures", "test-data-sa22016-to-sa22021.rds"))
+
+  mapped_data <- map_data_with_correspondence(
+    .data = obj,
+    codes = SA2Cd2016,
+    values = PrtcpntCnt,
+    groups = ReportDte,
+    from_area = "sa2",
+    from_year = 2016,
+    to_area = "sa2",
+    to_year = "2021.csv",
+    value_type = "aggs"
+  )
+
+  # TODO: fix bug where date data type for groups is turned into numeric
+  # TODO: find out why I'm getting NAs for resulting CODES
+})
+
+
 test_that("using multiple groups works", {
   sa2_2011 <- suppressMessages(get_polygon(area = "sa2", year = 2011))
   withr::with_seed(
