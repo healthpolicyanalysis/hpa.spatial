@@ -19,6 +19,7 @@
 #'   mb_geo = get_mb21_pop()
 #' )
 make_correspondence_tbl <- function(from_geo, to_geo, mb_geo = get_mb21_pop(), ...) {
+
   mb_geo <- mb_geo |>
     dplyr::select(mb_code = 1, pop = Person)
 
@@ -34,21 +35,27 @@ make_correspondence_tbl <- function(from_geo, to_geo, mb_geo = get_mb21_pop(), .
   mb_geo_from <- mb_geo |>
     sf::st_join(from_geo) |>
     dplyr::as_tibble() |>
-    dplyr::select(mb_code, from_code, pop)
+    dplyr::select(mb_code, from_code, pop) |>
+    stats::na.omit()
 
   mapped_from_mb_codes <- unique(mb_geo_from$from_code)
 
   mb_geo_to <- mb_geo |>
     sf::st_join(to_geo) |>
     dplyr::as_tibble() |>
-    dplyr::select(mb_code, to_code)
+    dplyr::select(mb_code, to_code) |>
+    stats::na.omit()
 
-  dplyr::inner_join(mb_geo_from, mb_geo_to, by = "mb_code") |>
+  matched_geos <- dplyr::inner_join(mb_geo_from, mb_geo_to, by = "mb_code") |>
     dplyr::group_by(from_code, to_code) |>
     dplyr::summarize(pop_sum = sum(pop)) |>
     dplyr::ungroup() |>
     dplyr::group_by(from_code) |>
-    dplyr::mutate(ratio = pop_sum / sum(pop_sum)) |>
+    dplyr::mutate(ratio = ifelse(
+      dplyr::n() == 1 & pop_sum == 0,
+      1,
+      pop_sum / sum(pop_sum)
+    )) |>
     dplyr::select(-pop_sum) |>
     dplyr::filter(
       ratio != 0,
@@ -58,6 +65,14 @@ make_correspondence_tbl <- function(from_geo, to_geo, mb_geo = get_mb21_pop(), .
       !!rlang::sym(from_geo_codename) := 1,
       !!rlang::sym(to_geo_codename) := 2,
     )
+
+  unmatched_geos <- tibble::tibble(
+    !!rlang::sym(from_geo_codename) := from_geo$from_code[!from_geo$from_code %in% matched_geos[[1]]],
+    !!rlang::sym(to_geo_codename) := NA_character_,
+    ratio = 1
+  )
+
+  dplyr::bind_rows(matched_geos, unmatched_geos)
 }
 
 remove_empty_geographies <- function(geo, print_removed_codes = FALSE) {

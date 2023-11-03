@@ -3,8 +3,8 @@
     Code
       tbl_test
     Output
-      # A tibble: 549 x 3
-      # Groups:   sa2_code_2016 [521]
+      # A tibble: 555 x 3
+      # Groups:   sa2_code_2016 [528]
          sa2_code_2016 sa2_code_2021 ratio
          <chr>         <chr>         <dbl>
        1 301011001     301011001         1
@@ -17,15 +17,15 @@
        8 301021008     301021008         1
        9 301021009     301021009         1
       10 301021011     301021011         1
-      # i 539 more rows
+      # i 545 more rows
 
 ---
 
     Code
       sa2_to_lhn_tbl
     Output
-      # A tibble: 2,497 x 3
-      # Groups:   sa2_code_2021 [2,415]
+      # A tibble: 2,521 x 3
+      # Groups:   sa2_code_2021 [2,454]
          sa2_code_2021 LHN_Name     ratio
          <chr>         <chr>        <dbl>
        1 101021007     Southern NSW     1
@@ -38,5 +38,5 @@
        8 101031013     Southern NSW     1
        9 101031014     Southern NSW     1
       10 101031015     Southern NSW     1
-      # i 2,487 more rows
+      # i 2,511 more rows
 

@@ -2,6 +2,10 @@
 
 * use open-source (MIT) license.
 
+* bug fix: when creating a correspondence table and there is a complete match 
+  between the polygons but all meshblocks data within have populations of zero,
+  allow the match with ratio = 1.
+
 # hpa.spatial 0.2.8
 
 * allow user to get Modified Monash Model data (for SA1, 2016 ed.) using 

@@ -47,7 +47,8 @@ test_that("test mapping is similar to published correspondence tables", {
 
 test_that("test mapping is similar to published correspondence tables", {
   to_poly <- get_polygon(area = "LHN", crs = 7844)
-  from_poly <- get_polygon(area = "sa2", year = 2021, crs = 7844)
+  from_poly <- get_polygon(area = "sa2", year = 2021, crs = 7844) |>
+    remove_empty_geographies()
 
   # test creation of correspondence table on non-standard geography
   sa2_to_lhn_tbl <- make_correspondence_tbl(from_poly, to_poly)
