@@ -6,7 +6,7 @@ Version: 0.2.8.9000
 Authors@R: 
     person("Rex", "Parsons", , "rex.parsons@healthpolicy.com", role = c("aut", "cre"))
 Description: Data and helpful functions for spatial data analyses.
-License: file LICENSE
+License: MIT + file LICENSE
 Imports: 
     assertthat,
     dplyr,

@@ -3,3 +3,4 @@
 ^\.Ruserdata$
 ^README\.Rmd$
 ^data-raw$
+^LICENSE\.md$

@@ -1,5 +1,7 @@
 # hpa.spatial (development version)
 
+* use open-source (MIT) license.
+
 # hpa.spatial 0.2.8
 
 * allow user to get Modified Monash Model data (for SA1, 2016 ed.) using 
