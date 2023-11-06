@@ -1,5 +1,9 @@
 test_that("problem case from unmet needs is fixed", {
-  obj <- readRDS(test_path("fixtures", "test-data-sa22016-to-sa22021.rds"))
+  sa22016 <- get_polygon("sa22016") |>
+    remove_empty_geographies()
+
+  obj <- readRDS(test_path("fixtures", "test-data-sa22016-to-sa22021.rds")) |>
+    dplyr::filter(SA2Cd2016 %in% sa22016$sa2_code_2016)
 
   mapped_data <- map_data_with_correspondence(
     .data = obj,
@@ -13,8 +17,7 @@ test_that("problem case from unmet needs is fixed", {
     value_type = "aggs"
   )
 
-  # TODO: fix bug where date data type for groups is turned into numeric
-  # TODO: find out why I'm getting NAs for resulting CODES
+  expect_snapshot(mapped_data)
 })
 
 
@@ -85,7 +88,8 @@ test_that("using multiple groups works", {
 
 
 test_that("mapping using user-provided polygons", {
-  from_sa2s <- suppressMessages(get_polygon("sa22016"))
+  from_sa2s <- suppressMessages(get_polygon("sa22016")) |>
+    remove_empty_geographies()
   to_lhns <- suppressMessages(get_polygon("LHN"))
   withr::with_seed(
     42,
@@ -107,7 +111,8 @@ test_that("mapping using user-provided polygons", {
   expect_snapshot(mapped_df_with_data)
 
   mapped_df_with_data2 <- callr::r(function() {
-    from_sa2s <- suppressMessages(hpa.spatial::get_polygon("sa22016"))
+    from_sa2s <- suppressMessages(hpa.spatial::get_polygon("sa22016")) |>
+      hpa.spatial:::remove_empty_geographies()
     to_lhns <- suppressMessages(hpa.spatial::get_polygon("LHN"))
     withr::with_seed(
       42,

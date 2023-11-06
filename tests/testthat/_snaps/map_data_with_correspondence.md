@@ -1,3 +1,23 @@
+# problem case from unmet needs is fixed
+
+    Code
+      mapped_data
+    Output
+      # A tibble: 39,264 x 3
+         SA2_CODE_2021 PrtcpntCnt ReportDte 
+         <chr>              <dbl> <date>    
+       1 101021007           27   2019-06-30
+       2 101021008          165   2019-06-30
+       3 101021009          171   2019-06-30
+       4 101021010           61   2019-06-30
+       5 101021012          119   2019-06-30
+       6 101021610           16.2 2019-06-30
+       7 101021611          151.  2019-06-30
+       8 101031013           31   2019-06-30
+       9 101031014          150   2019-06-30
+      10 101031015           31   2019-06-30
+      # i 39,254 more rows
+
 # using multiple groups works
 
     Code
@@ -43,27 +63,27 @@
     Code
       mapped_df_with_data
     Output
-      # A tibble: 61 x 2
+      # A tibble: 60 x 2
          LHN_Name                     values
          <chr>                         <dbl>
-       1 Australian Capital Territory   2.62
-       2 Barwon                         5.16
-       3 Bayside Peninsula             -3.08
-       4 Brimbank Melton               -1.97
-       5 Cairns and Hinterland         -3.10
-       6 Central Adelaide               5.34
-       7 Central Australia (NT)         7.99
-       8 Central Coast (NSW)           -2.95
-       9 Central Highlands             -2.97
-      10 Central Queensland             3.94
-      # i 51 more rows
+       1 Australian Capital Territory -0.418
+       2 Barwon                        6.55 
+       3 Bayside Peninsula            -2.77 
+       4 Brimbank Melton               1.77 
+       5 Cairns and Hinterland         1.17 
+       6 Central Adelaide              5.54 
+       7 Central Australia (NT)       -3.33 
+       8 Central Coast (NSW)          -2.95 
+       9 Central Highlands            -2.36 
+      10 Central Queensland            4.75 
+      # i 50 more rows
 
 # test mapping with custom geo
 
     Code
       mapped_data
     Output
-      # A tibble: 61 x 2
+      # A tibble: 60 x 2
          LHN_Name                     values
          <chr>                         <dbl>
        1 Australian Capital Territory  5.02 
@@ -76,27 +96,27 @@
        8 Central Coast (NSW)           1.42 
        9 Central Highlands            -1.92 
       10 Central Queensland           -0.649
-      # i 51 more rows
+      # i 50 more rows
 
 # mapping using created correspondence tables when abs ones aren't available
 
     Code
       mapped_df_with_data
     Output
-      # A tibble: 61 x 2
-         LHN_Name                       values
-         <chr>                           <dbl>
-       1 Australian Capital Territory  10.7   
-       2 Barwon                       -10.1   
-       3 Bayside Peninsula             -7.31  
-       4 Brimbank Melton              -10.0   
-       5 Cairns and Hinterland         -5.73  
-       6 Central Adelaide               0.0546
-       7 Central Australia (NT)        -1.71  
-       8 Central Coast (NSW)           -1.21  
-       9 Central Highlands             -8.69  
-      10 Central Queensland            -5.94  
-      # i 51 more rows
+      # A tibble: 60 x 2
+         LHN_Name                      values
+         <chr>                          <dbl>
+       1 Australian Capital Territory   8.83 
+       2 Barwon                       -10.1  
+       3 Bayside Peninsula             -7.31 
+       4 Brimbank Melton              -10.0  
+       5 Cairns and Hinterland         -4.33 
+       6 Central Adelaide               0.494
+       7 Central Australia (NT)        -1.71 
+       8 Central Coast (NSW)           -1.21 
+       9 Central Highlands             -8.69 
+      10 Central Queensland            -6.87 
+      # i 50 more rows
 
 # grouping works
 
@@ -166,16 +186,16 @@
       # A tibble: 200 x 2
          sa3_code_2016 random_vals
          <chr>               <dbl>
-       1 10103               0.896
-       2 10104              -0.230
-       3 10105               0.837
-       4 10201              -1.75 
-       5 10202               1.69 
-       6 10302               0.865
-       7 10304              -0.151
-       8 10304              -1.45 
-       9 10401               0.643
-      10 10402               0.483
+       1 10103             -0.832 
+       2 10104              1.75  
+       3 10105              0.983 
+       4 10201              0.885 
+       5 10202             -0.0346
+       6 10302              1.13  
+       7 10304              0.194 
+       8 10304             -0.105 
+       9 10401             -0.935 
+      10 10402              1.25  
       # i 190 more rows
 
 ---

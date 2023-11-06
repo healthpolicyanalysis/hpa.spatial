@@ -23,8 +23,8 @@
     Code
       res$tbl
     Output
-      # A tibble: 2,238 x 3
-      # Groups:   sa2_code_2011 [2,165]
+      # A tibble: 2,263 x 3
+      # Groups:   sa2_code_2011 [2,196]
          sa2_code_2011 LHN_Name                ratio
          <chr>         <chr>                   <dbl>
        1 101011001     Southern NSW         1       
@@ -37,14 +37,14 @@
        8 101011006     Murrumbidgee         1       
        9 101021007     Southern NSW         1       
       10 101021008     Southern NSW         1       
-      # i 2,228 more rows
+      # i 2,253 more rows
 
 # can get CG using input polygons rather than areas/years
 
     Code
       tbl
     Output
-      # A tibble: 433 x 3
+      # A tibble: 420 x 3
       # Groups:   sa3_code_2016 [340]
          sa3_code_2016 LHN_Name                ratio
          <chr>         <chr>                   <dbl>
@@ -58,5 +58,5 @@
        8 10106         Southern NSW         0.496   
        9 10201         Central Coast (NSW)  1       
       10 10202         Central Coast (NSW)  1       
-      # i 423 more rows
+      # i 410 more rows
 
