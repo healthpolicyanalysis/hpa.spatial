@@ -19,7 +19,7 @@
       10 301021011     301021011         1
       # i 545 more rows
 
----
+# test mapping works for non-standard geographies
 
     Code
       sa2_to_lhn_tbl

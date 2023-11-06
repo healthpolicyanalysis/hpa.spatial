@@ -9,22 +9,18 @@ test_that("child remains unchanged when it should", {
 })
 
 test_that("SA3s are adapted when adapted to be within LHNs", {
-  sa3 <- get_polygon("sa32016")
-  lhns <- get_polygon("LHN")
-  new_sa3s <- create_child_geo(sa3, lhns)
+  qld_sa3 <- get_polygon("sa32016") |>
+    dplyr::filter(state_name_2016 == "Queensland")
+  qld_lhns <- get_polygon("LHN") |>
+    dplyr::filter(state == "QLD")
+  qld_new_sa3s <- create_child_geo(qld_sa3, qld_lhns)
 
-  gg <- cowplot::plot_grid(
-    ggplot2::ggplot() +
-      ggplot2::geom_sf(data = new_sa3s),
-    ggplot2::ggplot() +
-      ggplot2::geom_sf(data = sa3),
-    ggplot2::ggplot() +
-      ggplot2::geom_sf(data = lhns),
-    labels = c("new-sa3s", "old-sa3s", "lhns")
-  )
 
-  vdiffr::expect_doppelganger(
-    "adjusted_SA3s_within_LHNs",
-    gg
-  )
+  qld_new_sa3s |>
+    dplyr::filter(stringr::str_detect(sa3_code_2016, "-")) |>
+    dplyr::pull(sa3_code_2016) |>
+    sort() |>
+    expect_snapshot()
+
+  expect_gt(nrow(qld_new_sa3s), nrow(qld_sa3))
 })

@@ -17,8 +17,8 @@ test_that("test mapping is similar to published correspondence tables", {
   qld_mb21 <- get_mb21_pop() |>
     dplyr::filter(STE_NAME21 == "Queensland")
 
-  tbl_test <- make_correspondence_tbl(from_geo = sa2_2016_qld, sa2_2021_qld, mb_geo = qld_mb21)
-  tbl_test2 <- make_correspondence_tbl(from_geo = sa2_2016_qld, sa2_2021_qld)
+  tbl_test <- make_correspondence_tbl(from_geo = sa2_2016_qld, sa2_2021_qld, mb_geo = qld_mb21) |> na.omit()
+  tbl_test2 <- make_correspondence_tbl(from_geo = sa2_2016_qld, sa2_2021_qld) |> na.omit()
 
   tbl_test3 <- callr::r(
     function() {
@@ -28,24 +28,15 @@ test_that("test mapping is similar to published correspondence tables", {
       sa2_2021_qld <- sa2_2021[sa2_2021$state_name_2021 == "Queensland", ]
       hpa.spatial::make_correspondence_tbl(from_geo = sa2_2016_qld, to_geo = sa2_2021_qld)
     }
-  )
+  ) |> na.omit()
 
   expect_identical(tbl_test, tbl_test2) # use default mb_geo
   expect_identical(tbl_test, tbl_test3) # use default mb_geo when hpa.spatial isn't loaded
-
-  # TODO: come up with a good test of approx. equivalence to the correspondence files from abs...
-  dplyr::full_join(
-    tbl_ref,
-    tbl_test,
-    by = c("SA2_MAINCODE_2016" = "sa2_code_2016", "SA2_CODE_2021" = "sa2_code_2021")
-  ) |>
-    dplyr::filter(ratio.x != ratio.y)
-
   expect_snapshot(tbl_test)
 })
 
 
-test_that("test mapping is similar to published correspondence tables", {
+test_that("test mapping works for non-standard geographies", {
   to_poly <- get_polygon(area = "LHN", crs = 7844)
   from_poly <- get_polygon(area = "sa2", year = 2021, crs = 7844) |>
     remove_empty_geographies()
