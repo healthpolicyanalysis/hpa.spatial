@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# hpa.spatial <a href='https://healthpolicyanalysis.github.io/hpa.spatial/'><img src='man/figures/hex.png' align="right" height="139" /></a>
+# hpa.spatial <a href='https://healthpolicyanalysis.github.io/hpa.spatial/'><img src='man/figures/hex.png' align="right" style="height:150px"/></a>
 
 <!-- badges: start -->
 
