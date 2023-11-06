@@ -12,6 +12,10 @@
 * workflow: add github action workflows for checking package (check-standard) and
   making a github pages website (pkgdown).
 
+* bug fix: `map_data_with_correspondence()` would get confused when a vector
+  object is used in combination with `.data`. Now the vector is attempted to be 
+  evaluated and if that errors, it accesses it from `.data`.
+
 # hpa.spatial 0.2.8
 
 * allow user to get Modified Monash Model data (for SA1, 2016 ed.) using 

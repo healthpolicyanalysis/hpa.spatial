@@ -88,7 +88,12 @@ map_data_with_correspondence <- function(.data = NULL,
       if (values_name %in% names(.data)) {
         values <- dplyr::pull(.data, dplyr::all_of(values_name))
       } else {
-        values <- rlang::eval_tidy(rlang::enexpr(values), data = .data)
+        # check whether it was passed as a vector
+        values <- try(values)
+        # if not, access from .data
+        if(inherits(values, "try-error")) {
+          values <- rlang::eval_tidy(rlang::enexpr(values), data = .data)
+        }
       }
     } else {
       values <- rlang::eval_tidy(rlang::enexpr(values), data = .data)
@@ -100,7 +105,12 @@ map_data_with_correspondence <- function(.data = NULL,
       if (codes_name %in% names(.data)) {
         codes <- dplyr::pull(.data, dplyr::all_of(codes_name))
       } else {
-        codes <- rlang::eval_tidy(rlang::enexpr(codes), data = .data)
+        # check whether it was passed as a vector
+        codes <- try(codes)
+        # if not, access from .data
+        if(inherits(codes, "try-error")) {
+          codes <- rlang::eval_tidy(rlang::enexpr(codes), data = .data)
+        }
       }
     } else {
       codes <- rlang::eval_tidy(rlang::enexpr(codes), data = .data)
