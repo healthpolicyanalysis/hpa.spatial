@@ -1,3 +1,5 @@
+# hpa.spatial (development version)
+
 # hpa.spatial 0.2.9
 
 * use open-source (MIT) license.
