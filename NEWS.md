@@ -6,6 +6,9 @@
   between the polygons but all meshblocks data within have populations of zero,
   allow the match with ratio = 1.
 
+* bug fix: when using map_data_with_correspondence, avoid bug which converts 
+  `Date` grouping variables to numeric (use of `cbind.data.frame`, not `cbind`).
+
 # hpa.spatial 0.2.8
 
 * allow user to get Modified Monash Model data (for SA1, 2016 ed.) using 

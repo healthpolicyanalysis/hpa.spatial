@@ -106,7 +106,6 @@ map_data_with_correspondence <- function(.data = NULL,
       codes <- rlang::eval_tidy(rlang::enexpr(codes), data = .data)
     }
 
-    # browser()
     groups_values <- try(groups, silent = TRUE)
     groups_name <- try(as.character(substitute(groups)), silent = FALSE)
     if (inherits(groups_values, "try-error")) {
@@ -145,7 +144,7 @@ map_data_with_correspondence <- function(.data = NULL,
     }
 
     stopifnot(length(codes) == length(values))
-    groups_df <- do.call("cbind", groups)
+    groups_df <- do.call("cbind.data.frame", groups)
 
     df_res <- split(
       cbind(data.frame(codes = codes, values = values), groups_df),
@@ -392,6 +391,7 @@ adjust_correspodence_tbl <- function(tbl) {
   # for these cases, assign the ratio to be 2 before the fixing process
   # (which will affect the new value and reduce it to be 1- sum(ratio))
   # this will force the missing ratio to be the remainder of the sum of the other non-NA ratios
+  tbl <- tidyr::drop_na(tbl, !ratio)
   tbl$ratio[is.na(tbl$ratio)] <- 2
   code_col <- names(tbl)[1]
 
