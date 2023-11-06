@@ -11,13 +11,13 @@ test_that("can get CG from absmapsdata", {
 test_that("can get CG via make_correspondence_tbl() and retrieve faster a second time", {
   res <- callr::r(function() {
     t1 <- Sys.time()
-    tbl <- hpa.spatial::get_correspondence_tbl(from_area = "sa2", from_year = 2011, to_area = "LHN")
+    tbl <- hpa.spatial::get_correspondence_tbl(from_area = "sa2", from_year = 2011, to_area = "sa2", to_year = 2016)
     t2 <- Sys.time()
 
     first_call <- t2 - t1
 
     t1 <- Sys.time()
-    hpa.spatial::get_correspondence_tbl(from_area = "sa2", from_year = 2011, to_area = "LHN")
+    hpa.spatial::get_correspondence_tbl(from_area = "sa2", from_year = 2011, to_area = "sa2", to_year = 2016)
     t2 <- Sys.time()
 
     second_call <- t2 - t1
@@ -26,10 +26,14 @@ test_that("can get CG via make_correspondence_tbl() and retrieve faster a second
   })
 
   expect_lt(res$second_call, res$first_call) # second retrieval should be faster than first
-
-  expect_snapshot(res$tbl)
 })
 
+
+test_that("can get a custom CG via make_correspondence_tbl()", {
+  tbl <- get_correspondence_tbl(from_area = "sa2", from_year = 2011, to_area = "LHN")
+
+  expect_snapshot(tbl)
+})
 
 test_that("can get CG using input polygons rather than areas/years", {
   from_sa2 <- get_polygon(name = "sa32016")

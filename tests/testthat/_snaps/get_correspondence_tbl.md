@@ -18,10 +18,10 @@
       10 101021010         101021010             1
       # i 2,416 more rows
 
-# can get CG via make_correspondence_tbl() and retrieve faster a second time
+# can get a custom CG via make_correspondence_tbl()
 
     Code
-      res$tbl
+      tbl
     Output
       # A tibble: 2,263 x 3
       # Groups:   sa2_code_2011 [2,196]
