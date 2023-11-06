@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">hpa.spatial</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.8.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.9.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,10 +40,14 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="hpaspatial-development-version">hpa.spatial (development version)<a class="anchor" aria-label="anchor" href="#hpaspatial-development-version"></a></h2>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.9" id="hpaspatial-029">hpa.spatial 0.2.9<a class="anchor" aria-label="anchor" href="#hpaspatial-029"></a></h2>
 <ul><li><p>use open-source (MIT) license.</p></li>
 <li><p>bug fix: when creating a correspondence table and there is a complete match between the polygons but all meshblocks data within have populations of zero, allow the match with ratio = 1.</p></li>
 <li><p>bug fix: when using map_data_with_correspondence, avoid bug which converts <code>Date</code> grouping variables to numeric (use of <code>cbind.data.frame</code>, not <code>cbind</code>).</p></li>
 <li><p>workflow: add github action workflows for checking package (check-standard) and making a github pages website (pkgdown).</p></li>
+<li><p>bug fix: <code><a href="../reference/map_data_with_correspondence.html">map_data_with_correspondence()</a></code> would get confused when a vector object is used in combination with <code>.data</code>. Now the vector is attempted to be evaluated and if that errors, it accesses it from <code>.data</code>.</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.8" id="hpaspatial-028">hpa.spatial 0.2.8<a class="anchor" aria-label="anchor" href="#hpaspatial-028"></a></h2>

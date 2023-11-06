@@ -2,7 +2,7 @@ pandoc: 2.19.2
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles: {}
-last_built: 2023-11-06T06:05Z
+last_built: 2023-11-06T06:31Z
 urls:
   reference: https://healthpolicyanalysis.github.io/hpa.spatial/reference
   article: https://healthpolicyanalysis.github.io/hpa.spatial/articles
