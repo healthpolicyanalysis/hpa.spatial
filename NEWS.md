@@ -8,6 +8,9 @@
 
 * bug fix: when using map_data_with_correspondence, avoid bug which converts 
   `Date` grouping variables to numeric (use of `cbind.data.frame`, not `cbind`).
+  
+* workflow: add github action workflows for checking package (check-standard) and
+  making a github pages website (pkgdown).
 
 # hpa.spatial 0.2.8
 

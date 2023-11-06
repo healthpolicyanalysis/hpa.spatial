@@ -19,6 +19,7 @@ Imports:
     strayr,
     stringr,
     tibble,
+    tidyr,
     utils,
     withr
 Encoding: UTF-8
@@ -33,3 +34,4 @@ Suggests:
     testthat (>= 3.0.0),
     vdiffr
 Config/testthat/edition: 3
+URL: https://healthpolicyanalysis.github.io/hpa.spatial/

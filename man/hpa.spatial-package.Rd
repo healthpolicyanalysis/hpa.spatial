@@ -8,6 +8,13 @@
 \description{
 Data and helpful functions for spatial data analyses.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://healthpolicyanalysis.github.io/hpa.spatial/}
+}
+
+}
 \author{
 \strong{Maintainer}: Rex Parsons \email{rex.parsons@healthpolicy.com}
 
