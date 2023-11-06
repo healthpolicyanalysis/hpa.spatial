@@ -80,7 +80,7 @@ aus_plot <- ggplot() +
 
 p <- ggdraw() +
   draw_plot(aus_plot) +
-  draw_image("data-raw/HPA.png", scale = 0.7, vjust=-0.1)
+  draw_image("data-raw/HPA.png", scale = 0.4, vjust=-0.05, hjust=0)
 
 
 sticker(
@@ -88,8 +88,8 @@ sticker(
   s_x=1,
   s_y=0.8,
   s_width=1.4,
-  s_height=1.1,
-  p_color = "#003D79",
-  h_fill = "#e5929a",
-  h_color = "#003D79",
+  s_height=1,
+  p_color = "#1D2455",
+  h_fill = "#408BCA",
+  h_color = "#1D2455",
   filename="inst/figures/hex.png")
