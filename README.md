@@ -1,9 +1,11 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# hpa.spatial
+# hpa.spatial <a href='https://healthpolicyanalysis.github.io/hpa.spatial/'><img src='man/figures/hex.png' align="right" height="139" /></a>
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/healthpolicyanalysis/hpa.spatial/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/healthpolicyanalysis/hpa.spatial/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of hpa.spatial is to make relevant shape files and data easily
@@ -153,20 +155,20 @@ These can be accessed by the `"area"` or `"name"` arguments by “LHN”.
 qld_hhs <- get_polygon(area = "LHN") |> filter(state == "QLD")
 #> The data for the Local Hospital Networks (LHN) are from here: <https://hub.arcgis.com/datasets/ACSQHC::local-hospital-networks/explore>
 head(qld_hhs)
-#> Simple feature collection with 6 features and 4 fields
+#> Simple feature collection with 6 features and 3 fields
 #> Geometry type: MULTIPOLYGON
 #> Dimension:     XY
 #> Bounding box:  xmin: 141.1318 ymin: -28.36396 xmax: 153.5522 ymax: -15.90277
 #> Geodetic CRS:  GDA2020
-#> # A tibble: 6 × 5
-#>   LHN_Name              LHN_Code state STATE_CODE                       geometry
-#>   <chr>                 <chr>    <chr> <chr>                  <MULTIPOLYGON [°]>
-#> 1 Cairns and Hinterland 312      QLD   3          (((146.1522 -17.99844, 146.15…
-#> 2 Metro North (Qld)     320      QLD   3          (((152.4362 -26.46019, 152.44…
-#> 3 Metro South (Qld)     322      QLD   3          (((153.2022 -27.35289, 153.19…
-#> 4 Gold Coast            323      QLD   3          (((153.4123 -27.9313, 153.412…
-#> 5 Sunshine Coast        319      QLD   3          (((151.8027 -25.75822, 151.80…
-#> 6 West Moreton          324      QLD   3          (((152.2818 -26.45192, 152.28…
+#> # A tibble: 6 × 4
+#>   LHN_Name              state STATE_CODE                                geometry
+#>   <chr>                 <fct> <chr>                           <MULTIPOLYGON [°]>
+#> 1 Cairns and Hinterland QLD   3          (((146.1522 -17.99844, 146.1524 -17.99…
+#> 2 Metro North (Qld)     QLD   3          (((152.4362 -26.46019, 152.4407 -26.46…
+#> 3 Metro South (Qld)     QLD   3          (((153.2022 -27.35289, 153.192 -27.367…
+#> 4 Gold Coast            QLD   3          (((153.4123 -27.9313, 153.4128 -27.931…
+#> 5 Sunshine Coast        QLD   3          (((151.8027 -25.75822, 151.8043 -25.75…
+#> 6 West Moreton          QLD   3          (((152.2818 -26.45192, 152.2829 -26.45…
 
 qld_hhs |>
   ggplot() +
@@ -196,7 +198,6 @@ map_data_with_correspondence(
   value_type = "units"
 )
 #> # A tibble: 2 × 2
-#> # Rowwise: 
 #>   SA2_MAINCODE_2016 values
 #>   <chr>              <dbl>
 #> 1 107011547             10
@@ -217,7 +218,6 @@ map_data_with_correspondence(
   to_year = 2016,
   value_type = "aggs"
 )
-#> Reading file found in /tmp/Rtmp7qsyPa
 #> # A tibble: 5 × 2
 #>   SA2_MAINCODE_2016 values
 #>   <chr>              <dbl>
@@ -260,7 +260,6 @@ sa3_counts <- map_data_with_correspondence(
   value_type = "aggs"
 ) |>
   rename(patient_counts = values)
-#> Reading file found in /tmp/Rtmp7qsyPa
 
 sa3_2016 <- get_polygon("sa32016") |>
   left_join(sa3_counts)
