@@ -279,6 +279,9 @@ map_data_with_correspondence <- function(.data = NULL,
   ))
 
   correspondence_tbl <- rlang::eval_tidy(call)
+  # not all the sum of the ratios add up to 1 in the correspondence tables.
+  # For those that don't, add/subtract the difference from the majority target code by adjust_correspondence_tbl()
+  correspondence_tbl <- adjust_correspodence_tbl(correspondence_tbl)
 
   # remove codes that aren't in the correspondence table
   bad_codes <- codes[!codes %in% correspondence_tbl[[1]]]
@@ -335,9 +338,7 @@ map_data_with_correspondence <- function(.data = NULL,
   if (value_type == "aggs") {
     stopifnot(length(codes) == length(unique(codes)))
 
-    # not all the sum of the ratios add up to 1 in the correspondence tables.
-    # For those that don't, add/subtract the difference from the majority target code by adjust_correspondence_tbl()
-    correspondence_tbl <- adjust_correspodence_tbl(correspondence_tbl)
+
     mapped_df <-
       df |>
       dplyr::left_join(correspondence_tbl, by = c("codes" = names(correspondence_tbl)[1])) |>
