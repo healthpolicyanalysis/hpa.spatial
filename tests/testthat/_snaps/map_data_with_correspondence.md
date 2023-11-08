@@ -63,60 +63,60 @@
     Code
       mapped_df_with_data
     Output
-      # A tibble: 60 x 2
+      # A tibble: 65 x 2
          LHN_Name                     values
          <chr>                         <dbl>
        1 Australian Capital Territory -0.418
-       2 Barwon                        6.55 
-       3 Bayside Peninsula            -2.77 
-       4 Brimbank Melton               1.77 
-       5 Cairns and Hinterland         1.17 
-       6 Central Adelaide              5.54 
-       7 Central Australia (NT)       -3.33 
-       8 Central Coast (NSW)          -2.95 
-       9 Central Highlands            -2.36 
-      10 Central Queensland            4.75 
-      # i 50 more rows
+       2 Barossa Hills Fleurieu        5.59 
+       3 Barwon                        6.55 
+       4 Bayside Peninsula            -2.77 
+       5 Brimbank Melton               1.77 
+       6 Cairns and Hinterland         1.17 
+       7 Central Adelaide              5.52 
+       8 Central Australia (NT)       -3.33 
+       9 Central Coast (NSW)          -2.95 
+      10 Central Highlands            -2.36 
+      # i 55 more rows
 
 # test mapping with custom geo
 
     Code
       mapped_data
     Output
-      # A tibble: 60 x 2
+      # A tibble: 65 x 2
          LHN_Name                     values
          <chr>                         <dbl>
-       1 Australian Capital Territory  5.02 
-       2 Barwon                        1.90 
-       3 Bayside Peninsula            -1.76 
-       4 Brimbank Melton               2.07 
-       5 Cairns and Hinterland         2.48 
-       6 Central Adelaide             -1.97 
-       7 Central Australia (NT)       -0.237
-       8 Central Coast (NSW)           1.42 
-       9 Central Highlands            -1.92 
-      10 Central Queensland           -0.649
-      # i 50 more rows
+       1 Australian Capital Territory   1.93
+       2 Barossa Hills Fleurieu        -1.24
+       3 Barwon                         1.90
+       4 Bayside Peninsula             -1.76
+       5 Brimbank Melton                2.07
+       6 Cairns and Hinterland          2.48
+       7 Central Adelaide              -1.97
+       8 Central Australia (NT)         4.26
+       9 Central Coast (NSW)            1.42
+      10 Central Highlands             -1.92
+      # i 55 more rows
 
 # mapping using created correspondence tables when abs ones aren't available
 
     Code
       mapped_df_with_data
     Output
-      # A tibble: 60 x 2
+      # A tibble: 65 x 2
          LHN_Name                      values
          <chr>                          <dbl>
        1 Australian Capital Territory   8.83 
-       2 Barwon                       -10.1  
-       3 Bayside Peninsula             -7.31 
-       4 Brimbank Melton              -10.0  
-       5 Cairns and Hinterland         -4.33 
-       6 Central Adelaide               0.494
-       7 Central Australia (NT)        -1.71 
-       8 Central Coast (NSW)           -1.21 
-       9 Central Highlands             -8.69 
-      10 Central Queensland            -6.87 
-      # i 50 more rows
+       2 Barossa Hills Fleurieu        -2.56 
+       3 Barwon                       -10.1  
+       4 Bayside Peninsula             -7.31 
+       5 Brimbank Melton              -10.0  
+       6 Cairns and Hinterland         -4.33 
+       7 Central Adelaide               0.490
+       8 Central Australia (NT)        -1.71 
+       9 Central Coast (NSW)           -1.21 
+      10 Central Highlands             -8.69 
+      # i 55 more rows
 
 # grouping works
 

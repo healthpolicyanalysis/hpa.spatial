@@ -1,5 +1,7 @@
 # hpa.spatial (development version)
 
+* update testing snaps after LHN polygon was updated on `{hpa.spatial.data}`
+
 # hpa.spatial 0.2.9
 
 * use open-source (MIT) license.
