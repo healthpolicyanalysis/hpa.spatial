@@ -2,6 +2,8 @@
 
 * update testing snaps after LHN polygon was updated on `{hpa.spatial.data}`
 
+* create vignettes
+
 # hpa.spatial 0.2.9
 
 * use open-source (MIT) license.

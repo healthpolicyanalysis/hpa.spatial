@@ -31,8 +31,11 @@ Suggests:
     callr,
     cowplot,
     ggplot2,
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0),
     vdiffr
 Remotes: runapp-aus/strayr
 Config/testthat/edition: 3
 URL: https://healthpolicyanalysis.github.io/hpa.spatial/
+VignetteBuilder: knitr
