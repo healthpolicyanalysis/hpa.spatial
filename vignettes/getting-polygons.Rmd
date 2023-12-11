@@ -16,4 +16,47 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(hpa.spatial)
+library(dplyr)
+library(ggplot2)
+```
+
+`get_polygon()` works very similarly to `?strayr::read_absmap()` and it has access to all the same shape files but also has access to additional data from [`{hpa.spatial.data}`](https://github.com/healthpolicyanalysis/hpa.spatial.data).
+
+```{r}
+quick_plot <- function(poly) {
+  ggplot() + 
+    geom_sf(data=poly) +
+    theme_bw()
+}
+```
+
+```{r, warning=FALSE}
+get_polygon("sa22016") |> quick_plot()
+```
+
+```{r, warning=FALSE}
+get_polygon("LHN") |> quick_plot()
+```
+
+```{r, warning=FALSE}
+get_polygon("PHN") |> quick_plot()
+```
+
+It includes an argument, `simplify_keep`, which allows the user to simplify shape files (which is helpful when being used in interactive maps to reduce load time).
+
+```{r, fig.show='hold', warning=FALSE}
+sa2_2016 <- get_polygon(area = "sa2", year = 2016)
+sa2_2016_simple <- get_polygon(area = "sa2", year = 2016, simplify_keep = 0.1)
+
+sa2_2016 |>
+  filter(gcc_name_2016 == "Greater Brisbane") |>
+  quick_plot() +
+  scale_x_continuous(limits = c(152.9, 153.1)) +
+  scale_y_continuous(limits = c(-27.4, -27.6)) 
+
+sa2_2016_simple |>
+  filter(gcc_name_2016 == "Greater Brisbane") |>
+  quick_plot() +
+  scale_x_continuous(limits = c(152.9, 153.1)) +
+  scale_y_continuous(limits = c(-27.4, -27.6)) 
 ```
