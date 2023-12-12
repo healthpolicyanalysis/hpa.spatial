@@ -30,13 +30,13 @@ test_that("can get CG via make_correspondence_tbl() and retrieve faster a second
 
 
 test_that("can get a custom CG via make_correspondence_tbl()", {
-  tbl <- get_correspondence_tbl(from_area = "sa2", from_year = 2011, to_area = "LHN")
+  tbl <- suppressWarnings(get_correspondence_tbl(from_area = "sa2", from_year = 2011, to_area = "LHN"))
 
   expect_snapshot(tbl)
 })
 
 test_that("can get CG using input polygons rather than areas/years", {
-  from_sa2 <- get_polygon(name = "sa32016")
+  from_sa2 <- suppressWarnings(get_polygon(name = "sa32016", crs = 7844))
   to_lhn <- get_polygon(name = "LHN")
 
   tbl <- get_correspondence_tbl(

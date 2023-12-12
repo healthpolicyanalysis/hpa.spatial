@@ -136,7 +136,7 @@ test_that("mapping using user-provided polygons", {
 
 
 test_that("test mapping with custom geo", {
-  sa3 <- get_polygon("sa32016")
+  sa3 <- suppressWarnings(get_polygon("sa32016", crs = 7844))
   lhns <- get_polygon("LHN")
   new_sa3s <- create_child_geo(sa3, lhns)
 
