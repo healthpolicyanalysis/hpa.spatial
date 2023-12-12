@@ -327,18 +327,20 @@ map_data_with_correspondence <- function(.data = NULL,
         sum_ratio <- sum(mapping_df_filtered[[3]], na.rm = TRUE)
         mapping_df_filtered[is.na(mapping_df_filtered[[3]]), 3] <- (1 - sum_ratio) / na_count
       }
-      if (is.null(seed)) {
-        sample(mapping_df_filtered[[2]], size = 1, prob = mapping_df_filtered[[3]])
-      } else {
-        withr::with_seed(seed, {
-          sample(mapping_df_filtered[[2]], size = 1, prob = mapping_df_filtered[[3]])
-        })
-      }
+      sample(mapping_df_filtered[[2]], size = 1, prob = mapping_df_filtered[[3]])
     }
 
-    mapped_df <- df |>
-      dplyr::rowwise() |>
-      dplyr::mutate(codes = f_assign_code(code = codes, mapping_df = correspondence_tbl))
+    if (is.null(seed)) {
+      mapped_df <- df |>
+        dplyr::rowwise() |>
+        dplyr::mutate(codes = f_assign_code(code = codes, mapping_df = correspondence_tbl))
+    } else {
+      withr::with_seed(seed, {
+        mapped_df <- df |>
+          dplyr::rowwise() |>
+          dplyr::mutate(codes = f_assign_code(code = codes, mapping_df = correspondence_tbl))
+      })
+    }
 
     names(mapped_df)[1] <- names(correspondence_tbl)[2]
 
