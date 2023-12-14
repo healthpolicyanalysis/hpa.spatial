@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">hpa.spatial</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.9.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.10.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,8 +75,171 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://healthpolicyanalysis.github.io/hpa.spatial/">hpa.spatial</a></span><span class="op">)</span></span></code></pre></div>
-  </main>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://healthpolicyanalysis.github.io/hpa.spatial/">hpa.spatial</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'dplyr'</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     filter, lag</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
+<div class="section level2">
+<h2 id="the-problem">The problem<a class="anchor" aria-label="anchor" href="#the-problem"></a>
+</h2>
+<p>A task that often comes up when working with spatial data is to move
+data across geographies for presentation. Aggregating up from SA2s to
+SA3s can be straight forward, but mapping data between partially (but
+not completely) overlapping geographies can be trickier. For example,
+not all SA2s are wholly contained within a single local hospital network
+(LHN). In these cases, it we may want to take a couple different
+approaches to presenting that data.</p>
+</div>
+<div class="section level2">
+<h2 id="the-solutions">The solutions<a class="anchor" aria-label="anchor" href="#the-solutions"></a>
+</h2>
+<div class="section level3">
+<h3 id="solution-1-map-data-from-one-geography-to-another-based-on-population">Solution 1: Map data from one geography to another based on
+population<a class="anchor" aria-label="anchor" href="#solution-1-map-data-from-one-geography-to-another-based-on-population"></a>
+</h3>
+<p>The Australian Bureau of Statistics (ABS) release correspondence
+tables which allow the user to estimate the proportion of cross over
+between a pair of geographies (based on residential population).</p>
+<p>These are helpful when mapping between geographies which they release
+editions for. For example, between the 2011 and 2016 edition of
+SA2s.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sa2_cg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_correspondence_tbl.html">get_correspondence_tbl</a></span><span class="op">(</span></span>
+<span>  from_area<span class="op">=</span><span class="st">"sa2"</span>, </span>
+<span>  from_year <span class="op">=</span> <span class="fl">2011</span>, </span>
+<span>  to_area <span class="op">=</span> <span class="st">"sa2"</span>, </span>
+<span>  to_year <span class="op">=</span> <span class="fl">2016</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">sa2_cg</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2,426 × 3</span></span></span>
+<span><span class="co">#&gt;    SA2_MAINCODE_2011 SA2_MAINCODE_2016 ratio</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 101011001         101051539             1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 101011002         101051540             1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 101011003         101061541             1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 101011004         101061542             1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 101011005         101061543             1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 101011006         101061544             1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 101021007         101021007             1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 101021008         101021008             1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 101021009         101021009             1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 101021010         101021010             1</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 2,416 more rows</span></span></span></code></pre></div>
+<p>Some of the SA2 codes from 2011 will be split into more than one SA2
+code in the 2016 edition.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sa2_cg</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">ratio</span> <span class="op">!=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 461 × 3</span></span></span>
+<span><span class="co">#&gt;    SA2_MAINCODE_2011 SA2_MAINCODE_2016   ratio</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 102021047         102021047         0.993  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 102021047         102021055         0.006<span style="text-decoration: underline;">58</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 104011082         104011082         1.00   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 107011130         107011545         0.482  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 107011130         107011546         0.362  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 107011130         107011547         0.157  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 107041144         107041144         1.00   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 107041149         107041548         0.449  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 107041149         107041549         0.551  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 109011172         109011172         1.00   </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 451 more rows</span></span></span></code></pre></div>
+<p>The <code><a href="../reference/map_data_with_correspondence.html">map_data_with_correspondence()</a></code> uses these
+correspondence tables to map data from one geography to another. It can
+be used to map rows of data (using the <code>ratio</code> as a
+probability of assignment to the new area). For example, if we pass two
+values from this code to <code><a href="../reference/map_data_with_correspondence.html">map_data_with_correspondence()</a></code> and
+ask it to map to the 2016 edition, these (may) be distributed across to
+different geographies. This considers each code-value pair as a single
+unit to be allocated to a new geography and is specified by the
+<code>value_type</code> argument.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/map_data_with_correspondence.html">map_data_with_correspondence</a></span><span class="op">(</span></span>
+<span>  codes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">107011130</span>, <span class="fl">107011130</span><span class="op">)</span>,</span>
+<span>  values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>,</span>
+<span>  from_area <span class="op">=</span> <span class="st">"sa2"</span>,</span>
+<span>  from_year <span class="op">=</span> <span class="fl">2011</span>,</span>
+<span>  to_area <span class="op">=</span> <span class="st">"sa2"</span>,</span>
+<span>  to_year <span class="op">=</span> <span class="fl">2016</span>, </span>
+<span>  value_type <span class="op">=</span> <span class="st">"units"</span>,</span>
+<span>  seed <span class="op">=</span> <span class="fl">2</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 2</span></span></span>
+<span><span class="co">#&gt;   SA2_MAINCODE_2016 values</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 107011545              1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 107011546              4</span></span></code></pre></div>
+<p>However, if the code-value pairs are aggregate values (i.e. number of
+car crashes in that SA2), then it would be preferable to split them and
+then aggregate up again in the new geographies. This is what happens
+when we pass “aggregate” values with
+<code>value_type = "aggs"</code></p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/map_data_with_correspondence.html">map_data_with_correspondence</a></span><span class="op">(</span></span>
+<span>  codes <span class="op">=</span> <span class="fl">107011130</span>,</span>
+<span>  values <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  from_area <span class="op">=</span> <span class="st">"sa2"</span>,</span>
+<span>  from_year <span class="op">=</span> <span class="fl">2011</span>,</span>
+<span>  to_area <span class="op">=</span> <span class="st">"sa2"</span>,</span>
+<span>  to_year <span class="op">=</span> <span class="fl">2016</span>, </span>
+<span>  value_type <span class="op">=</span> <span class="st">"aggs"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 2</span></span></span>
+<span><span class="co">#&gt;   SA2_MAINCODE_2016 values</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 107011545           4.82</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 107011546           3.62</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 107011547           1.57</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="solution-2-adjust-your-geography-so-suit-">Solution 2: Adjust your geography so suit.<a class="anchor" aria-label="anchor" href="#solution-2-adjust-your-geography-so-suit-"></a>
+</h3>
+<p>In some cases, you may be given data on the SA2 level but want to
+visualise on the LHN level. SA2s are almost always completely contained
+within an LHN but this isn’t always the case. If it’s still important to
+be able to see differences between SA2s but also differences between
+LHNs, it might be best to split those particular SA2s where they cross
+LHN boundaries.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">custom_geo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_child_geo.html">create_child_geo</a></span><span class="op">(</span></span>
+<span>  child_geo <span class="op">=</span> <span class="fu"><a href="../reference/get_polygon.html">get_polygon</a></span><span class="op">(</span><span class="st">"sa22011"</span><span class="op">)</span>,</span>
+<span>  parent_geo <span class="op">=</span> <span class="fu"><a href="../reference/get_polygon.html">get_polygon</a></span><span class="op">(</span><span class="st">"LHN"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; The data for the Local Hospital Networks (LHN) are from here: &lt;https://hub.arcgis.com/datasets/ACSQHC::local-hospital-networks/explore&gt;</span></span>
+<span></span>
+<span><span class="va">custom_geo</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">sa2_code_2011</span>, <span class="st">"210041241"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">1</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">sa2_code_2011</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">10</span>, col <span class="op">=</span> <span class="st">"transparent"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="../reference/get_polygon.html">get_polygon</a></span><span class="op">(</span><span class="st">"LHN"</span><span class="op">)</span>, <span class="va">LHN_Name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Brimbank Melton"</span>, <span class="st">"Hume Moreland"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">LHN_Name</span><span class="op">)</span>,</span>
+<span>    col <span class="op">=</span> <span class="st">"black"</span>, </span>
+<span>    linetype <span class="op">=</span> <span class="st">"dashed"</span>,</span>
+<span>    size <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>    alpha <span class="op">=</span> <span class="fl">0.4</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; The data for the Local Hospital Networks (LHN) are from here: &lt;https://hub.arcgis.com/datasets/ACSQHC::local-hospital-networks/explore&gt;</span></span></code></pre></div>
+<p><img src="mapping-data_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<p>In this graphic, the original SA2 (210041241) that crosses the LHN
+boundary (Brimbank Melton and Hume Moreland) is split into two parts (A
+and B) at the boarder.</p>
+<p>We can map data to this new geography and so that we can visualise
+differences between SA2s while maintaining a separation between
+LHNs.</p>
+</div>
+</div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
