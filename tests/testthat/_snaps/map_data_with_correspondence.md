@@ -84,18 +84,18 @@
       mapped_data
     Output
       # A tibble: 65 x 2
-         LHN_Name                     values
-         <chr>                         <dbl>
-       1 Australian Capital Territory   1.93
-       2 Barossa Hills Fleurieu        -1.24
-       3 Barwon                         1.90
-       4 Bayside Peninsula             -1.76
-       5 Brimbank Melton                2.07
-       6 Cairns and Hinterland          2.48
-       7 Central Adelaide              -1.97
-       8 Central Australia (NT)         4.26
-       9 Central Coast (NSW)            1.42
-      10 Central Highlands             -1.92
+         LHN_Name                      values
+         <chr>                          <dbl>
+       1 Australian Capital Territory  3.34  
+       2 Barossa Hills Fleurieu        1.03  
+       3 Barwon                       -1.04  
+       4 Bayside Peninsula            -1.41  
+       5 Brimbank Melton              -0.0996
+       6 Cairns and Hinterland         2.74  
+       7 Central Adelaide             -1.02  
+       8 Central Australia (NT)        1.30  
+       9 Central Coast (NSW)           1.42  
+      10 Central Highlands             4.25  
       # i 55 more rows
 
 # mapping using created correspondence tables when abs ones aren't available
