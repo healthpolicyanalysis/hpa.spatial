@@ -1,6 +1,9 @@
 # hpa.spatial (development version)
 
-* update testing snaps after LHN polygon was updated on `{hpa.spatial.data}`
+* update `create_child_geo()` to assign un-parented mesh blocks to the nearest
+  polygon from `parent_geo`.
+
+* update testing snaps after LHN polygon was updated on `{hpa.spatial.data}`.
 
 * create vignettes
 

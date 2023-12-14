@@ -62,6 +62,7 @@ create_child_geo <- function(child_geo,
     return(child_geo_orig)
   }
 
+  # browser()
   child_codes_for_splitting <- majority_portions |>
     dplyr::filter(max_ratio < minimum_majority_portions) |>
     dplyr::pull(dplyr::all_of(child_code_col))
@@ -74,6 +75,18 @@ create_child_geo <- function(child_geo,
     sf::st_filter(child_polygons_for_splitting) |>
     sf::st_join(dplyr::select(child_polygons_for_splitting, !!rlang::sym(child_code_col))) |>
     sf::st_join(dplyr::select(parent_geo, !!rlang::sym(parent_code_col)))
+
+  if (any(is.na(mb_joined[[parent_code_col]]))) {
+    message(
+      "There are some polygons in the child_geo which are not contained ",
+      "within the parent_geo. Assigning these to the nearest polygon in the parent_geo"
+    )
+    mb_nas <- mb_joined |> dplyr::filter(is.na(!!rlang::sym(parent_code_col)))
+    parent_geo_code_idx <- sf::st_nearest_feature(mb_nas, parent_geo)
+
+    mb_joined[is.na(mb_joined[[parent_code_col]]), parent_code_col] <- parent_geo[[parent_code_col]][parent_geo_code_idx]
+  }
+
 
   mb_poly <- mb_poly |>
     dplyr::select(1) |>
