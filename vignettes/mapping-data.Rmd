@@ -93,7 +93,7 @@ custom_geo <- create_child_geo(
 )
 
 custom_geo |> 
-  filter(str_detect(sa2_code_2011, "210041241")) |> 
+  filter(stringr::str_detect(sa2_code_2011, "210041241")) |> 
   ggplot() + 
   geom_sf(alpha = 1, aes(fill = sa2_code_2011), size = 10, col = "transparent") +
   geom_sf(
