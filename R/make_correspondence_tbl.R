@@ -19,7 +19,6 @@
 #'   mb_geo = get_mb21_pop()
 #' )
 make_correspondence_tbl <- function(from_geo, to_geo, mb_geo = get_mb21_pop(), ...) {
-
   mb_geo <- mb_geo |>
     dplyr::select(mb_code = 1, pop = Person)
 
@@ -36,7 +35,12 @@ make_correspondence_tbl <- function(from_geo, to_geo, mb_geo = get_mb21_pop(), .
     sf::st_join(from_geo) |>
     dplyr::as_tibble() |>
     dplyr::select(mb_code, from_code, pop) |>
-    stats::na.omit()
+    stats::na.omit() |>
+    dplyr::group_by(from_code) |>
+    dplyr::mutate(empty_pop = sum(pop) == 0) |>
+    dplyr::ungroup() |>
+    dplyr::mutate(pop = ifelse(empty_pop, 1, pop)) |>
+    dplyr::select(-empty_pop)
 
   mapped_from_mb_codes <- unique(mb_geo_from$from_code)
 

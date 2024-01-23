@@ -47,3 +47,10 @@ test_that("can get CG using input polygons rather than areas/years", {
 
   expect_snapshot(tbl)
 })
+
+test_that("correspondence table is complete - all non-NA SA2 mappings are other territories", {
+  tbl <- suppressWarnings(get_correspondence_tbl(from_area = "sa2", from_year = 2021, to_area = "LHN")) |>
+    dplyr::filter(is.na(LHN_Name))
+
+  expect_snapshot(tbl)
+})

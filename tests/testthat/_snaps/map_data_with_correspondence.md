@@ -69,7 +69,7 @@
        1 Australian Capital Territory -0.418
        2 Barossa Hills Fleurieu        5.59 
        3 Barwon                        6.55 
-       4 Bayside Peninsula            -2.77 
+       4 Bayside Peninsula            -2.04 
        5 Brimbank Melton               1.77 
        6 Cairns and Hinterland         1.17 
        7 Central Adelaide              5.52 
@@ -89,7 +89,7 @@
        1 Australian Capital Territory  3.34  
        2 Barossa Hills Fleurieu        1.03  
        3 Barwon                       -1.04  
-       4 Bayside Peninsula            -1.41  
+       4 Bayside Peninsula            -1.42  
        5 Brimbank Melton              -0.0996
        6 Cairns and Hinterland         2.74  
        7 Central Adelaide             -1.02  
@@ -109,7 +109,7 @@
        1 Australian Capital Territory   8.83 
        2 Barossa Hills Fleurieu        -2.56 
        3 Barwon                       -10.1  
-       4 Bayside Peninsula             -7.31 
+       4 Bayside Peninsula             -7.96 
        5 Brimbank Melton              -10.0  
        6 Cairns and Hinterland         -4.33 
        7 Central Adelaide               0.490
