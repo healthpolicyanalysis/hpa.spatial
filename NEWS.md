@@ -1,4 +1,4 @@
-# hpa.spatial (development version)
+# hpa.spatial 0.2.11
 
 * Ensure that SA2s can completely map to LHNs (including SA2s with zero pop).
   Includes an associated change to {hpa.spatial.data} [commit](https://github.com/healthpolicyanalysis/hpa.spatial.data/commit/b1e28f35a90af27de5078dfecfd3b43d01bc3789).
