@@ -1,5 +1,7 @@
 # hpa.spatial (development version)
 
+* only do GHA for R CMD CHECK on Windows
+
 # hpa.spatial 0.2.11
 
 * Ensure that SA2s can completely map to LHNs (including SA2s with zero pop).
