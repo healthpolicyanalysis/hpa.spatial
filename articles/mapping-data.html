@@ -6,12 +6,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="hpa.spatial">
-<title>mapping-data • hpa.spatial</title>
+<title>Mapping data across geographies • hpa.spatial</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="mapping-data">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Mapping data across geographies">
 <meta property="og:description" content="hpa.spatial">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -41,8 +41,8 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/getting-polygons.html">getting-polygons</a>
-    <a class="dropdown-item" href="../articles/mapping-data.html">mapping-data</a>
+    <a class="dropdown-item" href="../articles/getting-polygons.html">Loading polygons</a>
+    <a class="dropdown-item" href="../articles/mapping-data.html">Mapping data across geographies</a>
   </div>
 </li>
 <li class="nav-item">
@@ -65,7 +65,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>mapping-data</h1>
+      <img src="" class="logo" alt=""><h1>Mapping data across geographies</h1>
             
       
       
@@ -77,15 +77,15 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://healthpolicyanalysis.github.io/hpa.spatial/">hpa.spatial</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attaching package: 'dplyr'</span></span>
-<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     filter, lag</span></span>
-<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
+<p>“Mapping” in the title is talking about more of a
+<code>purr::map()</code> than a <code>mapview::mapview()</code> kind of
+“map”. The objective is to appropriately move data from one set of
+polygons to another. It is heavily inspired by the Australian context
+and uses population-based correspondence tables between geographies to
+perform this “mapping”.</p>
 <div class="section level2">
 <h2 id="the-problem">The problem<a class="anchor" aria-label="anchor" href="#the-problem"></a>
 </h2>
@@ -95,7 +95,9 @@ SA3s can be straight forward, but mapping data between partially (but
 not completely) overlapping geographies can be trickier. For example,
 not all SA2s are wholly contained within a single local hospital network
 (LHN). In these cases, it we may want to take a couple different
-approaches to presenting that data.</p>
+approaches to moving the data from SA2 to LHN and presenting that data.
+This also happens between editions of the ASGS, say from the 2011 to the
+2016 edition for SA2s.</p>
 </div>
 <div class="section level2">
 <h2 id="the-solutions">The solutions<a class="anchor" aria-label="anchor" href="#the-solutions"></a>
@@ -152,13 +154,14 @@ code in the 2016 edition.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 109011172         109011172         1.00   </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 451 more rows</span></span></span></code></pre></div>
 <p>The <code><a href="../reference/map_data_with_correspondence.html">map_data_with_correspondence()</a></code> uses these
-correspondence tables to map data from one geography to another. It can
-be used to map rows of data (using the <code>ratio</code> as a
-probability of assignment to the new area). For example, if we pass two
-values from this code to <code><a href="../reference/map_data_with_correspondence.html">map_data_with_correspondence()</a></code> and
-ask it to map to the 2016 edition, these (may) be distributed across to
-different geographies. This considers each code-value pair as a single
-unit to be allocated to a new geography and is specified by the
+correspondence tables to map values <strong><code>from</code></strong>
+one geography <strong><code>to</code></strong> another. It can be used
+to map rows of data (using the <code>ratio</code> as a probability of
+assignment to the new area). For example, if we pass two values from
+this code to <code><a href="../reference/map_data_with_correspondence.html">map_data_with_correspondence()</a></code> and ask it to
+map to the 2016 edition, these (may) be distributed across to different
+geographies. This considers each code-value pair as a single unit to be
+allocated to a new geography and is specified by the
 <code>value_type</code> argument.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/map_data_with_correspondence.html">map_data_with_correspondence</a></span><span class="op">(</span></span>
@@ -237,6 +240,63 @@ and B) at the boarder.</p>
 differences between SA2s while maintaining a separation between
 LHNs.</p>
 </div>
+</div>
+<div class="section level2">
+<h2 id="mapping-grouped-data">Mapping grouped data<a class="anchor" aria-label="anchor" href="#mapping-grouped-data"></a>
+</h2>
+<p>Sometimes, we may have data for groups, with values for each group
+within each geography and want to map these to a new geography.
+<code><a href="../reference/map_data_with_correspondence.html">map_data_with_correspondence()</a></code> can handle these groups
+nicely with the <code>groups</code> argument. Also in this example, we
+show off that you can pass the input data as <code>.data</code> and
+reference its columns for the <code>codes</code> and <code>values</code>
+arguments rather than passing them as vectors.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sa2_2011_data</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="../reference/get_polygon.html">get_polygon</a></span><span class="op">(</span><span class="st">"sa22011"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">sa2_code_2011</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    ages_00_to_11 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, mean <span class="op">=</span> <span class="fl">10</span>, sd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span>
+<span>    ages_12_to_24 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, mean <span class="op">=</span> <span class="fl">20</span>, sd <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>,</span>
+<span>    ages_25_to_64 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, mean <span class="op">=</span> <span class="fl">25</span>, sd <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>,</span>
+<span>    ages_65_plus <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, mean <span class="op">=</span> <span class="fl">40</span>, sd <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span></span>
+<span>    <span class="op">!</span><span class="va">sa2_code_2011</span>, </span>
+<span>    names_to <span class="op">=</span> <span class="st">"agegrp"</span>,</span>
+<span>    values_to <span class="op">=</span> <span class="st">"outcome_var"</span>,</span>
+<span>    names_transform <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html" class="external-link">str_remove</a></span><span class="op">(</span><span class="va">.x</span>, <span class="st">"ages_"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html" class="external-link">str_replace</a></span><span class="op">(</span><span class="st">"_to_"</span>, <span class="st">"-"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html" class="external-link">str_replace</a></span><span class="op">(</span><span class="st">"_plus"</span>, <span class="st">"+"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="co">#&gt; Reading sa22011 file found in /tmp/Rtmp6zL303</span></span>
+<span></span>
+<span><span class="va">sa2_2016_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/map_data_with_correspondence.html">map_data_with_correspondence</a></span><span class="op">(</span></span>
+<span>  .data <span class="op">=</span> <span class="va">sa2_2011_data</span>,</span>
+<span>  codes <span class="op">=</span> <span class="va">sa2_code_2011</span>,</span>
+<span>  values <span class="op">=</span> <span class="va">outcome_var</span>,</span>
+<span>  groups <span class="op">=</span> <span class="va">agegrp</span>,</span>
+<span>  from_area <span class="op">=</span> <span class="st">"sa2"</span>,</span>
+<span>  from_year <span class="op">=</span> <span class="fl">2011</span>,</span>
+<span>  to_area <span class="op">=</span> <span class="st">"sa2"</span>, </span>
+<span>  to_year <span class="op">=</span> <span class="fl">2016</span>,</span>
+<span>  value_type <span class="op">=</span> <span class="st">"aggs"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">sa2_2016_data</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 9,212 × 3</span></span></span>
+<span><span class="co">#&gt;    SA2_MAINCODE_2016 outcome_var agegrp</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 101021007                7.09 00-11 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 101021008                7.40 00-11 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 101021009               11.3  00-11 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 101021010                7.97 00-11 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 101021011                9.27 00-11 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 101021012                7.35 00-11 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 101031013                9.91 00-11 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 101031014                8.75 00-11 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 101031015                9.23 00-11 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 101031016               10.2  00-11 </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 9,202 more rows</span></span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

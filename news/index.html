@@ -24,8 +24,8 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/getting-polygons.html">getting-polygons</a>
-    <a class="dropdown-item" href="../articles/mapping-data.html">mapping-data</a>
+    <a class="dropdown-item" href="../articles/getting-polygons.html">Loading polygons</a>
+    <a class="dropdown-item" href="../articles/mapping-data.html">Mapping data across geographies</a>
   </div>
 </li>
 <li class="active nav-item">
@@ -47,7 +47,9 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="hpaspatial-development-version">hpa.spatial (development version)<a class="anchor" aria-label="anchor" href="#hpaspatial-development-version"></a></h2>
-<ul><li>only do GHA for R CMD CHECK on Windows</li>
+<ul><li><p>only do GHA for R CMD CHECK on Windows.</p></li>
+<li><p>update README.</p></li>
+<li><p>update vignettes.</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.11" id="hpaspatial-0211">hpa.spatial 0.2.11<a class="anchor" aria-label="anchor" href="#hpaspatial-0211"></a></h2>
@@ -57,7 +59,7 @@
 <h2 class="pkg-version" data-toc-text="0.2.10" id="hpaspatial-0210">hpa.spatial 0.2.10<a class="anchor" aria-label="anchor" href="#hpaspatial-0210"></a></h2>
 <ul><li><p>update <code><a href="../reference/create_child_geo.html">create_child_geo()</a></code> to assign un-parented mesh blocks to the nearest polygon from <code>parent_geo</code>.</p></li>
 <li><p>update testing snaps after LHN polygon was updated on <code>{hpa.spatial.data}</code>.</p></li>
-<li><p>create vignettes</p></li>
+<li><p>create vignettes.</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.9" id="hpaspatial-029">hpa.spatial 0.2.9<a class="anchor" aria-label="anchor" href="#hpaspatial-029"></a></h2>
@@ -76,7 +78,7 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.7" id="hpaspatial-027">hpa.spatial 0.2.7<a class="anchor" aria-label="anchor" href="#hpaspatial-027"></a></h2>
 <ul><li><p>allow <code><a href="../reference/map_data_with_correspondence.html">map_data_with_correspondence()</a></code> to take <code>from_geo</code> and <code>to_geo</code> rather than only areas and years. (Also requires adding <code>export_fname</code> arg, consistent with changes to <code><a href="../reference/get_correspondence_tbl.html">get_correspondence_tbl()</a></code>.)</p></li>
-<li><p>allow <code><a href="../reference/get_correspondence_tbl.html">get_correspondence_tbl()</a></code> to take <code>from_geo</code> and <code>to_geo</code> rather than only areas and years to get the polygons via <code><a href="../reference/get_polygon.html">get_polygon()</a></code>. Also allow user to specify an <code>export_fname</code> (file name) to save the correspondence table for these new tables as they can’t be named with <code>make_fname()</code></p></li>
+<li><p>allow <code><a href="../reference/get_correspondence_tbl.html">get_correspondence_tbl()</a></code> to take <code>from_geo</code> and <code>to_geo</code> rather than only areas and years to get the polygons via <code><a href="../reference/get_polygon.html">get_polygon()</a></code>. Also allow user to specify an <code>export_fname</code> (file name) to save the correspondence table for these new tables as they can’t be named with <code>make_fname()</code>.</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.6" id="hpaspatial-026">hpa.spatial 0.2.6<a class="anchor" aria-label="anchor" href="#hpaspatial-026"></a></h2>
@@ -92,7 +94,7 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.4" id="hpaspatial-024">hpa.spatial 0.2.4<a class="anchor" aria-label="anchor" href="#hpaspatial-024"></a></h2>
 <ul><li><p>use tidy evaluation on quosures to avoid problems with accessing objects passed to hpa.spatial functions that evaluate calls.</p></li>
-<li><p>save and read correspondence tables to save time particularly when a correspondence table that’s being created is being created many times over within <code><a href="../reference/map_data_with_correspondence.html">map_data_with_correspondence()</a></code> (say, when <code>groups</code> is being used)</p></li>
+<li><p>save and read correspondence tables to save time particularly when a correspondence table that’s being created is being created many times over within <code><a href="../reference/map_data_with_correspondence.html">map_data_with_correspondence()</a></code> (say, when <code>groups</code> is being used).</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.3" id="hpaspatial-023">hpa.spatial 0.2.3<a class="anchor" aria-label="anchor" href="#hpaspatial-023"></a></h2>
