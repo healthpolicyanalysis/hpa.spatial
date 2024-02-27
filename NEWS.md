@@ -1,6 +1,8 @@
 # hpa.spatial (development version)
 
-* only do GHA for R CMD CHECK on Windows
+* only do GHA for R CMD CHECK on Windows.
+
+* update README.
 
 # hpa.spatial 0.2.11
 
@@ -14,7 +16,7 @@
 
 * update testing snaps after LHN polygon was updated on `{hpa.spatial.data}`.
 
-* create vignettes
+* create vignettes.
 
 # hpa.spatial 0.2.9
 
@@ -55,7 +57,7 @@
 * allow `get_correspondence_tbl()` to take `from_geo` and `to_geo` rather than
   only areas and years to get the polygons via `get_polygon()`. Also allow user
   to specify an `export_fname` (file name) to save the correspondence table for 
-  these new tables as they can't be named with `make_fname()`
+  these new tables as they can't be named with `make_fname()`.
 
 # hpa.spatial 0.2.6
 
@@ -85,7 +87,7 @@
 
 * save and read correspondence tables to save time particularly when a 
   correspondence table that's being created is being created many times over
-  within `map_data_with_correspondence()` (say, when `groups` is being used)
+  within `map_data_with_correspondence()` (say, when `groups` is being used).
 
 # hpa.spatial 0.2.3
 

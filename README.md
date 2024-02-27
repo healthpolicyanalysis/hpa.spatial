@@ -143,13 +143,14 @@ sa2_2016_simple |>
 
 <img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
 
-### LHN’s shapefiles
+### Other shapefiles
 
 Aside from the built in shapefiles that are hosted by `{absmapsdata}`,
-`get_polygon()` can also access (most) shapefiles for local hospital
-networks (LHNs).
+`get_polygon()` can also access shapefiles for local hospital networks
+(LHNs) and Primary Health Networks (PHNs).
 
-These can be accessed by the `"area"` or `"name"` arguments by “LHN”.
+For example, these can be accessed by the `"area"` or `"name"` arguments
+as “LHN”.
 
 ``` r
 qld_hhs <- get_polygon(area = "LHN") |> filter(state == "QLD")
@@ -158,17 +159,17 @@ head(qld_hhs)
 #> Simple feature collection with 6 features and 3 fields
 #> Geometry type: MULTIPOLYGON
 #> Dimension:     XY
-#> Bounding box:  xmin: 141.1318 ymin: -28.36396 xmax: 153.5522 ymax: -15.90277
+#> Bounding box:  xmin: 137.9975 ymin: -29.1779 xmax: 153.5522 ymax: -15.90277
 #> Geodetic CRS:  GDA2020
 #> # A tibble: 6 × 4
 #>   LHN_Name              state STATE_CODE                                geometry
 #>   <chr>                 <fct> <chr>                           <MULTIPOLYGON [°]>
 #> 1 Cairns and Hinterland QLD   3          (((146.1522 -17.99844, 146.1524 -17.99…
-#> 2 Metro North (Qld)     QLD   3          (((152.4362 -26.46019, 152.4407 -26.46…
-#> 3 Metro South (Qld)     QLD   3          (((153.2022 -27.35289, 153.192 -27.367…
-#> 4 Gold Coast            QLD   3          (((153.4123 -27.9313, 153.4128 -27.931…
-#> 5 Sunshine Coast        QLD   3          (((151.8027 -25.75822, 151.8043 -25.75…
-#> 6 West Moreton          QLD   3          (((152.2818 -26.45192, 152.2829 -26.45…
+#> 2 Central Queensland    QLD   3          (((150.0524 -22.13545, 150.0573 -22.13…
+#> 3 Central West (Qld)    QLD   3          (((143.2272 -21.31218, 143.2364 -21.31…
+#> 4 Darling Downs         QLD   3          (((150.245 -25.4072, 150.2493 -25.4081…
+#> 5 Gold Coast            QLD   3          (((153.4123 -27.9313, 153.4128 -27.931…
+#> 6 Mackay                QLD   3          (((147.7665 -19.70548, 147.7666 -19.70…
 
 qld_hhs |>
   ggplot() +
@@ -185,7 +186,7 @@ editions.
 
 When used with unit level data, it will randomly allocate the value to
 the code of the updated edition based on the population-weighted
-proportions (as probabiilties) on the relevant correspondence table.
+proportions (as probabilities) on the relevant correspondence table.
 
 ``` r
 map_data_with_correspondence(
@@ -204,7 +205,7 @@ map_data_with_correspondence(
 #> 2 107041548             10
 ```
 
-When used with aggregate data, it will split the value amongst the codes
+When used with aggregate data, it will split the value among the codes
 of the updated edition based on the population-weighted proportions on
 the relevant correspondence table.
 
@@ -239,17 +240,6 @@ of ASGS and to a more recent edition.
 sa2_2011 <- get_polygon("sa22011")
 sa2_2011$patient_counts <- rpois(n = nrow(sa2_2011), lambda = 30)
 
-sa2_2011 |>
-  ggplot() +
-  geom_sf(aes(fill = patient_counts)) +
-  ggtitle("Patient counts by SA2 (2011)")
-```
-
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
-
-``` r
-
-
 sa3_counts <- map_data_with_correspondence(
   codes = sa2_2011$sa2_code_2011,
   values = sa2_2011$patient_counts,
@@ -264,11 +254,20 @@ sa3_counts <- map_data_with_correspondence(
 sa3_2016 <- get_polygon("sa32016") |>
   left_join(sa3_counts)
 #> Joining with `by = join_by(sa3_code_2016)`
+```
+
+``` r
+sa2_2011 |>
+  ggplot() +
+  geom_sf(aes(fill = patient_counts)) +
+  ggtitle("Patient counts by SA2 (2011)") + 
+  theme_bw()
 
 sa3_2016 |>
   ggplot() +
   geom_sf(aes(fill = patient_counts)) +
-  ggtitle("Patient counts by SA3 (2016)")
+  ggtitle("Patient counts by SA3 (2016)") + 
+  theme_bw()
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-2.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-11-1.png" width="100%" />

@@ -112,11 +112,11 @@ p2 <- sa2_2016_simple |>
 gridExtra::grid.arrange(p1, p2, ncol = 2)
 ```
 
-### LHN's shapefiles
+### Other shapefiles
 
-Aside from the built in shapefiles that are hosted by `{absmapsdata}`, `get_polygon()` can also access (most) shapefiles for local hospital networks (LHNs).
+Aside from the built in shapefiles that are hosted by `{absmapsdata}`, `get_polygon()` can also access shapefiles for local hospital networks (LHNs) and Primary Health Networks (PHNs).
 
-These can be accessed by the `"area"` or `"name"` arguments by "LHN".
+For example, these can be accessed by the `"area"` or `"name"` arguments as "LHN".
 
 ```{r, warning=FALSE}
 qld_hhs <- get_polygon(area = "LHN") |> filter(state == "QLD")
@@ -133,7 +133,7 @@ qld_hhs |>
 
 `map_data_with_correspondence()` is used to map data across ASGS editions.
 
-When used with unit level data, it will randomly allocate the value to the code of the updated edition based on the population-weighted proportions (as probabiilties) on the relevant correspondence table.
+When used with unit level data, it will randomly allocate the value to the code of the updated edition based on the population-weighted proportions (as probabilities) on the relevant correspondence table.
 
 ```{r}
 map_data_with_correspondence(
@@ -147,7 +147,7 @@ map_data_with_correspondence(
 )
 ```
 
-When used with aggregate data, it will split the value amongst the codes of the updated edition based on the population-weighted proportions on the relevant correspondence table.
+When used with aggregate data, it will split the value among the codes of the updated edition based on the population-weighted proportions on the relevant correspondence table.
 
 ```{r}
 map_data_with_correspondence(
@@ -169,12 +169,6 @@ Suppose we have counts of patients within SA2s (2011) and we want to aggregate t
 sa2_2011 <- get_polygon("sa22011")
 sa2_2011$patient_counts <- rpois(n = nrow(sa2_2011), lambda = 30)
 
-sa2_2011 |>
-  ggplot() +
-  geom_sf(aes(fill = patient_counts)) +
-  ggtitle("Patient counts by SA2 (2011)")
-
-
 sa3_counts <- map_data_with_correspondence(
   codes = sa2_2011$sa2_code_2011,
   values = sa2_2011$patient_counts,
@@ -188,12 +182,35 @@ sa3_counts <- map_data_with_correspondence(
 
 sa3_2016 <- get_polygon("sa32016") |>
   left_join(sa3_counts)
+```
+
+```{r, eval=FALSE}
+sa2_2011 |>
+  ggplot() +
+  geom_sf(aes(fill = patient_counts)) +
+  ggtitle("Patient counts by SA2 (2011)") + 
+  theme_bw()
 
 sa3_2016 |>
   ggplot() +
   geom_sf(aes(fill = patient_counts)) +
-  ggtitle("Patient counts by SA3 (2016)")
+  ggtitle("Patient counts by SA3 (2016)") + 
+  theme_bw()
 ```
 
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+p1 <- sa2_2011 |>
+  ggplot() +
+  geom_sf(aes(fill = patient_counts)) +
+  ggtitle("Patient counts by SA2 (2011)") + 
+  theme_bw()
 
+p2 <- sa3_2016 |>
+  ggplot() +
+  geom_sf(aes(fill = patient_counts)) +
+  ggtitle("Patient counts by SA3 (2016)") + 
+  theme_bw()
+
+gridExtra::grid.arrange(p1, p2, ncol = 1)
+```
 
