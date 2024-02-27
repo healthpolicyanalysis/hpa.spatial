@@ -1,5 +1,5 @@
 ---
-title: "getting-polygons"
+title: "Loading polygons"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{getting-polygons}
@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, message=FALSE}
 library(hpa.spatial)
 library(dplyr)
 library(ggplot2)
