@@ -4,7 +4,7 @@
 \name{hpa.spatial-package}
 \alias{hpa.spatial}
 \alias{hpa.spatial-package}
-\title{hpa.spatial: Data and helpful functions for spatial data analyses for Australian geometries}
+\title{hpa.spatial: (Australian) Data Access and Helpful Functions for Spatial Data Analyses}
 \description{
 Data and helpful functions for spatial data analyses.
 }

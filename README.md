@@ -9,14 +9,18 @@
 <!-- badges: end -->
 
 The goal of hpa.spatial is to make relevant shape files and data easily
-available and include helpful functions for analysis of spatial data.
+available and include helpful functions for the analysis of spatial
+data, focusing on the Australian (health) context.
 
 ## Notes on other packages
 
 Most shape files are available within
 [`{absmapsdata}`](https://github.com/wfmackey/absmapsdata) and can be
-(lazily) loaded using
-[`{strayr}`](https://github.com/runapp-aus/strayr).
+loaded using [`{strayr}`](https://github.com/runapp-aus/strayr).
+
+The way that data are accessed with hpa.spatial both uses these packages
+as well as replicating their approach to access data from
+[`{hpa.spatial.data}`](https://github.com/healthpolicyanalysis/hpa.spatial.data).
 
 ## Installation
 

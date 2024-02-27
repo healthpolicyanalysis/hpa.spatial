@@ -1,7 +1,6 @@
 Type: Package
 Package: hpa.spatial
-Title: Data and helpful functions for spatial data analyses for Australian
-    geometries
+Title: (Australian) Data Access and Helpful Functions for Spatial Data Analyses
 Version: 0.2.11.9000
 Authors@R: 
     person("Rex", "Parsons", , "rex.parsons@healthpolicy.com", role = c("aut", "cre"))
