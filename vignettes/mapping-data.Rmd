@@ -17,6 +17,8 @@ knitr::opts_chunk$set(
 ```{r setup, message=FALSE}
 library(hpa.spatial)
 library(dplyr)
+library(tidyr)
+library(stringr)
 library(ggplot2)
 ```
 
@@ -116,20 +118,21 @@ We can map data to this new geography and so that we can visualise differences b
 Sometimes, we may have data for groups, with values for each group within each geography and want to map these to a new geography. `map_data_with_correspondence()` can handle these groups nicely with the `groups` argument. Also in this example, we show off that you can pass the input data as `.data` and reference its columns for the `codes` and `values` arguments rather than passing them as vectors.
 
 ```{r}
-sa2_2011_data <- get_polygon("sa22011") |> 
+sa2_2011_data <-
+  get_polygon("sa22011") |> 
   as_tibble() |> 
   select(sa2_code_2011) |> 
   mutate(
     ages_00_to_11 = rnorm(n = max(n()), mean = 10, sd = 2),
-    ages_12_to_24 = rnorm(max(n()), mean = 20, sd = 4),
-    ages_25_to_64 = rnorm(max(n()), mean = 25, sd = 5),
-    ages_65_plus = rnorm(max(n()), mean = 40, sd = 8)
+    ages_12_to_24 = rnorm(n = max(n()), mean = 20, sd = 4),
+    ages_25_to_64 = rnorm(n = max(n()), mean = 25, sd = 5),
+    ages_65_plus = rnorm(n = max(n()), mean = 40, sd = 8)
   ) |> 
   pivot_longer(
     !sa2_code_2011, 
     names_to = "agegrp",
     values_to = "outcome_var",
-    names_transform = \(x) str_remove(x, "ages_") |> str_replace("_to_", "-") |> str_replace("_plus", "+")
+    names_transform = ~ str_remove(.x, "ages_") |> str_replace("_to_", "-") |> str_replace("_plus", "+")
   )
 
 sa2_2016_data <- map_data_with_correspondence(
