@@ -1,5 +1,5 @@
 ---
-title: "mapping-data"
+title: "Mapping data across geographies"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{mapping-data}
@@ -14,17 +14,17 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, message=FALSE}
 library(hpa.spatial)
 library(dplyr)
 library(ggplot2)
 ```
 
+"Mapping" in the title is talking about more of a `purr::map()` than a `mapview::mapview()` kind of "map". The objective is to appropriately move data from one set of polygons to another. It is heavily inspired by the Australian context and uses population-based correspondence tables between geographies to perform this "mapping".
 
 ## The problem
 
-A task that often comes up when working with spatial data is to move data across geographies for presentation. Aggregating up from SA2s to SA3s can be straight forward, but mapping data between partially (but not completely) overlapping geographies can be trickier. For example, not all SA2s are wholly contained within a single local hospital network (LHN). In these cases, it we may want to take a couple different approaches to presenting that data.
-
+A task that often comes up when working with spatial data is to move data across geographies for presentation. Aggregating up from SA2s to SA3s can be straight forward, but mapping data between partially (but not completely) overlapping geographies can be trickier. For example, not all SA2s are wholly contained within a single local hospital network (LHN). In these cases, it we may want to take a couple different approaches to moving the data from SA2 to LHN and presenting that data. This also happens between editions of the ASGS, say from the 2011 to the 2016 edition for SA2s.
 
 ## The solutions
 
@@ -51,7 +51,7 @@ Some of the SA2 codes from 2011 will be split into more than one SA2 code in the
 sa2_cg |> filter(ratio != 1)
 ```
 
-The `map_data_with_correspondence()` uses these correspondence tables to map data from one geography to another. It can be used to map rows of data (using the `ratio` as a probability of assignment to the new area). For example, if we pass two values from this code to `map_data_with_correspondence()` and ask it to map to the 2016 edition, these (may) be distributed across to different geographies. This considers each code-value pair as a single unit to be allocated to a new geography and is specified by the `value_type` argument.
+The `map_data_with_correspondence()` uses these correspondence tables to map values **`from`** one geography **`to`** another. It can be used to map rows of data (using the `ratio` as a probability of assignment to the new area). For example, if we pass two values from this code to `map_data_with_correspondence()` and ask it to map to the 2016 edition, these (may) be distributed across to different geographies. This considers each code-value pair as a single unit to be allocated to a new geography and is specified by the `value_type` argument.
 
 ```{r}
 map_data_with_correspondence(
@@ -80,11 +80,9 @@ map_data_with_correspondence(
 )
 ```
 
-
 ### Solution 2: Adjust your geography so suit.
 
 In some cases, you may be given data on the SA2 level but want to visualise on the LHN level. SA2s are almost always completely contained within an LHN but this isn't always the case. If it's still important to be able to see differences between SA2s but also differences between LHNs, it might be best to split those particular SA2s where they cross LHN boundaries.
-
 
 ```{r warning=FALSE}
 custom_geo <- create_child_geo(
@@ -111,3 +109,40 @@ custom_geo |>
 In this graphic, the original SA2 (210041241) that crosses the LHN boundary (Brimbank Melton and Hume Moreland) is split into two parts (A and B) at the boarder.
 
 We can map data to this new geography and so that we can visualise differences between SA2s while maintaining a separation between LHNs.
+
+
+## Mapping grouped data
+
+Sometimes, we may have data for groups, with values for each group within each geography and want to map these to a new geography. `map_data_with_correspondence()` can handle these groups nicely with the `groups` argument. Also in this example, we show off that you can pass the input data as `.data` and reference its columns for the `codes` and `values` arguments rather than passing them as vectors.
+
+```{r}
+sa2_2011_data <- get_polygon("sa22011") |> 
+  as_tibble() |> 
+  select(sa2_code_2011) |> 
+  mutate(
+    ages_00_to_11 = rnorm(n = max(n()), mean = 10, sd = 2),
+    ages_12_to_24 = rnorm(max(n()), mean = 20, sd = 4),
+    ages_25_to_64 = rnorm(max(n()), mean = 25, sd = 5),
+    ages_65_plus = rnorm(max(n()), mean = 40, sd = 8)
+  ) |> 
+  pivot_longer(
+    !sa2_code_2011, 
+    names_to = "agegrp",
+    values_to = "outcome_var",
+    names_transform = \(x) str_remove(x, "ages_") |> str_replace("_to_", "-") |> str_replace("_plus", "+")
+  )
+
+sa2_2016_data <- map_data_with_correspondence(
+  .data = sa2_2011_data,
+  codes = sa2_code_2011,
+  values = outcome_var,
+  groups = agegrp,
+  from_area = "sa2",
+  from_year = 2011,
+  to_area = "sa2", 
+  to_year = 2016,
+  value_type = "aggs"
+)
+
+sa2_2016_data
+```
