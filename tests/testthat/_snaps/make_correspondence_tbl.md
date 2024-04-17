@@ -24,7 +24,7 @@
     Code
       sa2_to_lhn_tbl
     Output
-      # A tibble: 2,527 x 3
+      # A tibble: 2,526 x 3
       # Groups:   sa2_code_2021 [2,454]
          sa2_code_2021 LHN_Name     ratio
          <chr>         <chr>        <dbl>
@@ -38,5 +38,5 @@
        8 101031013     Southern NSW     1
        9 101031014     Southern NSW     1
       10 101031015     Southern NSW     1
-      # i 2,517 more rows
+      # i 2,516 more rows
 
