@@ -63,33 +63,35 @@
 <span>  to_area <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  to_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  to_geo <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  correspondence_tbl <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  mb_geo <span class="op">=</span> <span class="fu"><a href="get_mb21_pop.html">get_mb21_pop</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  value_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"units"</span>, <span class="st">"aggs"</span><span class="op">)</span>,</span>
 <span>  export_fname <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  round <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  seed <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"hpa.spatial.quiet"</span>, <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>.data</dt>
-<dd><p>a <code>data.frame</code>(-like) object. Can be passed if codes,
+<dd><p>A <code>data.frame</code>(-like) object. Can be passed if codes,
 values or groups are passed by reference (like in <code><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">dplyr::mutate()</a></code>).</p></dd>
 
 
 <dt>codes</dt>
-<dd><p>codes representing locations relevant to the <code>from_area</code>.
+<dd><p>Codes representing locations relevant to the <code>from_area</code>.
 SA1 or SA2, for example.</p></dd>
 
 
 <dt>values</dt>
-<dd><p>values associated with codes to be alloocated to newly mapped
+<dd><p>Values associated with codes to be allocated to newly mapped
 codes.</p></dd>
 
 
 <dt>groups</dt>
-<dd><p>values associated with codes/values specifying a grouping
+<dd><p>Values associated with codes/values specifying a grouping
 structure. For example, if there are codes/values for several age groups,
 then groups will be the grouping variable for the age group associated with
 the code and value of the same position. Defaults to <code>NULL</code> (no
@@ -125,8 +127,20 @@ data to be in).</p></dd>
 using <code>to_year</code> and <code>to_area</code> in <code>get_polygon</code>.</p></dd>
 
 
+<dt>correspondence_tbl</dt>
+<dd><p>A correspondence table to be used to map values
+between code sets. It should contain 3 columns: (1) code set FROM which
+values are being mapped, (2) code set TO which values are being mapped, and
+(3) a column named "ratio" containing the proportion/probability of the
+value(s) being mapped between the from- and to- code pair (row). Defaults to
+<code>NULL</code>, in which case it will attempt to get the correspondence table
+from the ABS and, if not available, it will create a correspondence table
+based on the overlap of the shapes and the residential population in the
+intersection (uses <code>mb_geo</code> argument).</p></dd>
+
+
 <dt>mb_geo</dt>
-<dd><p>an <code>{sf}</code> POINT object where the points are the centroids
+<dd><p>An <code>{sf}</code> POINT object where the points are the centroids
 of a small area (intended to be mesh blocks but can be any other space that's
 small enough to be useful. Should also include a column, <code>Person</code>,
 with the population within that area. Defaults to use Mesh Blocks (2021) and
@@ -157,6 +171,11 @@ otherwise return decimal values in the mapped areas).</p></dd>
 unit level data are reproducible (as these use the mapping probabilities
 for randomly allocating observations to the new geographies and may be
 different between runs with the same data/inputs).</p></dd>
+
+
+<dt>quiet</dt>
+<dd><p>whether to be quiet about warnings. Set package level quiet-ness
+with <code>options(hpa.spatial.quiet = TRUE)</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
