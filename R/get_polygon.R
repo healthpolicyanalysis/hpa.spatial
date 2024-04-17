@@ -99,7 +99,10 @@ update_crs <- function(geo, crs = NULL) {
 #' # hospital and health services (HHS) is the name for the local hospital networks in QLD.
 #' shp <- check_for_internal_polygon(name = "HHS")
 check_for_internal_polygon <- function(name = NULL, area = NULL, year = NULL, export_dir = tempdir(), ...) {
-  # use non-null arg (of name/area) to identify LHN data
+  if (any(c(toupper(name), toupper(area)) %in% c("ACPR"))) {
+    message("The data for the Aged Care Planning Regions in Australia (2018 edition) are from here: <https://www.gen-agedcaredata.gov.au/resources/access-data/2020/january/aged-care-planning-region-maps>")
+    return(read_hpa_spatial_data("acpr", export_dir = export_dir))
+  }
   if (any(c(toupper(name), toupper(area)) %in% c("PHN"))) {
     message("The data for The Primary Health Network (PHN) are from here: <https://data.gov.au/dataset/ds-dga-ef2d28a4-1ed5-47d0-8e3a-46e25bc4f66b/details?q=primary%20health%20network>")
     return(read_hpa_spatial_data("phn", export_dir = export_dir))
@@ -173,6 +176,7 @@ get_mmm19_poly <- function(export_dir = tempdir()) {
 
 .get_internal_polygon_names <- function() {
   c(
+    "ACPR",
     "PHN",
     "LHN",
     "MB21",

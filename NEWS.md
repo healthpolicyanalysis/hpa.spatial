@@ -1,5 +1,8 @@
 # hpa.spatial (development version)
 
+* add access to recently added Aged Care Planning Region shape files 
+  (on hpa.spatial.data).
+
 * only do GHA for R CMD CHECK on Windows.
 
 * update README.
