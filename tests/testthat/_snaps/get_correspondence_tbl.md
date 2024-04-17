@@ -23,7 +23,7 @@
     Code
       tbl
     Output
-      # A tibble: 2,270 x 3
+      # A tibble: 2,269 x 3
       # Groups:   sa2_code_2011 [2,196]
          sa2_code_2011 LHN_Name                ratio
          <chr>         <chr>                   <dbl>
@@ -37,14 +37,14 @@
        8 101011006     Murrumbidgee         1       
        9 101021007     Southern NSW         1       
       10 101021008     Southern NSW         1       
-      # i 2,260 more rows
+      # i 2,259 more rows
 
 # can get CG using input polygons rather than areas/years
 
     Code
       tbl
     Output
-      # A tibble: 425 x 3
+      # A tibble: 430 x 3
       # Groups:   sa3_code_2016 [340]
          sa3_code_2016 LHN_Name                ratio
          <chr>         <chr>                   <dbl>
@@ -58,7 +58,7 @@
        8 10106         Southern NSW         0.496   
        9 10201         Central Coast (NSW)  1       
       10 10202         Central Coast (NSW)  1       
-      # i 415 more rows
+      # i 420 more rows
 
 # correspondence table is complete - all non-NA SA2 mappings are other territories
 
