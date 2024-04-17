@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   getting-polygons: getting-polygons.html
   mapping-data: mapping-data.html
-last_built: 2024-04-17T01:59Z
+last_built: 2024-04-17T04:01Z
 urls:
   reference: https://healthpolicyanalysis.github.io/hpa.spatial/reference
   article: https://healthpolicyanalysis.github.io/hpa.spatial/articles
