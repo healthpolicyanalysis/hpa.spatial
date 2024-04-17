@@ -1,3 +1,28 @@
+test_that("custom correspondence table work", {
+  d_nsw_postcodes <- get_polygon("postcode2021") |>
+    dplyr::filter(substr(postcode_2021, 1, 1) == "2")
+
+  d_nsw_postcodes$vals <- rnorm(n = nrow(d_nsw_postcodes))
+
+  custom_ct <- get_correspondence_tbl(
+    from_area = "postcode", from_year = 2021,
+    to_area = "SA3", to_year = 2021
+  ) |>
+    dplyr::filter(substr(sa3_code_2021, 1, 1) == "1") # only keep those that map to NSW SA3's
+
+  mapped_data <- map_data_with_correspondence(
+    .data = d_nsw_postcodes,
+    codes = postcode_2021,
+    values = vals,
+    correspondence_tbl = custom_ct,
+    value_type = "aggs",
+    quiet = TRUE
+  )
+  unique_states_n <- nrow(dplyr::count(mapped_data, substr(sa3_code_2021, 1, 1)))
+  expect_true(unique_states_n == 1)
+})
+
+
 test_that("problem case from unmet needs is fixed", {
   sa22016 <- get_polygon("sa22016") |>
     remove_empty_geographies()
@@ -451,7 +476,47 @@ test_that("mapping data works", {
         to_area = "sa2",
         to_year = 2016
       ),
-      "not a valid"
+      "107041548"
+    )
+  )
+
+  expect_no_message(
+    map_data_with_correspondence(
+      codes = c(107011130, 107041548),
+      values = c(10, 10),
+      from_area = "sa2",
+      from_year = 2011,
+      to_area = "sa2",
+      to_year = 2016,
+      quiet = TRUE
+    )
+  )
+
+  expect_no_message(
+    withr::with_options(
+      list(hpa.spatial.quiet = TRUE),
+      map_data_with_correspondence(
+        codes = c(107011130, 107041548),
+        values = c(10, 10),
+        from_area = "sa2",
+        from_year = 2011,
+        to_area = "sa2",
+        to_year = 2016
+      )
+    )
+  )
+
+  expect_message(
+    withr::with_options(
+      list(hpa.spatial.quiet = FALSE),
+      map_data_with_correspondence(
+        codes = c(107011130, 107041548),
+        values = c(10, 10),
+        from_area = "sa2",
+        from_year = 2011,
+        to_area = "sa2",
+        to_year = 2016
+      )
     )
   )
 
@@ -469,7 +534,6 @@ test_that("mapping data works", {
       "not valid"
     )
   )
-
 
   withr::with_seed(
     42,

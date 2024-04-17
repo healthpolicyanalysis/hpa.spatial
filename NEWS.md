@@ -1,5 +1,8 @@
 # hpa.spatial (development version)
 
+* allow user to specify a custom correspondence table to 
+  map_data_with_correspondence().
+
 * add access to recently added Aged Care Planning Region shape files 
   (on hpa.spatial.data).
 

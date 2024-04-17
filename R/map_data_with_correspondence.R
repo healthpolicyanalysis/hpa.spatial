@@ -22,6 +22,15 @@
 #' @param to_year The year you want to correspond TO.
 #' @param to_geo The TO polygon geography. Helpful if it is not available
 #' using \code{to_year} and \code{to_area} in \code{get_polygon}.
+#' @param correspondence_tbl A correspondence table to be used to map values
+#' between code sets. It should contain 3 columns: (1) code set FROM which
+#' values are being mapped, (2) code set TO which values are being mapped, and
+#' (3) a column named "ratio" containing the proportion/probability of the
+#' value(s) being mapped between the from- and to- code pair (row). Defaults to
+#' \code{NULL}, in which case it will attempt to get the correspondence table
+#' from the ABS and, if not available, it will create a correspondence table
+#' based on the overlap of the shapes and the residential population in the
+#' intersection (uses \code{mb_geo} argument).
 #' @param mb_geo An \code{{sf}} POINT object where the points are the centroids
 #' of a small area (intended to be mesh blocks but can be any other space that's
 #' small enough to be useful. Should also include a column, \code{Person},
@@ -41,6 +50,8 @@
 #' unit level data are reproducible (as these use the mapping probabilities
 #' for randomly allocating observations to the new geographies and may be
 #' different between runs with the same data/inputs).
+#' @param quiet whether to be quiet about warnings. Set package level quiet-ness
+#' with \code{options(hpa.spatial.quiet = TRUE)}.
 #'
 #' @return A \code{data.frame}.
 #' @export
@@ -74,11 +85,14 @@ map_data_with_correspondence <- function(.data = NULL,
                                          to_area = NULL,
                                          to_year = NULL,
                                          to_geo = NULL,
+                                         correspondence_tbl = NULL,
                                          mb_geo = get_mb21_pop(),
                                          value_type = c("units", "aggs"),
                                          export_fname = NULL,
                                          round = FALSE,
-                                         seed = NULL) {
+                                         seed = NULL,
+                                         quiet = getOption("hpa.spatial.quiet", FALSE)) {
+  # extract codes and values from .data
   if (!is.null(.data)) {
     .data <- dplyr::as_tibble(.data)
 
@@ -141,6 +155,54 @@ map_data_with_correspondence <- function(.data = NULL,
     values_name <- NA
   }
 
+
+  ### CREATE CORRESPONDENCE TBL
+  if(is.null(correspondence_tbl)) {
+    ct_provided <- FALSE
+    call <- rlang::expr(get_correspondence_tbl(
+      from_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_area))),
+      from_year = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_year))),
+      from_geo = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_geo))),
+      to_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_area))),
+      to_year = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_year))),
+      to_geo = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_geo))),
+      export_fname = rlang::eval_tidy(rlang::expr(!!rlang::quo(export_fname)))
+    ))
+
+    correspondence_tbl <- rlang::eval_tidy(call)
+  } else {
+    ct_provided <- TRUE
+  }
+
+  # not all the sum of the ratios add up to 1 in the correspondence tables.
+  # For those that don't, add/subtract the difference from the majority target code by adjust_correspondence_tbl()
+  correspondence_tbl <- adjust_correspodence_tbl(correspondence_tbl)
+
+  # remove codes that aren't in the correspondence table
+  bad_codes <- codes[!codes %in% correspondence_tbl[[1]]]
+
+  if (length(bad_codes) != 0 & !quiet) {
+    if (length(bad_codes) > 1) {
+      message(glue::glue(
+        "\nThe following {length(bad_codes)} codes were passed but are not ",
+        "valid (within the from geography) codes:"
+      ))
+    } else {
+      message(glue::glue(
+        "\nThe following code was passed but is not a valid code:"
+      ))
+    }
+
+    for (c in bad_codes) {
+      message(c)
+    }
+  }
+
+  df <- data.frame(codes = as.character(codes), values) |>
+    dplyr::filter(codes %in% correspondence_tbl[[1]])
+
+
+  # if grouped are used call self (map_data_with_correspondence() for each group)
   multiple_groups <- inherits(groups, "list")
 
   if (!is.null(groups)) {
@@ -171,6 +233,7 @@ map_data_with_correspondence <- function(.data = NULL,
           to_area = !!rlang::quo(to_area),
           to_year = !!rlang::quo(to_year),
           to_geo = !!rlang::quo(to_geo),
+          correspondence_tbl = rlang::eval_tidy(correspondence_tbl),
           value_type = !!rlang::quo(value_type)
         ))
 
@@ -203,7 +266,7 @@ map_data_with_correspondence <- function(.data = NULL,
     is.null(to_geo)
   )
 
-  if (maybe_sa) {
+  if (maybe_sa & !ct_provided) {
     if (is_SA(from_area) & is_SA(to_area) & clean_year(from_year) == clean_year(to_year)) {
       # if the areas are both SA's and the year is the same, this is the process
       # of aggregating up (i.e. from SA2 to SA3) and can be done without
@@ -278,44 +341,6 @@ map_data_with_correspondence <- function(.data = NULL,
     }
   }
 
-  call <- rlang::expr(get_correspondence_tbl(
-    from_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_area))),
-    from_year = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_year))),
-    from_geo = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_geo))),
-    to_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_area))),
-    to_year = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_year))),
-    to_geo = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_geo))),
-    export_fname = rlang::eval_tidy(rlang::expr(!!rlang::quo(export_fname)))
-  ))
-
-  correspondence_tbl <- rlang::eval_tidy(call)
-  # not all the sum of the ratios add up to 1 in the correspondence tables.
-  # For those that don't, add/subtract the difference from the majority target code by adjust_correspondence_tbl()
-  correspondence_tbl <- adjust_correspodence_tbl(correspondence_tbl)
-
-  # remove codes that aren't in the correspondence table
-  bad_codes <- codes[!codes %in% correspondence_tbl[[1]]]
-
-  if (length(bad_codes) != 0) {
-    if (length(bad_codes) > 1) {
-      message(glue::glue(
-        "\nThe following {length(bad_codes)} codes were passed but are not ",
-        "valid (within the from geography) codes:"
-      ))
-    } else {
-      message(glue::glue(
-        "\nThe following code was passed but is not a valid code:"
-      ))
-    }
-
-    for (c in bad_codes) {
-      message(c)
-    }
-  }
-
-  df <- data.frame(codes = as.character(codes), values) |>
-    dplyr::filter(codes %in% correspondence_tbl[[1]])
-
 
   if (value_type == "units") {
     # randomly assign codes to new mapped codes based on ratios
@@ -351,8 +376,7 @@ map_data_with_correspondence <- function(.data = NULL,
     stopifnot(length(codes) == length(unique(codes)))
 
 
-    mapped_df <-
-      df |>
+    mapped_df <- df |>
       dplyr::left_join(correspondence_tbl, by = c("codes" = names(correspondence_tbl)[1])) |>
       dplyr::mutate(values = values * ratio) |>
       dplyr::group_by(!!rlang::sym(names(correspondence_tbl)[2])) |>
@@ -368,6 +392,8 @@ map_data_with_correspondence <- function(.data = NULL,
 
   clean_mapped_tbl(mapped_df, values_name = values_name, groups_name = groups_name)
 }
+
+
 
 
 get_mapping_tbl_col_name <- function(area, year) {

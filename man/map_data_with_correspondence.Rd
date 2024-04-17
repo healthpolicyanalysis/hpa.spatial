@@ -15,11 +15,13 @@ map_data_with_correspondence(
   to_area = NULL,
   to_year = NULL,
   to_geo = NULL,
+  correspondence_tbl = NULL,
   mb_geo = get_mb21_pop(),
   value_type = c("units", "aggs"),
   export_fname = NULL,
   round = FALSE,
-  seed = NULL
+  seed = NULL,
+  quiet = getOption("hpa.spatial.quiet", FALSE)
 )
 }
 \arguments{
@@ -55,6 +57,16 @@ data to be in).}
 \item{to_geo}{The TO polygon geography. Helpful if it is not available
 using \code{to_year} and \code{to_area} in \code{get_polygon}.}
 
+\item{correspondence_tbl}{A correspondence table to be used to map values
+between code sets. It should contain 3 columns: (1) code set FROM which
+values are being mapped, (2) code set TO which values are being mapped, and
+(3) a column named "ratio" containing the proportion/probability of the
+value(s) being mapped between the from- and to- code pair (row). Defaults to
+\code{NULL}, in which case it will attempt to get the correspondence table
+from the ABS and, if not available, it will create a correspondence table
+based on the overlap of the shapes and the residential population in the
+intersection (uses \code{mb_geo} argument).}
+
 \item{mb_geo}{An \code{{sf}} POINT object where the points are the centroids
 of a small area (intended to be mesh blocks but can be any other space that's
 small enough to be useful. Should also include a column, \code{Person},
@@ -78,6 +90,9 @@ otherwise return decimal values in the mapped areas).}
 unit level data are reproducible (as these use the mapping probabilities
 for randomly allocating observations to the new geographies and may be
 different between runs with the same data/inputs).}
+
+\item{quiet}{whether to be quiet about warnings. Set package level quiet-ness
+with \code{options(hpa.spatial.quiet = TRUE)}.}
 }
 \value{
 A \code{data.frame}.
