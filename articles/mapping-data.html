@@ -22,7 +22,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light" data-bs-theme="light"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">hpa.spatial</a>
 
@@ -268,7 +268,7 @@ arguments rather than passing them as vectors.</p>
 <span>    values_to <span class="op">=</span> <span class="st">"outcome_var"</span>,</span>
 <span>    names_transform <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html" class="external-link">str_remove</a></span><span class="op">(</span><span class="va">.x</span>, <span class="st">"ages_"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html" class="external-link">str_replace</a></span><span class="op">(</span><span class="st">"_to_"</span>, <span class="st">"-"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html" class="external-link">str_replace</a></span><span class="op">(</span><span class="st">"_plus"</span>, <span class="st">"+"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
-<span><span class="co">#&gt; Reading sa22011 file found in /tmp/Rtmp6zL303</span></span>
+<span><span class="co">#&gt; Reading sa22011 file found in /tmp/Rtmpk5W4Gg</span></span>
 <span></span>
 <span><span class="va">sa2_2016_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/map_data_with_correspondence.html">map_data_with_correspondence</a></span><span class="op">(</span></span>
 <span>  .data <span class="op">=</span> <span class="va">sa2_2011_data</span>,</span>
@@ -286,16 +286,16 @@ arguments rather than passing them as vectors.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 9,212 × 3</span></span></span>
 <span><span class="co">#&gt;    SA2_MAINCODE_2016 outcome_var agegrp</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 101021007                7.09 00-11 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 101021008                7.40 00-11 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 101021009               11.3  00-11 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 101021010                7.97 00-11 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 101021011                9.27 00-11 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 101021012                7.35 00-11 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 101031013                9.91 00-11 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 101031014                8.75 00-11 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 101031015                9.23 00-11 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 101031016               10.2  00-11 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 101021007                6.36 00-11 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 101021008                9.51 00-11 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 101021009                9.51 00-11 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 101021010                9.43 00-11 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 101021011                8.89 00-11 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 101021012               11.3  00-11 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 101031013               14.1  00-11 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 101031014                6.74 00-11 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 101031015               11.0  00-11 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 101031016                6.27 00-11 </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 9,202 more rows</span></span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -311,7 +311,7 @@ arguments rather than passing them as vectors.</p>
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.</p>
 </div>
 
     </footer>
