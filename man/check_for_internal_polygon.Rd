@@ -2,7 +2,8 @@
 % Please edit documentation in R/get_polygon.R
 \name{check_for_internal_polygon}
 \alias{check_for_internal_polygon}
-\title{check_for_internal_polygon}
+\title{Check for (and return if so) the shape if it is "internal" (contained within
+\code{hpa.spatial}/\code{hpa.spatial.data})}
 \usage{
 check_for_internal_polygon(
   name = NULL,
@@ -13,23 +14,27 @@ check_for_internal_polygon(
 )
 }
 \arguments{
-\item{name}{a character string names to identify data not kept on absmapsdata.}
+\item{name}{A character string names to identify data not kept on
+\code{absmapsdata}.}
 
-\item{area}{a character string names to identify data not kept on absmapsdata.}
+\item{area}{A character string names to identify data not kept on
+\code{absmapsdata}.}
 
-\item{year}{a character string names to identify data not kept on absmapsdata.}
+\item{year}{A character string names to identify data not kept on
+\code{absmapsdata}.}
 
 \item{export_dir}{The directory to store the downloaded data.}
 
-\item{...}{additional, ignored arguments.}
+\item{...}{Additional, ignored arguments.}
 }
 \value{
-a \code{sf} object or, if no pkg data found, \code{NULL}.
+An \code{sf} object or, if no pkg data found, \code{NULL}.
 }
 \description{
-check_for_internal_polygon
+Check for (and return if so) the shape if it is "internal" (contained within
+\code{hpa.spatial}/\code{hpa.spatial.data})
 }
 \examples{
-# hospital and health services (HHS) is the name for the local hospital networks in QLD.
-shp <- check_for_internal_polygon(name = "HHS")
+# Get the Local Hospital Network (LHN) shapes.
+shp <- check_for_internal_polygon(name = "LHN")
 }

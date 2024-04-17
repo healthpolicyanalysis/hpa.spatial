@@ -2,7 +2,7 @@
 % Please edit documentation in R/create_child_geo.R
 \name{create_child_geo}
 \alias{create_child_geo}
-\title{Create a child geography (polygon) which fits neatly into a parent geography.}
+\title{Create a child geography (polygon) which fits neatly into a parent geography}
 \usage{
 create_child_geo(
   child_geo,
@@ -32,10 +32,10 @@ single polygon within the \code{parent_geo}, it will not be split into
 multiple separate polygons.}
 }
 \value{
-a \code{sf} polygon or multipolygon.
+An \code{sf} polygon or multipolygon.
 }
 \description{
-Create a child geography (polygon) which fits neatly into a parent geography.
+Create a child geography (polygon) which fits neatly into a parent geography
 }
 \examples{
 \donttest{

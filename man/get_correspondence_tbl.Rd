@@ -2,8 +2,8 @@
 % Please edit documentation in R/get_correspondence_tbl.R
 \name{get_correspondence_tbl}
 \alias{get_correspondence_tbl}
-\title{get a correspondence table, either via \code{strayr::read_correspondence_tbl}
-or by creating one with \code{make_correspondence_tbl}.}
+\title{Get a correspondence table, either via \code{strayr::read_correspondence_tbl}
+or by creating one with \code{make_correspondence_tbl}}
 \usage{
 get_correspondence_tbl(
   from_area = NULL,
@@ -18,8 +18,8 @@ get_correspondence_tbl(
 )
 }
 \arguments{
-\item{from_area}{The area you want to correspond FROM (ie the areas your data
-are currently in). For example: "sa1", "sa2, "sa3", "sa4".}
+\item{from_area}{The area you want to correspond FROM (i.e. the areas your
+data are currently in). For example: 'sa1', 'sa2', 'sa3', 'sa4'.}
 
 \item{from_year}{The year you want to correspond FROM. For example: 2011,
 2016.}
@@ -27,8 +27,8 @@ are currently in). For example: "sa1", "sa2, "sa3", "sa4".}
 \item{from_geo}{The FROM polygon geography. Helpful if it is not available
 using \code{from_year} and \code{from_area} in \code{get_polygon}.}
 
-\item{to_area}{The area you want to correspond TO (ie the areas you want your
-data to be in).}
+\item{to_area}{The area you want to correspond TO (i.e. the areas you want
+your data to be in).}
 
 \item{to_year}{The year you want to correspond TO.}
 
@@ -45,11 +45,11 @@ using \code{to_year} and \code{to_area} in \code{get_polygon}.}
 \code{get_mb21_pop()}).}
 }
 \value{
-a \code{tibble}.
+A \code{tibble}.
 }
 \description{
-get a correspondence table, either via \code{strayr::read_correspondence_tbl}
-or by creating one with \code{make_correspondence_tbl}.
+Get a correspondence table, either via \code{strayr::read_correspondence_tbl}
+or by creating one with \code{make_correspondence_tbl}
 }
 \examples{
 get_correspondence_tbl(from_area = "sa2", from_year = 2021, to_area = "LHN")

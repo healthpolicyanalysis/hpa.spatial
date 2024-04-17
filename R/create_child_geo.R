@@ -1,4 +1,4 @@
-#' Create a child geography (polygon) which fits neatly into a parent geography.
+#' Create a child geography (polygon) which fits neatly into a parent geography
 #'
 #'
 #' @param child_geo Child geography (\code{sf} polygon or multipolygon) which
@@ -15,7 +15,7 @@
 #' single polygon within the \code{parent_geo}, it will not be split into
 #' multiple separate polygons.
 #'
-#' @return a \code{sf} polygon or multipolygon.
+#' @return An \code{sf} polygon or multipolygon.
 #' @export
 #'
 #' @examples

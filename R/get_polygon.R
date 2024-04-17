@@ -1,16 +1,30 @@
-#' Get shapefiles from ABS
+#' Get shapefiles from ABS (via \code{strayr} and \code{absmapsdata} or via
+#' \code{hpa.spatial} and \code{hpa.spatial.data})
 #'
-#' @param name a character string containing absmapsdata file names in \code{[area][year]} format, eg "sa42016"; "gcc2021". See full list at https://github.com/wfmackey/absmapsdata. Note: if name is entered, then area and year values will be ignored.
-#' @param area a character string containing the concise absmapsdata area names, eg "sa4"; "gcc". See full list at https://github.com/wfmackey/absmapsdata.
-#' @param year a character string or numeric of the full source year of absmapsdata object, eg "2016"; 2021. See full list at https://github.com/wfmackey/absmapsdata.
-#' @param remove_year_suffix logical defaulting to FALSE. If TRUE, 'strip_year_suffix' is run before returning the object, removing the '_year' suffix from variable names.
-#' @param export_dir path to a directory to store the desired sf object. tempdir() by default.
-#' @param .validate_name logical defaulting to TRUE, which checks the name input (or area year combination) against a list of available objects in the absmapsdata package.
-#' @param simplify_keep proportion of points to retain (0-1; default 1 - no simplification).
-#' @param crs whether to update the crs (if necessary) of the returned polygon.
-#' @param ... arguments passed to \code{rmapshaper::ms_simplify()} (other than \code{keep}).
+#' @param name A character string containing \code{absmapsdata} file names in
+#' \code{[area][year]} format, eg "sa42016"; "gcc2021". See full list at
+#' <https://github.com/wfmackey/absmapsdata>. Note: if name is entered, then
+#' area and year values will be ignored.
+#' @param area A character string containing the concise absmapsdata area names,
+#' eg "sa4"; "gcc". See full list at <https://github.com/wfmackey/absmapsdata>.
+#' @param year A character string or numeric of the full source year of
+#' \code{absmapsdata} object, eg "2016"; 2021. See full list at
+#' <https://github.com/wfmackey/absmapsdata>.
+#' @param remove_year_suffix A logical defaulting to FALSE. If TRUE,
+#' 'strip_year_suffix' is run before returning the object, removing the '_year'
+#' suffix from variable names.
+#' @param export_dir Path to a directory to store the desired sf object.
+#' \code{tempdir()} by default.
+#' @param .validate_name Logical defaulting to TRUE, which checks the name
+#' input (or area year combination) against a list of available objects in the
+#' \code{absmapsdata} package.
+#' @param simplify_keep The proportion of points to retain (0-1; default 1 -
+#' no simplification).
+#' @param crs Whether to update the crs (if necessary) of the returned polygon.
+#' @param ... Arguments passed to \code{rmapshaper::ms_simplify()} (other than
+#' \code{keep}).
 #'
-#' @return a polygon of class \code{sf}.
+#' @return A polygon of class \code{sf}.
 #' @export
 #'
 #' @examples
@@ -84,20 +98,24 @@ update_crs <- function(geo, crs = NULL) {
 }
 
 
-#' check_for_internal_polygon
+#' Check for (and return if so) the shape if it is "internal" (contained within
+#' \code{hpa.spatial}/\code{hpa.spatial.data})
 #'
-#' @param name a character string names to identify data not kept on absmapsdata.
-#' @param area a character string names to identify data not kept on absmapsdata.
-#' @param year a character string names to identify data not kept on absmapsdata.
+#' @param name A character string names to identify data not kept on
+#' \code{absmapsdata}.
+#' @param area A character string names to identify data not kept on
+#' \code{absmapsdata}.
+#' @param year A character string names to identify data not kept on
+#' \code{absmapsdata}.
 #' @param export_dir The directory to store the downloaded data.
-#' @param ... additional, ignored arguments.
+#' @param ... Additional, ignored arguments.
 #'
-#' @return a \code{sf} object or, if no pkg data found, \code{NULL}.
+#' @return An \code{sf} object or, if no pkg data found, \code{NULL}.
 #' @export
 #'
 #' @examples
-#' # hospital and health services (HHS) is the name for the local hospital networks in QLD.
-#' shp <- check_for_internal_polygon(name = "HHS")
+#' # Get the Local Hospital Network (LHN) shapes.
+#' shp <- check_for_internal_polygon(name = "LHN")
 check_for_internal_polygon <- function(name = NULL, area = NULL, year = NULL, export_dir = tempdir(), ...) {
   if (any(c(toupper(name), toupper(area)) %in% c("ACPR"))) {
     message("The data for the Aged Care Planning Regions in Australia (2018 edition) are from here: <https://www.gen-agedcaredata.gov.au/resources/access-data/2020/january/aged-care-planning-region-maps>")
@@ -122,11 +140,11 @@ check_for_internal_polygon <- function(name = NULL, area = NULL, year = NULL, ex
   }
 }
 
-#' Get Mesh Blocks (2021 edition) and population counts.
+#' Get Mesh Blocks (2021 edition) and population counts
 #'
 #' @param export_dir The directory to store the downloaded data.
 #'
-#' @return a \code{sf} object.
+#' @return An \code{sf} object.
 #' @export
 #'
 #' @examples
@@ -135,11 +153,11 @@ get_mb21_pop <- function(export_dir = tempdir()) {
   read_hpa_spatial_data("mb21_pop", export_dir = export_dir)
 }
 
-#' Get Mesh Blocks (2021 edition) polygons.
+#' Get Mesh Blocks (2021 edition) polygons
 #'
 #' @param export_dir The directory to store the downloaded data.
 #'
-#' @return a \code{sf} object.
+#' @return A \code{sf} object.
 #' @export
 #'
 #' @examples
@@ -150,11 +168,11 @@ get_mb21_poly <- function(export_dir = tempdir()) {
 
 
 #' Modified Monash Model polygons (SA1, 2016 edition, polygons with MMM, 2019
-#' edition column).
+#' edition column)
 #'
 #' @param export_dir The directory to store the downloaded data.
 #'
-#' @return a \code{sf} object.
+#' @return An \code{sf} object.
 #' @export
 #'
 #' @examples

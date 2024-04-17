@@ -1,14 +1,14 @@
-#' get a correspondence table, either via \code{strayr::read_correspondence_tbl}
-#' or by creating one with \code{make_correspondence_tbl}.
+#' Get a correspondence table, either via \code{strayr::read_correspondence_tbl}
+#' or by creating one with \code{make_correspondence_tbl}
 #'
-#' @param from_area The area you want to correspond FROM (ie the areas your data
-#' are currently in). For example: "sa1", "sa2, "sa3", "sa4".
+#' @param from_area The area you want to correspond FROM (i.e. the areas your
+#' data are currently in). For example: 'sa1', 'sa2', 'sa3', 'sa4'.
 #' @param from_year The year you want to correspond FROM. For example: 2011,
 #' 2016.
 #' @param from_geo The FROM polygon geography. Helpful if it is not available
 #' using \code{from_year} and \code{from_area} in \code{get_polygon}.
-#' @param to_area The area you want to correspond TO (ie the areas you want your
-#' data to be in).
+#' @param to_area The area you want to correspond TO (i.e. the areas you want
+#' your data to be in).
 #' @param to_year The year you want to correspond TO.
 #' @param to_geo The TO polygon geography. Helpful if it is not available
 #' using \code{to_year} and \code{to_area} in \code{get_polygon}.
@@ -19,7 +19,7 @@
 #' 2021 edition mesh blocks and 2021 census data (see
 #' \code{get_mb21_pop()}).
 #'
-#' @return a \code{tibble}.
+#' @return A \code{tibble}.
 #' @export
 #'
 #' @examples

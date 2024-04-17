@@ -1,16 +1,16 @@
-#' Create a correspondence table between any two geographies.
+#' Create a correspondence table between any two geographies
 #'
 #'
-#' @param from_geo an \code{{sf}} POLYGON object.
-#' @param to_geo an \code{{sf}} POLYGON object.
-#' @param mb_geo an \code{{sf}} POINT object where the points are the centroids
+#' @param from_geo An \code{{sf}} POLYGON object.
+#' @param to_geo An \code{{sf}} POLYGON object.
+#' @param mb_geo An \code{{sf}} POINT object where the points are the centroids
 #' of a small area (intended to be mesh blocks but can be any other space that's
 #' small enough to be useful. Should also include a column, \code{Person},
 #' with the population within that area. Defaults to use Mesh Blocks (2021) and
 #' with 2021 census data. See \code{get_mb21_pop()}.
 #' @param ... other, ignored arguments.
 #'
-#' @return a \code{tibble}.
+#' @return A \code{tibble}.
 #' @export
 #' @examples
 #' make_correspondence_tbl(

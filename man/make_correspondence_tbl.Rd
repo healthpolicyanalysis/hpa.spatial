@@ -2,16 +2,16 @@
 % Please edit documentation in R/make_correspondence_tbl.R
 \name{make_correspondence_tbl}
 \alias{make_correspondence_tbl}
-\title{Create a correspondence table between any two geographies.}
+\title{Create a correspondence table between any two geographies}
 \usage{
 make_correspondence_tbl(from_geo, to_geo, mb_geo = get_mb21_pop(), ...)
 }
 \arguments{
-\item{from_geo}{an \code{{sf}} POLYGON object.}
+\item{from_geo}{An \code{{sf}} POLYGON object.}
 
-\item{to_geo}{an \code{{sf}} POLYGON object.}
+\item{to_geo}{An \code{{sf}} POLYGON object.}
 
-\item{mb_geo}{an \code{{sf}} POINT object where the points are the centroids
+\item{mb_geo}{An \code{{sf}} POINT object where the points are the centroids
 of a small area (intended to be mesh blocks but can be any other space that's
 small enough to be useful. Should also include a column, \code{Person},
 with the population within that area. Defaults to use Mesh Blocks (2021) and
@@ -20,10 +20,10 @@ with 2021 census data. See \code{get_mb21_pop()}.}
 \item{...}{other, ignored arguments.}
 }
 \value{
-a \code{tibble}.
+A \code{tibble}.
 }
 \description{
-Create a correspondence table between any two geographies.
+Create a correspondence table between any two geographies
 }
 \examples{
 make_correspondence_tbl(

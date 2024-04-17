@@ -1,12 +1,12 @@
 #' Map data between editions using correspondence tables from the ABS.
 #'
-#' @param .data a \code{data.frame}(-like) object. Can be passed if codes,
+#' @param .data A \code{data.frame}(-like) object. Can be passed if codes,
 #' values or groups are passed by reference (like in \code{dplyr::mutate()}).
-#' @param codes codes representing locations relevant to the \code{from_area}.
+#' @param codes Codes representing locations relevant to the \code{from_area}.
 #' SA1 or SA2, for example.
-#' @param values values associated with codes to be alloocated to newly mapped
+#' @param values Values associated with codes to be allocated to newly mapped
 #' codes.
-#' @param groups values associated with codes/values specifying a grouping
+#' @param groups Values associated with codes/values specifying a grouping
 #' structure. For example, if there are codes/values for several age groups,
 #' then groups will be the grouping variable for the age group associated with
 #' the code and value of the same position. Defaults to \code{NULL} (no
@@ -22,7 +22,7 @@
 #' @param to_year The year you want to correspond TO.
 #' @param to_geo The TO polygon geography. Helpful if it is not available
 #' using \code{to_year} and \code{to_area} in \code{get_polygon}.
-#' @param mb_geo an \code{{sf}} POINT object where the points are the centroids
+#' @param mb_geo An \code{{sf}} POINT object where the points are the centroids
 #' of a small area (intended to be mesh blocks but can be any other space that's
 #' small enough to be useful. Should also include a column, \code{Person},
 #' with the population within that area. Defaults to use Mesh Blocks (2021) and

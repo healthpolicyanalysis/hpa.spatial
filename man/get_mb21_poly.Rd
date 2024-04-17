@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_polygon.R
 \name{get_mb21_poly}
 \alias{get_mb21_poly}
-\title{Get Mesh Blocks (2021 edition) polygons.}
+\title{Get Mesh Blocks (2021 edition) polygons}
 \usage{
 get_mb21_poly(export_dir = tempdir())
 }
@@ -10,10 +10,10 @@ get_mb21_poly(export_dir = tempdir())
 \item{export_dir}{The directory to store the downloaded data.}
 }
 \value{
-a \code{sf} object.
+A \code{sf} object.
 }
 \description{
-Get Mesh Blocks (2021 edition) polygons.
+Get Mesh Blocks (2021 edition) polygons
 }
 \examples{
 get_mb21_poly()

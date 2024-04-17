@@ -3,7 +3,7 @@
 \name{get_mmm19_poly}
 \alias{get_mmm19_poly}
 \title{Modified Monash Model polygons (SA1, 2016 edition, polygons with MMM, 2019
-edition column).}
+edition column)}
 \usage{
 get_mmm19_poly(export_dir = tempdir())
 }
@@ -11,11 +11,11 @@ get_mmm19_poly(export_dir = tempdir())
 \item{export_dir}{The directory to store the downloaded data.}
 }
 \value{
-a \code{sf} object.
+An \code{sf} object.
 }
 \description{
 Modified Monash Model polygons (SA1, 2016 edition, polygons with MMM, 2019
-edition column).
+edition column)
 }
 \examples{
 get_mmm19_poly()

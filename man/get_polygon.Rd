@@ -2,7 +2,8 @@
 % Please edit documentation in R/get_polygon.R
 \name{get_polygon}
 \alias{get_polygon}
-\title{Get shapefiles from ABS}
+\title{Get shapefiles from ABS (via \code{strayr} and \code{absmapsdata} or via
+\code{hpa.spatial} and \code{hpa.spatial.data})}
 \usage{
 get_polygon(
   name = NULL,
@@ -17,29 +18,43 @@ get_polygon(
 )
 }
 \arguments{
-\item{name}{a character string containing absmapsdata file names in \code{[area][year]} format, eg "sa42016"; "gcc2021". See full list at https://github.com/wfmackey/absmapsdata. Note: if name is entered, then area and year values will be ignored.}
+\item{name}{A character string containing \code{absmapsdata} file names in
+\code{[area][year]} format, eg "sa42016"; "gcc2021". See full list at
+<https://github.com/wfmackey/absmapsdata>. Note: if name is entered, then
+area and year values will be ignored.}
 
-\item{area}{a character string containing the concise absmapsdata area names, eg "sa4"; "gcc". See full list at https://github.com/wfmackey/absmapsdata.}
+\item{area}{A character string containing the concise absmapsdata area names,
+eg "sa4"; "gcc". See full list at <https://github.com/wfmackey/absmapsdata>.}
 
-\item{year}{a character string or numeric of the full source year of absmapsdata object, eg "2016"; 2021. See full list at https://github.com/wfmackey/absmapsdata.}
+\item{year}{A character string or numeric of the full source year of
+\code{absmapsdata} object, eg "2016"; 2021. See full list at
+<https://github.com/wfmackey/absmapsdata>.}
 
-\item{remove_year_suffix}{logical defaulting to FALSE. If TRUE, 'strip_year_suffix' is run before returning the object, removing the '_year' suffix from variable names.}
+\item{remove_year_suffix}{A logical defaulting to FALSE. If TRUE,
+'strip_year_suffix' is run before returning the object, removing the '_year'
+suffix from variable names.}
 
-\item{export_dir}{path to a directory to store the desired sf object. tempdir() by default.}
+\item{export_dir}{Path to a directory to store the desired sf object.
+\code{tempdir()} by default.}
 
-\item{.validate_name}{logical defaulting to TRUE, which checks the name input (or area year combination) against a list of available objects in the absmapsdata package.}
+\item{.validate_name}{Logical defaulting to TRUE, which checks the name
+input (or area year combination) against a list of available objects in the
+\code{absmapsdata} package.}
 
-\item{simplify_keep}{proportion of points to retain (0-1; default 1 - no simplification).}
+\item{simplify_keep}{The proportion of points to retain (0-1; default 1 -
+no simplification).}
 
-\item{crs}{whether to update the crs (if necessary) of the returned polygon.}
+\item{crs}{Whether to update the crs (if necessary) of the returned polygon.}
 
-\item{...}{arguments passed to \code{rmapshaper::ms_simplify()} (other than \code{keep}).}
+\item{...}{Arguments passed to \code{rmapshaper::ms_simplify()} (other than
+\code{keep}).}
 }
 \value{
-a polygon of class \code{sf}.
+A polygon of class \code{sf}.
 }
 \description{
-Get shapefiles from ABS
+Get shapefiles from ABS (via \code{strayr} and \code{absmapsdata} or via
+\code{hpa.spatial} and \code{hpa.spatial.data})
 }
 \examples{
 get_polygon(area = "sa2", year = 2016)

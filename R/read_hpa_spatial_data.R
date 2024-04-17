@@ -1,10 +1,10 @@
-#' Read a dataset from github.com/healthpolicyanalysis/hpa.spatial.data/
+#' Read a dataset from <github.com/healthpolicyanalysis/hpa.spatial.data/>
 #'
 #' @param name The name of dataset in \code{hpa.spatial.data} repo.
 #' Valid names are those within \code{get_data_file_list()}.
 #' @param export_dir The directory to store the downloaded data.
 #'
-#' @return a \code{sf} object.
+#' @return An \code{sf} object.
 #' @export
 #'
 #' @examples
@@ -65,14 +65,6 @@ read_hpa_spatial_data <- function(name, export_dir = tempdir()) {
 
 
 get_data_file_list <- function() {
-  # req <- httr::GET("https://api.github.com/repos/healthpolicyanalysis/hpa.spatial.data/git/trees/main?recursive=1")
-  # httr::stop_for_status(req)
-  # filelist <- unlist(lapply(httr::content(req)$tree, "[", "path"), use.names = F)
-  #
-  # stringr::str_subset(filelist, "data/") |>
-  #   stringr::str_remove("data/") |>
-  #   stringr::str_remove("_?[A-Z]?\\.rda$") |>
-  #   unique()
   c(
     "acpr",
     "lhn",

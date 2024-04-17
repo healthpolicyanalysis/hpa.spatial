@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_polygon.R
 \name{get_mb21_pop}
 \alias{get_mb21_pop}
-\title{Get Mesh Blocks (2021 edition) and population counts.}
+\title{Get Mesh Blocks (2021 edition) and population counts}
 \usage{
 get_mb21_pop(export_dir = tempdir())
 }
@@ -10,10 +10,10 @@ get_mb21_pop(export_dir = tempdir())
 \item{export_dir}{The directory to store the downloaded data.}
 }
 \value{
-a \code{sf} object.
+An \code{sf} object.
 }
 \description{
-Get Mesh Blocks (2021 edition) and population counts.
+Get Mesh Blocks (2021 edition) and population counts
 }
 \examples{
 get_mb21_pop()
