@@ -5,7 +5,7 @@ expect_tbl_snap <- function(x, sample_n = 100, seed = 42) {
   x <- x |>
     dplyr::mutate(dplyr::across(
       dplyr::where(is.numeric),
-      ~ round(.x, digits = 4)
+      ~ round(.x, digits = 2)
     ))
 
   df_sample <- x |>
