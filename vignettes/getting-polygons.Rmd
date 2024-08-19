@@ -24,8 +24,8 @@ library(ggplot2)
 
 ```{r}
 quick_plot <- function(poly) {
-  ggplot() + 
-    geom_sf(data=poly) +
+  ggplot() +
+    geom_sf(data = poly) +
     theme_bw()
 }
 ```
@@ -52,11 +52,11 @@ sa2_2016 |>
   filter(gcc_name_2016 == "Greater Brisbane") |>
   quick_plot() +
   scale_x_continuous(limits = c(152.9, 153.1)) +
-  scale_y_continuous(limits = c(-27.4, -27.6)) 
+  scale_y_continuous(limits = c(-27.4, -27.6))
 
 sa2_2016_simple |>
   filter(gcc_name_2016 == "Greater Brisbane") |>
   quick_plot() +
   scale_x_continuous(limits = c(152.9, 153.1)) +
-  scale_y_continuous(limits = c(-27.4, -27.6)) 
+  scale_y_continuous(limits = c(-27.4, -27.6))
 ```

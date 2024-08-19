@@ -3,7 +3,7 @@
     Code
       tbl_test
     Output
-      # A tibble: 555 x 3
+      # A tibble: 553 x 3
       # Groups:   sa2_code_2016 [528]
          sa2_code_2016 sa2_code_2021 ratio
          <chr>         <chr>         <dbl>
@@ -17,7 +17,7 @@
        8 301021008     301021008         1
        9 301021009     301021009         1
       10 301021011     301021011         1
-      # i 545 more rows
+      # i 543 more rows
 
 # test mapping works for non-standard geographies
 

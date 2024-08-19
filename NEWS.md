@@ -1,10 +1,10 @@
 # hpa.spatial (development version)
 
 * allow user to specify a custom correspondence table to 
-  map_data_with_correspondence().
+  `map_data_with_correspondence()`.
 
 * add access to recently added Aged Care Planning Region shape files 
-  (on hpa.spatial.data).
+  (on `{hpa.spatial.data}`).
 
 * only do GHA for R CMD CHECK on Windows.
 
@@ -15,7 +15,7 @@
 # hpa.spatial 0.2.11
 
 * Ensure that SA2s can completely map to LHNs (including SA2s with zero pop).
-  Includes an associated change to {hpa.spatial.data} [commit](https://github.com/healthpolicyanalysis/hpa.spatial.data/commit/b1e28f35a90af27de5078dfecfd3b43d01bc3789).
+  Includes an associated change to `{hpa.spatial.data}` [commit](https://github.com/healthpolicyanalysis/hpa.spatial.data/commit/b1e28f35a90af27de5078dfecfd3b43d01bc3789).
 
 # hpa.spatial 0.2.10
 
@@ -91,7 +91,7 @@
 # hpa.spatial 0.2.4
 
 * use tidy evaluation on quosures to avoid problems with accessing objects 
-  passed to hpa.spatial functions that evaluate calls.
+  passed to `hpa.spatial` functions that evaluate calls.
 
 * save and read correspondence tables to save time particularly when a 
   correspondence table that's being created is being created many times over
@@ -105,7 +105,7 @@
 # hpa.spatial 0.2.2
 
 * default mb_geo in `map_data_with_correspondence()` as missing and apply 
-  default within function code. Using a hpa.spatial function as a default arg 
+  default within function code. Using a `hpa.spatial` function as a default arg 
   fails when it's called by namespace 
   (`hpa.spatial::map_data_with_correspondence()`).
 
@@ -124,7 +124,7 @@
 * added a `.data` argument to `map_data_with_correspondence()` so that `codes`,
   `values` and `groups` can be passed by reference (like in `dplyr::mutate()`).
   
-* always returna a tibble from `map_data_with_correspondence()` (just for 
+* always return a tibble from `map_data_with_correspondence()` (just for 
   consistency).
 
 * add tests for (#3) which is a non-issue.
@@ -135,7 +135,7 @@
   `nsw_lhd`, `sa_lhn` etc...).
 
 * bug fix (#2): use `withr::with_package()` and `withr::with_environment()` to 
-  evaluate calls in `get_polygon()` with hpa.spatial namespace within copy of 
+  evaluate calls in `get_polygon()` with `hpa.spatial` namespace within copy of 
   parent environment.
 
 # hpa.spatial 0.1.1

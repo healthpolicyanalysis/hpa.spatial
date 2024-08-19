@@ -105,7 +105,7 @@ map_data_with_correspondence <- function(.data = NULL,
         # check whether it was passed as a vector
         values <- try(values)
         # if not, access from .data
-        if(inherits(values, "try-error")) {
+        if (inherits(values, "try-error")) {
           values <- rlang::eval_tidy(rlang::enexpr(values), data = .data)
         }
       }
@@ -122,7 +122,7 @@ map_data_with_correspondence <- function(.data = NULL,
         # check whether it was passed as a vector
         codes <- try(codes)
         # if not, access from .data
-        if(inherits(codes, "try-error")) {
+        if (inherits(codes, "try-error")) {
           codes <- rlang::eval_tidy(rlang::enexpr(codes), data = .data)
         }
       }
@@ -157,7 +157,7 @@ map_data_with_correspondence <- function(.data = NULL,
 
 
   ### CREATE CORRESPONDENCE TBL
-  if(is.null(correspondence_tbl)) {
+  if (is.null(correspondence_tbl)) {
     ct_provided <- FALSE
     call <- rlang::expr(get_correspondence_tbl(
       from_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_area))),

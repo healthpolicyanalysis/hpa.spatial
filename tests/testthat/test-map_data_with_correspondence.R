@@ -48,19 +48,15 @@ test_that("problem case from unmet needs is fixed", {
 
 test_that("using multiple groups works", {
   sa2_2011 <- suppressMessages(get_polygon(area = "sa2", year = 2011))
-  withr::with_seed(
-    42,
-    {
-      n_sample <- 100
-      sa2_2011_sample_with_groups <- sa2_2011[1:n_sample, ] |>
-        (\(x) {
-          x$g1 <- sample(LETTERS[1:5], size = n_sample, replace = TRUE)
-          x$g2 <- sample(letters[1:5], size = n_sample, replace = TRUE)
-          x$test_outcome <- rnorm(n_sample)
-          return(x)
-        })()
-    }
-  )
+  withr::local_seed(42)
+  n_sample <- 100
+  sa2_2011_sample_with_groups <- sa2_2011[1:n_sample, ] |>
+    (\(x) {
+      x$g1 <- sample(LETTERS[1:5], size = n_sample, replace = TRUE)
+      x$g2 <- sample(letters[1:5], size = n_sample, replace = TRUE)
+      x$test_outcome <- rnorm(n_sample)
+      return(x)
+    })()
 
   mapped_df_with_data1 <- map_data_with_correspondence(
     sa2_2011_sample_with_groups,
@@ -116,12 +112,9 @@ test_that("mapping using user-provided polygons", {
   from_sa2s <- suppressMessages(get_polygon("sa22016")) |>
     remove_empty_geographies()
   to_lhns <- suppressMessages(get_polygon("LHN"))
-  withr::with_seed(
-    42,
-    {
-      from_sa2s$test_outcome <- rnorm(nrow(from_sa2s))
-    }
-  )
+
+  withr::local_seed(42)
+  from_sa2s$test_outcome <- rnorm(nrow(from_sa2s))
 
   mapped_df_with_data <- suppressWarnings(map_data_with_correspondence(
     codes = from_sa2s[[1]],
@@ -139,12 +132,9 @@ test_that("mapping using user-provided polygons", {
     from_sa2s <- suppressMessages(hpa.spatial::get_polygon("sa22016")) |>
       hpa.spatial:::remove_empty_geographies()
     to_lhns <- suppressMessages(hpa.spatial::get_polygon("LHN"))
-    withr::with_seed(
-      42,
-      {
-        from_sa2s$test_outcome <- rnorm(nrow(from_sa2s))
-      }
-    )
+
+    withr::local_seed(42)
+    from_sa2s$test_outcome <- rnorm(nrow(from_sa2s))
 
     suppressWarnings(hpa.spatial::map_data_with_correspondence(
       codes = from_sa2s[[1]],
@@ -179,12 +169,9 @@ test_that("test mapping with custom geo", {
 
 test_that("mapping using created correspondence tables when abs ones aren't available", {
   sa2_2021 <- suppressMessages(get_polygon(area = "sa2", year = 2021))
-  withr::with_seed(
-    42,
-    {
-      sa2_2021$test_outcome <- rnorm(nrow(sa2_2021))
-    }
-  )
+
+  withr::local_seed(42)
+  sa2_2021$test_outcome <- rnorm(nrow(sa2_2021))
 
   mapped_df_with_data <- suppressWarnings(map_data_with_correspondence(
     codes = sa2_2021$sa2_code_2021,
@@ -200,12 +187,9 @@ test_that("mapping using created correspondence tables when abs ones aren't avai
 
   mapped_df_with_data2 <- callr::r(function() {
     sa2_2021 <- suppressMessages(hpa.spatial::get_polygon(area = "sa2", year = 2021))
-    withr::with_seed(
-      42,
-      {
-        sa2_2021$test_outcome <- rnorm(nrow(sa2_2021))
-      }
-    )
+
+    withr::local_seed(42)
+    sa2_2021$test_outcome <- rnorm(nrow(sa2_2021))
 
     suppressWarnings(hpa.spatial::map_data_with_correspondence(
       codes = sa2_2021$sa2_code_2021,
@@ -222,21 +206,17 @@ test_that("mapping using created correspondence tables when abs ones aren't avai
 
 test_that("passing dataframe and retaining column names works", {
   sa2_2011 <- suppressMessages(get_polygon(area = "sa2", year = 2011))
-  withr::with_seed(
-    42,
-    {
-      sa2_2011_sample <- sa2_2011[1:100, ]
 
-      sa2_2011_sample_with_groups <-
-        lapply(
-          LETTERS[1:5],
-          \(x)tibble::add_column(.data = sa2_2011_sample, letter_group = x)
-        ) |>
-        (\(x) do.call("rbind", x))()
+  withr::local_seed(42)
+  sa2_2011_sample <- sa2_2011[1:100, ]
 
-      sa2_2011_sample_with_groups$test_outcome <- rnorm(nrow(sa2_2011_sample_with_groups))
-    }
-  )
+  sa2_2011_sample_with_groups <- lapply(
+    LETTERS[1:5],
+    \(x)tibble::add_column(.data = sa2_2011_sample, letter_group = x)
+  ) |>
+    (\(x) do.call("rbind", x))()
+
+  sa2_2011_sample_with_groups$test_outcome <- rnorm(nrow(sa2_2011_sample_with_groups))
 
   mapped_df_with_data1 <- map_data_with_correspondence(
     sa2_2011_sample_with_groups,
@@ -289,21 +269,19 @@ test_that("grouping works", {
   sa2_2011 <- suppressMessages(get_polygon(area = "sa2", year = 2011))
 
   n_sample <- 200
-  withr::with_seed(
-    42,
-    {
-      sa2_to_sa3_2011_mapped_grped_aggs <- map_data_with_correspondence(
-        codes = sample(sa2_2011$sa2_code_2011, size = n_sample),
-        values = rnorm(n = n_sample),
-        groups = sample(LETTERS[1:5], size = n_sample, replace = TRUE),
-        from_area = "sa2",
-        from_year = 2011,
-        to_area = "sa3",
-        to_year = 2011,
-        value_type = "aggs"
-      )
-    }
+
+  withr::local_seed(42)
+  sa2_to_sa3_2011_mapped_grped_aggs <- map_data_with_correspondence(
+    codes = sample(sa2_2011$sa2_code_2011, size = n_sample),
+    values = rnorm(n = n_sample),
+    groups = sample(LETTERS[1:5], size = n_sample, replace = TRUE),
+    from_area = "sa2",
+    from_year = 2011,
+    to_area = "sa3",
+    to_year = 2011,
+    value_type = "aggs"
   )
+
   expect_snapshot(sa2_to_sa3_2011_mapped_grped_aggs)
 })
 
@@ -311,30 +289,26 @@ test_that("grouping works", {
 test_that("aggregating up SA's works", {
   sa2_2011 <- suppressMessages(get_polygon(area = "sa2", year = 2011))
 
-
   n_sample <- 200
-  withr::with_seed(
-    42,
-    {
-      sa2_to_sa3_2011_mapped_unit <- map_data_with_correspondence(
-        codes = sample(sa2_2011$sa2_code_2011, size = n_sample),
-        values = rnorm(n = n_sample),
-        from_area = "sa2",
-        from_year = 2011,
-        to_area = "sa3",
-        to_year = 2011
-      )
 
-      sa2_to_sa3_2011_mapped_aggs <- map_data_with_correspondence(
-        codes = sample(sa2_2011$sa2_code_2011, size = n_sample),
-        values = rnorm(n = n_sample),
-        from_area = "sa2",
-        from_year = 2011,
-        to_area = "sa3",
-        to_year = 2011,
-        value_type = "aggs"
-      )
-    }
+  withr::local_seed(42)
+  sa2_to_sa3_2011_mapped_unit <- map_data_with_correspondence(
+    codes = sample(sa2_2011$sa2_code_2011, size = n_sample),
+    values = rnorm(n = n_sample),
+    from_area = "sa2",
+    from_year = 2011,
+    to_area = "sa3",
+    to_year = 2011
+  )
+
+  sa2_to_sa3_2011_mapped_aggs <- map_data_with_correspondence(
+    codes = sample(sa2_2011$sa2_code_2011, size = n_sample),
+    values = rnorm(n = n_sample),
+    from_area = "sa2",
+    from_year = 2011,
+    to_area = "sa3",
+    to_year = 2011,
+    value_type = "aggs"
   )
 
   expect_snapshot(sa2_to_sa3_2011_mapped_unit)
@@ -346,35 +320,32 @@ test_that("aggregating up SA's works", {
 test_that("mapping across SAs and editions together works", {
   sa2_2011 <- suppressMessages(get_polygon(area = "sa2", year = 2011))
 
-  withr::with_seed(
-    42,
-    {
-      n_sample <- 200
-      sa2_2011_sample <- dplyr::sample_n(sa2_2011, n_sample)
-      random_vals <- rnorm(n = n_sample)
-      sample_codes <- sample(sa2_2011$sa2_code_2011, size = n_sample)
+  n_sample <- 200
 
-      sa2_to_sa3_2011_to_2016_mapped_unit_ref_col <- map_data_with_correspondence(
-        .data = sa2_2011_sample,
-        codes = sa2_code_2011,
-        values = random_vals,
-        from_area = "sa2",
-        from_year = 2011,
-        to_area = "sa3",
-        to_year = 2016,
-        seed = 42
-      )
+  withr::local_seed(42)
+  sa2_2011_sample <- dplyr::sample_n(sa2_2011, n_sample)
+  random_vals <- rnorm(n = n_sample)
+  sample_codes <- sample(sa2_2011$sa2_code_2011, size = n_sample)
 
-      sa2_to_sa3_2011_to_2016_mapped_unit <- map_data_with_correspondence(
-        codes = sample_codes,
-        values = random_vals,
-        from_area = "sa2",
-        from_year = 2011,
-        to_area = "sa3",
-        to_year = 2016,
-        seed = 42
-      )
-    }
+  sa2_to_sa3_2011_to_2016_mapped_unit_ref_col <- map_data_with_correspondence(
+    .data = sa2_2011_sample,
+    codes = sa2_code_2011,
+    values = random_vals,
+    from_area = "sa2",
+    from_year = 2011,
+    to_area = "sa3",
+    to_year = 2016,
+    seed = 42
+  )
+
+  sa2_to_sa3_2011_to_2016_mapped_unit <- map_data_with_correspondence(
+    codes = sample_codes,
+    values = random_vals,
+    from_area = "sa2",
+    from_year = 2011,
+    to_area = "sa3",
+    to_year = 2016,
+    seed = 42
   )
 
   sa2_to_sa3_2011_to_2016_mapped_aggs <- map_data_with_correspondence(
@@ -411,16 +382,14 @@ test_that("mapping across SAs and editions together works", {
 test_that("mapping data works", {
   sa2_2011 <- suppressMessages(get_polygon(area = "sa2", year = 2011))
 
-  withr::with_seed(
-    42,
-    sa2_2016_mapped_unit <- map_data_with_correspondence(
-      codes = sa2_2011$sa2_code_2011,
-      values = rnorm(n = nrow(sa2_2011)),
-      from_area = "sa2",
-      from_year = 2011,
-      to_area = "sa2",
-      to_year = 2016
-    )
+  withr::local_seed(42)
+  sa2_2016_mapped_unit <- map_data_with_correspondence(
+    codes = sa2_2011$sa2_code_2011,
+    values = rnorm(n = nrow(sa2_2011)),
+    from_area = "sa2",
+    from_year = 2011,
+    to_area = "sa2",
+    to_year = 2016
   )
 
   expect_snapshot(sa2_2016_mapped_unit)
@@ -430,18 +399,17 @@ test_that("mapping data works", {
   expect_gt(nrow(sa2_2016_mapped_unit), length(unique(sa2_2016_mapped_unit$SA2_MAINCODE_2016)))
 
 
-  withr::with_seed(
-    42,
-    sa2_2016_mapped_aggs <- map_data_with_correspondence(
-      codes = sa2_2011$sa2_code_2011,
-      values = rpois(n = nrow(sa2_2011), lambda = 15),
-      from_area = "sa2",
-      from_year = 2011,
-      to_area = "sa2",
-      to_year = 2016,
-      value_type = "aggs"
-    )
+  withr::local_seed(42)
+  sa2_2016_mapped_aggs <- map_data_with_correspondence(
+    codes = sa2_2011$sa2_code_2011,
+    values = rpois(n = nrow(sa2_2011), lambda = 15),
+    from_area = "sa2",
+    from_year = 2011,
+    to_area = "sa2",
+    to_year = 2016,
+    value_type = "aggs"
   )
+
   expect_snapshot(sa2_2016_mapped_aggs)
   # expect that all SA2s will only a single value (1-to-1 relationship when
   # mapping on aggregate level as the mapped values should be summed within new
@@ -534,33 +502,29 @@ test_that("mapping data works", {
       "not valid"
     )
   )
-
-  withr::with_seed(
-    42,
-    mdf_agg <- map_data_with_correspondence(
-      codes = c(107011130, 107041149),
-      values = c(10, 10),
-      from_area = "sa2",
-      from_year = 2011,
-      to_area = "sa2",
-      to_year = 2016,
-      value_type = "aggs"
-    )
+  withr::local_seed(42)
+  mdf_agg <- map_data_with_correspondence(
+    codes = c(107011130, 107041149),
+    values = c(10, 10),
+    from_area = "sa2",
+    from_year = 2011,
+    to_area = "sa2",
+    to_year = 2016,
+    value_type = "aggs"
   )
+
   expect_snapshot_output(mdf_agg)
 
-  withr::with_seed(
-    123,
-    mdf_agg_rounded <- map_data_with_correspondence(
-      codes = c(107011130, 107041149),
-      values = c(10, 10),
-      from_area = "sa2",
-      from_year = 2011,
-      to_area = "sa2",
-      to_year = 2016,
-      value_type = "aggs",
-      round = TRUE
-    )
+  withr::local_seed(123)
+  mdf_agg_rounded <- map_data_with_correspondence(
+    codes = c(107011130, 107041149),
+    values = c(10, 10),
+    from_area = "sa2",
+    from_year = 2011,
+    to_area = "sa2",
+    to_year = 2016,
+    value_type = "aggs",
+    round = TRUE
   )
   expect_snapshot_output(mdf_agg_rounded)
 })

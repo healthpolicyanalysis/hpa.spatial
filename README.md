@@ -254,9 +254,51 @@ sa3_counts <- map_data_with_correspondence(
   value_type = "aggs"
 ) |>
   rename(patient_counts = values)
+#> The following 18 codes were passed but are not valid (within the from geography) codes:
+#> 197979799
+#> 199999499
+#> 297979799
+#> 299999499
+#> 397979799
+#> 399999499
+#> 497979799
+#> 499999499
+#> 597979799
+#> 599999499
+#> 697979799
+#> 699999499
+#> 797979799
+#> 799999499
+#> 897979799
+#> 899999499
+#> 997979799
+#> 999999499
+#> Error in get(filename) : object 'CG_SA2_2016_SA3_2016' not found
+#> Failed to retrieve correspondence table through {strayr}, making correspondence table
+#> Reading sa22016 file found in C:\Users\REX~1.PAR\AppData\Local\Temp\Rtmp2XHtTv
+#> The following 18 codes were passed but are not valid (within the from geography) codes:
+#> 197979799
+#> 199999499
+#> 297979799
+#> 299999499
+#> 397979799
+#> 399999499
+#> 497979799
+#> 499999499
+#> 597979799
+#> 599999499
+#> 697979799
+#> 699999499
+#> 797979799
+#> 799999499
+#> 897979799
+#> 899999499
+#> 997979799
+#> 999999499
 
 sa3_2016 <- get_polygon("sa32016") |>
   left_join(sa3_counts)
+#> Reading sa32016 file found in C:\Users\REX~1.PAR\AppData\Local\Temp\Rtmp2XHtTv
 #> Joining with `by = join_by(sa3_code_2016)`
 ```
 
@@ -264,13 +306,13 @@ sa3_2016 <- get_polygon("sa32016") |>
 sa2_2011 |>
   ggplot() +
   geom_sf(aes(fill = patient_counts)) +
-  ggtitle("Patient counts by SA2 (2011)") + 
+  ggtitle("Patient counts by SA2 (2011)") +
   theme_bw()
 
 sa3_2016 |>
   ggplot() +
   geom_sf(aes(fill = patient_counts)) +
-  ggtitle("Patient counts by SA3 (2016)") + 
+  ggtitle("Patient counts by SA3 (2016)") +
   theme_bw()
 ```
 

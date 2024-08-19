@@ -59,13 +59,13 @@ aus_hex <- st_sf(data.frame(
   geom = hex_grid[intersected_polys]
 ))
 
-aus_hex$x <- st_coordinates(st_centroid(aus_hex))[,1]
-aus_hex$y <- st_coordinates(st_centroid(aus_hex))[,2]
+aus_hex$x <- st_coordinates(st_centroid(aus_hex))[, 1]
+aus_hex$y <- st_coordinates(st_centroid(aus_hex))[, 2]
 bbox <- sf::st_bbox(aus_hex)
 
 text_coord <- data.frame(
-  x = sum(bbox['xmin'], bbox['xmax'])/2,
-  y = sum(bbox['ymin'], bbox['ymax'])/2,
+  x = sum(bbox["xmin"], bbox["xmax"]) / 2,
+  y = sum(bbox["ymin"], bbox["ymax"]) / 2,
   label = "spatial"
 )
 
@@ -80,16 +80,18 @@ aus_plot <- ggplot() +
 
 p <- ggdraw() +
   draw_plot(aus_plot) +
-  draw_image("data-raw/HPA.png", scale = 0.4, vjust=-0.05, hjust=0)
+  draw_image("data-raw/HPA.png", scale = 0.4, vjust = -0.05, hjust = 0)
 
 
 sticker(
-  p, package="hpa.spatial", p_size=20,
-  s_x=1,
-  s_y=0.8,
-  s_width=1.4,
-  s_height=1,
+  p,
+  package = "hpa.spatial", p_size = 20,
+  s_x = 1,
+  s_y = 0.8,
+  s_width = 1.4,
+  s_height = 1,
   p_color = "#1D2455",
   h_fill = "#408BCA",
   h_color = "#1D2455",
-  filename="inst/figures/hex.png")
+  filename = "inst/figures/hex.png"
+)

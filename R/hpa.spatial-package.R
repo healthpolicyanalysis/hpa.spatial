@@ -6,19 +6,20 @@
 NULL
 
 utils::globalVariables(c(
-  "ratio",
-  "geometry",
-  "phn",
-  "lhn",
-  ":=",
   "!<-",
-  "values",
-  "grp",
-  "Person",
-  "pop",
-  "mb_code",
-  "max_ratio",
+  ":=",
+  "empty_pop",
   "from_code",
+  "geometry",
+  "grp",
+  "lhn",
+  "max_ratio",
+  "mb_code",
+  "Person",
+  "phn",
+  "pop",
+  "pop_sum",
+  "ratio",
   "to_code",
-  "pop_sum"
+  "values"
 ))

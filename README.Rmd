@@ -38,7 +38,7 @@ You can install the development version of hpa.spatial from [GitHub](https://git
 remotes::install_github("healthpolicyanalysis/hpa.spatial")
 ```
 
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 library(hpa.spatial)
 library(sf)
 library(dplyr)
@@ -190,13 +190,13 @@ sa3_2016 <- get_polygon("sa32016") |>
 sa2_2011 |>
   ggplot() +
   geom_sf(aes(fill = patient_counts)) +
-  ggtitle("Patient counts by SA2 (2011)") + 
+  ggtitle("Patient counts by SA2 (2011)") +
   theme_bw()
 
 sa3_2016 |>
   ggplot() +
   geom_sf(aes(fill = patient_counts)) +
-  ggtitle("Patient counts by SA3 (2016)") + 
+  ggtitle("Patient counts by SA3 (2016)") +
   theme_bw()
 ```
 
@@ -204,13 +204,13 @@ sa3_2016 |>
 p1 <- sa2_2011 |>
   ggplot() +
   geom_sf(aes(fill = patient_counts)) +
-  ggtitle("Patient counts by SA2 (2011)") + 
+  ggtitle("Patient counts by SA2 (2011)") +
   theme_bw()
 
 p2 <- sa3_2016 |>
   ggplot() +
   geom_sf(aes(fill = patient_counts)) +
-  ggtitle("Patient counts by SA3 (2016)") + 
+  ggtitle("Patient counts by SA3 (2016)") +
   theme_bw()
 
 gridExtra::grid.arrange(p1, p2, ncol = 1)

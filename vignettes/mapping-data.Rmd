@@ -38,9 +38,9 @@ These are helpful when mapping between geographies which they release editions f
 
 ```{r}
 sa2_cg <- get_correspondence_tbl(
-  from_area="sa2", 
-  from_year = 2011, 
-  to_area = "sa2", 
+  from_area = "sa2",
+  from_year = 2011,
+  to_area = "sa2",
   to_year = 2016
 )
 
@@ -62,7 +62,7 @@ map_data_with_correspondence(
   from_area = "sa2",
   from_year = 2011,
   to_area = "sa2",
-  to_year = 2016, 
+  to_year = 2016,
   value_type = "units",
   seed = 2
 )
@@ -77,7 +77,7 @@ map_data_with_correspondence(
   from_area = "sa2",
   from_year = 2011,
   to_area = "sa2",
-  to_year = 2016, 
+  to_year = 2016,
   value_type = "aggs"
 )
 ```
@@ -92,14 +92,14 @@ custom_geo <- create_child_geo(
   parent_geo = get_polygon("LHN")
 )
 
-custom_geo |> 
-  filter(stringr::str_detect(sa2_code_2011, "210041241")) |> 
-  ggplot() + 
+custom_geo |>
+  filter(stringr::str_detect(sa2_code_2011, "210041241")) |>
+  ggplot() +
   geom_sf(alpha = 1, aes(fill = sa2_code_2011), size = 10, col = "transparent") +
   geom_sf(
     data = filter(get_polygon("LHN"), LHN_Name %in% c("Brimbank Melton", "Hume Moreland")),
     aes(fill = LHN_Name),
-    col = "black", 
+    col = "black",
     linetype = "dashed",
     size = 10,
     alpha = 0.4
@@ -119,20 +119,22 @@ Sometimes, we may have data for groups, with values for each group within each g
 
 ```{r}
 sa2_2011_data <-
-  get_polygon("sa22011") |> 
-  as_tibble() |> 
-  select(sa2_code_2011) |> 
+  get_polygon("sa22011") |>
+  as_tibble() |>
+  select(sa2_code_2011) |>
   mutate(
     ages_00_to_11 = rnorm(n = max(n()), mean = 10, sd = 2),
     ages_12_to_24 = rnorm(n = max(n()), mean = 20, sd = 4),
     ages_25_to_64 = rnorm(n = max(n()), mean = 25, sd = 5),
     ages_65_plus = rnorm(n = max(n()), mean = 40, sd = 8)
-  ) |> 
+  ) |>
   pivot_longer(
-    !sa2_code_2011, 
+    !sa2_code_2011,
     names_to = "agegrp",
     values_to = "outcome_var",
-    names_transform = ~ str_remove(.x, "ages_") |> str_replace("_to_", "-") |> str_replace("_plus", "+")
+    names_transform = ~ str_remove(.x, "ages_") |>
+      str_replace("_to_", "-") |>
+      str_replace("_plus", "+")
   )
 
 sa2_2016_data <- map_data_with_correspondence(
@@ -142,7 +144,7 @@ sa2_2016_data <- map_data_with_correspondence(
   groups = agegrp,
   from_area = "sa2",
   from_year = 2011,
-  to_area = "sa2", 
+  to_area = "sa2",
   to_year = 2016,
   value_type = "aggs"
 )

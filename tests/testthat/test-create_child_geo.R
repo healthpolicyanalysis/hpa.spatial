@@ -35,4 +35,3 @@ test_that("child remains unchanged when it should", {
     dplyr::filter(test, stringr::str_detect(sa2_code_2021, "306031161"))
   )
 })
-

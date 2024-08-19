@@ -6,13 +6,11 @@ test_that("test mapping is similar to published correspondence tables", {
 
   published_tbl <- strayr::read_correspondence_tbl("sa2", 2016, "sa2", "2021.csv")
 
-  tbl_ref <- withr::with_package("dplyr", {
-    published_tbl |>
-      filter(SA2_MAINCODE_2016 %in% sa2_2016_qld$sa2_code_2016) |>
-      select(SA2_MAINCODE_2016, SA2_CODE_2021, ratio) |>
-      arrange(SA2_MAINCODE_2016, SA2_CODE_2021) |>
-      mutate(across(!ratio, as.character))
-  })
+  tbl_ref <- published_tbl |>
+    dplyr::filter(SA2_MAINCODE_2016 %in% sa2_2016_qld$sa2_code_2016) |>
+    dplyr::select(SA2_MAINCODE_2016, SA2_CODE_2021, ratio) |>
+    dplyr::arrange(SA2_MAINCODE_2016, SA2_CODE_2021) |>
+    dplyr::mutate(dplyr::across(!ratio, as.character))
 
   qld_mb21 <- get_mb21_pop() |>
     dplyr::filter(STE_NAME21 == "Queensland")
@@ -38,8 +36,7 @@ test_that("test mapping is similar to published correspondence tables", {
 
 test_that("test mapping works for non-standard geographies", {
   to_poly <- get_polygon(area = "LHN", crs = 7844)
-  from_poly <- suppressWarnings(get_polygon(area = "sa2", year = 2021, crs = 7844)) |>
-    remove_empty_geographies()
+  from_poly <- suppressWarnings(get_polygon(area = "sa2", year = 2021, crs = 7844))
 
   # test creation of correspondence table on non-standard geography
   sa2_to_lhn_tbl <- make_correspondence_tbl(from_poly, to_poly)
