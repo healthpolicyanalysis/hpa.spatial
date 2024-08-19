@@ -16,7 +16,7 @@ read_hpa_spatial_data <- function(name, export_dir = tempdir()) {
     stop("export_dir provided does not exist: ", export_dir)
   }
 
-  base_url <- "https://github.com/healthpolicyanalysis/hpa.spatial.data/raw/main/data/"
+  base_url <- "https://github.com/healthpolicyanalysis/hpa.spatial.data/raw/1ccc30b15ece78d0953d122e9470abbc047df2d5/data/"
   out_path <- file.path(export_dir, paste0(name, ".rda"))
 
   if (!file.exists(out_path)) {

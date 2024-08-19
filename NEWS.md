@@ -1,5 +1,9 @@
 # hpa.spatial (development version)
 
+* data read from `{hpa.spatial.data}` is read from a specific commit to ensure
+  (from now on) old versions of `{hpa.spatial}` will read the same data as they
+  are expected to (did at the time of analyses).
+
 * allow user to specify a custom correspondence table to 
   `map_data_with_correspondence()`.
 
