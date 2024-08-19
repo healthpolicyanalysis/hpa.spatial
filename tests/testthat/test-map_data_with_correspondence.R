@@ -42,7 +42,7 @@ test_that("problem case from unmet needs is fixed", {
     value_type = "aggs"
   )
 
-  expect_snapshot(mapped_data)
+  expect_tbl_snap(mapped_data)
 })
 
 
@@ -94,8 +94,8 @@ test_that("using multiple groups works", {
   )
 
 
-  expect_snapshot(mapped_df_with_data1)
-  expect_snapshot(mapped_df_with_data2)
+  expect_tbl_snap(mapped_df_with_data1)
+  expect_tbl_snap(mapped_df_with_data2)
   expect_identical(
     unname(as.matrix(mapped_df_with_data1)),
     unname(as.matrix(mapped_df_with_data2))
@@ -126,7 +126,7 @@ test_that("mapping using user-provided polygons", {
   ))
 
   expect_s3_class(mapped_df_with_data, "tbl")
-  expect_snapshot(mapped_df_with_data)
+  expect_tbl_snap(mapped_df_with_data)
 
   mapped_df_with_data2 <- callr::r(function() {
     from_sa2s <- suppressMessages(hpa.spatial::get_polygon("sa22016")) |>
@@ -164,7 +164,7 @@ test_that("test mapping with custom geo", {
     export_fname = "adjusted-sa3s-to-lhns"
   )
 
-  expect_snapshot(mapped_data)
+  expect_tbl_snap(mapped_data)
 })
 
 test_that("mapping using created correspondence tables when abs ones aren't available", {
@@ -183,7 +183,7 @@ test_that("mapping using created correspondence tables when abs ones aren't avai
   ))
 
   expect_s3_class(mapped_df_with_data, "tbl")
-  expect_snapshot(mapped_df_with_data)
+  expect_tbl_snap(mapped_df_with_data)
 
   mapped_df_with_data2 <- callr::r(function() {
     sa2_2021 <- suppressMessages(hpa.spatial::get_polygon(area = "sa2", year = 2021))
@@ -282,7 +282,7 @@ test_that("grouping works", {
     value_type = "aggs"
   )
 
-  expect_snapshot(sa2_to_sa3_2011_mapped_grped_aggs)
+  expect_tbl_snap(sa2_to_sa3_2011_mapped_grped_aggs)
 })
 
 
@@ -311,8 +311,8 @@ test_that("aggregating up SA's works", {
     value_type = "aggs"
   )
 
-  expect_snapshot(sa2_to_sa3_2011_mapped_unit)
-  expect_snapshot(sa2_to_sa3_2011_mapped_aggs)
+  expect_tbl_snap(sa2_to_sa3_2011_mapped_unit)
+  expect_tbl_snap(sa2_to_sa3_2011_mapped_aggs)
   expect_lt(nrow(sa2_to_sa3_2011_mapped_aggs), nrow(sa2_to_sa3_2011_mapped_unit))
 })
 
@@ -357,9 +357,9 @@ test_that("mapping across SAs and editions together works", {
     to_year = 2016,
     value_type = "aggs"
   )
-  expect_snapshot(sa2_to_sa3_2011_to_2016_mapped_unit_ref_col)
-  expect_snapshot(sa2_to_sa3_2011_to_2016_mapped_unit)
-  expect_snapshot(sa2_to_sa3_2011_to_2016_mapped_aggs)
+  expect_tbl_snap(sa2_to_sa3_2011_to_2016_mapped_unit_ref_col)
+  expect_tbl_snap(sa2_to_sa3_2011_to_2016_mapped_unit)
+  expect_tbl_snap(sa2_to_sa3_2011_to_2016_mapped_aggs)
   expect_lt(
     nrow(sa2_to_sa3_2011_to_2016_mapped_aggs),
     nrow(sa2_to_sa3_2011_to_2016_mapped_unit)
@@ -392,7 +392,7 @@ test_that("mapping data works", {
     to_year = 2016
   )
 
-  expect_snapshot(sa2_2016_mapped_unit)
+  expect_tbl_snap(sa2_2016_mapped_unit)
 
   # expect that some SA2s will have multiple units mapped to them (not a 1-to-1
   # relationship when mapping on unit level
@@ -410,7 +410,7 @@ test_that("mapping data works", {
     value_type = "aggs"
   )
 
-  expect_snapshot(sa2_2016_mapped_aggs)
+  expect_tbl_snap(sa2_2016_mapped_aggs)
   # expect that all SA2s will only a single value (1-to-1 relationship when
   # mapping on aggregate level as the mapped values should be summed within new
   # location codes)
@@ -513,7 +513,7 @@ test_that("mapping data works", {
     value_type = "aggs"
   )
 
-  expect_snapshot_output(mdf_agg)
+  expect_tbl_snap(mdf_agg)
 
   withr::local_seed(123)
   mdf_agg_rounded <- map_data_with_correspondence(
@@ -526,5 +526,5 @@ test_that("mapping data works", {
     value_type = "aggs",
     round = TRUE
   )
-  expect_snapshot_output(mdf_agg_rounded)
+  expect_tbl_snap(mdf_agg_rounded)
 })

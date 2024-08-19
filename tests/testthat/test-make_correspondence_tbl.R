@@ -30,7 +30,7 @@ test_that("test mapping is similar to published correspondence tables", {
 
   expect_identical(tbl_test, tbl_test2) # use default mb_geo
   expect_identical(tbl_test, tbl_test3) # use default mb_geo when hpa.spatial isn't loaded
-  expect_snapshot(tbl_test)
+  expect_tbl_snap(tbl_test)
 })
 
 
@@ -41,5 +41,5 @@ test_that("test mapping works for non-standard geographies", {
   # test creation of correspondence table on non-standard geography
   sa2_to_lhn_tbl <- make_correspondence_tbl(from_poly, to_poly)
 
-  expect_snapshot(sa2_to_lhn_tbl)
+  expect_tbl_snap(sa2_to_lhn_tbl)
 })

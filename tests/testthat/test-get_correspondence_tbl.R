@@ -5,7 +5,7 @@ test_that("can get CG from absmapsdata", {
     to_area = "sa2",
     to_year = 2016
   )
-  expect_snapshot(tbl)
+  expect_tbl_snap(tbl)
 })
 
 test_that("can get CG via make_correspondence_tbl() and retrieve faster a second time", {
@@ -32,7 +32,7 @@ test_that("can get CG via make_correspondence_tbl() and retrieve faster a second
 test_that("can get a custom CG via make_correspondence_tbl()", {
   tbl <- suppressWarnings(get_correspondence_tbl(from_area = "sa2", from_year = 2011, to_area = "LHN"))
 
-  expect_snapshot(tbl)
+  expect_tbl_snap(tbl)
 })
 
 test_that("can get CG using input polygons rather than areas/years", {
@@ -45,12 +45,12 @@ test_that("can get CG using input polygons rather than areas/years", {
     export_fname = "sa2-to-lhn"
   )
 
-  expect_snapshot(tbl)
+  expect_tbl_snap(tbl)
 })
 
 test_that("correspondence table is complete - all non-NA SA2 mappings are other territories", {
   tbl <- suppressWarnings(get_correspondence_tbl(from_area = "sa2", from_year = 2021, to_area = "LHN")) |>
     dplyr::filter(is.na(LHN_Name))
 
-  expect_snapshot(tbl)
+  expect_tbl_snap(tbl)
 })

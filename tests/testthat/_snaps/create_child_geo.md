@@ -12,7 +12,16 @@
 # child remains unchanged when it should
 
     Code
-      dplyr::filter(test, stringr::str_detect(sa2_code_2021, "306031161"))
+      df_sample
+    Output
+        sa2_code_2021              LHN_Name                       geometry
+      1   306031161-A Cairns and Hinterland MULTIPOLYGON (((146.1989 -1...
+      2   306031161-B            Townsville MULTIPOLYGON (((146.3296 -1...
+
+---
+
+    Code
+      x
     Output
       Simple feature collection with 2 features and 2 fields
       Geometry type: MULTIPOLYGON

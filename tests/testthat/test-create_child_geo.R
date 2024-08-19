@@ -31,7 +31,7 @@ test_that("child remains unchanged when it should", {
 
   test <- suppressWarnings(create_child_geo(child_geo = sa2, parent_geo = lhn))
 
-  expect_snapshot(
+  expect_tbl_snap(
     dplyr::filter(test, stringr::str_detect(sa2_code_2021, "306031161"))
   )
 })
