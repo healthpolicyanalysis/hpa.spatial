@@ -1,3 +1,5 @@
+# hpa.spatial (development version)
+
 # hpa.spatial 0.2.12
 
 * data read from `{hpa.spatial.data}` is read from a specific commit to ensure
