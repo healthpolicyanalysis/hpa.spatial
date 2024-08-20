@@ -1,37 +1,31 @@
-test_that("child remains unchanged when it should", {
-  sa2 <- get_polygon("sa22016")
-  sa3 <- get_polygon("sa32016")
+test_that("contained SA3s are unchanged, split SA3s are adapted", {
+  test_mb <- readRDS(test_path("fixtures", "brisbane_west_mb.rds"))
 
-  expect_identical(
-    sa2,
-    suppressWarnings(create_child_geo(child_geo = sa2, parent_geo = sa3))
-  )
-})
+  qld_sa3 <- get_polygon("sa32021") |>
+    dplyr::filter(sa3_code_2021 %in% c("30402", "30403"))
 
-test_that("SA3s are adapted when adapted to be within LHNs", {
-  qld_sa3 <- get_polygon("sa32016") |>
-    dplyr::filter(state_name_2016 == "Queensland")
   qld_lhns <- get_polygon("LHN") |>
     dplyr::filter(state == "QLD")
-  qld_new_sa3s <- suppressWarnings(create_child_geo(qld_sa3, qld_lhns))
 
+  qld_new_sa3s <- suppressWarnings(
+    create_child_geo(
+      child_geo = qld_sa3,
+      parent_geo = qld_lhns,
+      mb_geo = test_mb$pop,
+      mb_poly = test_mb$poly
+    )
+  ) |>
+    dplyr::as_tibble() |>
+    dplyr::select(-geometry)
 
-  qld_new_sa3s |>
-    dplyr::filter(stringr::str_detect(sa3_code_2016, "-")) |>
-    dplyr::pull(sa3_code_2016) |>
-    sort() |>
-    expect_snapshot()
+  split_geo <- qld_new_sa3s |>
+    dplyr::filter(stringr::str_detect(sa3_code_2021, "30403"))
 
-  expect_gt(nrow(qld_new_sa3s), nrow(qld_sa3))
-})
+  contained_geo <- qld_new_sa3s |>
+    dplyr::filter(stringr::str_detect(sa3_code_2021, "30402"))
 
-test_that("child remains unchanged when it should", {
-  sa2 <- get_polygon("sa22021") |> dplyr::filter(state_name_2021 == "Queensland")
-  lhn <- get_polygon("LHN") |> dplyr::filter(state == "QLD")
+  # the split geography should have multiple rows and the contained remains as 1
+  expect_gt(nrow(split_geo), nrow(contained_geo))
 
-  test <- suppressWarnings(create_child_geo(child_geo = sa2, parent_geo = lhn))
-
-  expect_tbl_snap(
-    dplyr::filter(test, stringr::str_detect(sa2_code_2021, "306031161"))
-  )
+  expect_snapshot(qld_new_sa3s)
 })

@@ -29,14 +29,12 @@ create_child_geo <- function(child_geo,
                              mb_geo = get_mb21_pop(),
                              mb_poly = get_mb21_poly(),
                              minimum_majority_portions = 0.95) {
-  # assert thats child/parent/mb_geo are sf polygons
-  # assert that minimum majoirty_portions is 0<=x<=1
-
+  # TODO: assert that child/parent/mb_geo are sf polygons
+  # TODO: assert that minimum majority_portions is 0 <= x <= 1
   child_geo_orig <- child_geo
 
   child_geo <- update_crs(child_geo, crs = sf::st_crs(mb_geo))
   parent_geo <- update_crs(parent_geo, crs = sf::st_crs(mb_geo))
-
 
   correspondence_tbl <- make_correspondence_tbl(
     from_geo = child_geo,
@@ -62,7 +60,6 @@ create_child_geo <- function(child_geo,
     return(child_geo_orig)
   }
 
-  # browser()
   child_codes_for_splitting <- majority_portions |>
     dplyr::filter(max_ratio < minimum_majority_portions) |>
     dplyr::pull(dplyr::all_of(child_code_col))
@@ -87,11 +84,9 @@ create_child_geo <- function(child_geo,
     mb_joined[is.na(mb_joined[[parent_code_col]]), parent_code_col] <- parent_geo[[parent_code_col]][parent_geo_code_idx]
   }
 
-
   mb_poly <- mb_poly |>
     dplyr::select(1) |>
     dplyr::inner_join(sf::st_drop_geometry(mb_joined), by = mb_code_col)
-
 
   mb_poly_agg <-
     mb_poly |>
