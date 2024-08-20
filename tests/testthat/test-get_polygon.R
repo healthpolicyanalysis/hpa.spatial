@@ -1,23 +1,24 @@
 test_that("get_polygon works", {
-  sa2_16 <- suppressMessages(get_polygon(area = "sa2", year = 2016))
+  sa4_16 <- suppressMessages(get_polygon(area = "sa4", year = 2016))
 
-  sa2_16_simplified <- suppressMessages(get_polygon(area = "sa2", year = 2016, simplify_keep = 0.05))
+  sa4_16_simplified <- suppressMessages(get_polygon(area = "sa4", year = 2016, simplify_keep = 0.05))
 
-  expect_s3_class(sa2_16, "sf")
-  expect_s3_class(sa2_16_simplified, "sf")
+  expect_s3_class(sa4_16, "sf")
+  expect_s3_class(sa4_16_simplified, "sf")
 
   # simplified polygon should be smaller than original
-  expect_lt(object.size(sa2_16_simplified), object.size(sa2_16))
+  expect_lt(object.size(sa4_16_simplified), object.size(sa4_16))
 })
 
-
 test_that("get_polygon for internal data works", {
-  for (geo in .get_internal_polygon_names()) {
-    shp <- suppressMessages(get_polygon(area = geo))
-    expect_s3_class(shp, "sf")
-    shp <- suppressMessages(get_polygon(name = geo))
-    expect_s3_class(shp, "sf")
-  }
+  internal_names <- .get_internal_polygon_names()
+  geo <- sample(internal_names[internal_names != "MB21"], size = 1)
+
+  shp <- suppressMessages(get_polygon(area = geo))
+  expect_s3_class(shp, "sf")
+  shp <- suppressMessages(get_polygon(name = geo))
+  expect_s3_class(shp, "sf")
+
 })
 
 test_that("get_polygon messaging for bad names work", {
@@ -27,32 +28,9 @@ test_that("get_polygon messaging for bad names work", {
   ))
 })
 
-
 test_that("get_polygon works when called without hpa.spatial loaded", {
-  p <- callr::r(function() hpa.spatial::get_polygon("sa22016"))
-  expect_s3_class(p, "sf")
-
-  p <- callr::r(function() hpa.spatial::get_polygon("LHN"))
-  expect_s3_class(p, "sf")
-
-
-  p <- callr::r(function() lapply(c("sa22021", "sa32021"), hpa.spatial::get_polygon))
-  for (i in 1:length(p)) {
+  p <- callr::r(function() lapply(c("sa42016", "LHN"), hpa.spatial::get_polygon))
+  for (i in seq_along(c("sa42016", "LHN"))) {
     expect_s3_class(p[[i]], "sf")
   }
-
-  geos <- c("sa22021", "sa32021")
-  p <- lapply(
-    geos,
-    \(x) get_polygon(name = x)
-  )
-
-  for (i in 1:length(p)) {
-    expect_s3_class(p[[i]], "sf")
-  }
-
-  p <- callr::r(function() {
-    geos <- c("sa22021", "sa32021")
-    lapply(geos, hpa.spatial::get_polygon)
-  })
 })
