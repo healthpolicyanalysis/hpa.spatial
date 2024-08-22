@@ -68,10 +68,11 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install the development version of hpa.spatial from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<p>hpa.spatial is only available here on GitHub. You can install the development or release versions of it using the code below:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"healthpolicyanalysis/hpa.spatial"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"healthpolicyanalysis/hpa.spatial"</span><span class="op">)</span> <span class="co"># development version</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"healthpolicyanalysis/hpa.spatial@*release"</span><span class="op">)</span> <span class="co"># latest release version</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://healthpolicyanalysis.github.io/hpa.spatial/">hpa.spatial</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
@@ -263,52 +264,10 @@
 <span>  value_type <span class="op">=</span> <span class="st">"aggs"</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>patient_counts <span class="op">=</span> <span class="va">values</span><span class="op">)</span></span>
-<span><span class="co">#&gt; The following 18 codes were passed but are not valid (within the from geography) codes:</span></span>
-<span><span class="co">#&gt; 197979799</span></span>
-<span><span class="co">#&gt; 199999499</span></span>
-<span><span class="co">#&gt; 297979799</span></span>
-<span><span class="co">#&gt; 299999499</span></span>
-<span><span class="co">#&gt; 397979799</span></span>
-<span><span class="co">#&gt; 399999499</span></span>
-<span><span class="co">#&gt; 497979799</span></span>
-<span><span class="co">#&gt; 499999499</span></span>
-<span><span class="co">#&gt; 597979799</span></span>
-<span><span class="co">#&gt; 599999499</span></span>
-<span><span class="co">#&gt; 697979799</span></span>
-<span><span class="co">#&gt; 699999499</span></span>
-<span><span class="co">#&gt; 797979799</span></span>
-<span><span class="co">#&gt; 799999499</span></span>
-<span><span class="co">#&gt; 897979799</span></span>
-<span><span class="co">#&gt; 899999499</span></span>
-<span><span class="co">#&gt; 997979799</span></span>
-<span><span class="co">#&gt; 999999499</span></span>
 <span><span class="co">#&gt; Error in get(filename) : object 'CG_SA2_2016_SA3_2016' not found</span></span>
-<span><span class="co">#&gt; Failed to retrieve correspondence table through {strayr}, making correspondence table</span></span>
-<span><span class="co">#&gt; Reading sa22016 file found in C:\Users\REX~1.PAR\AppData\Local\Temp\Rtmp2XHtTv</span></span>
-<span><span class="co">#&gt; The following 18 codes were passed but are not valid (within the from geography) codes:</span></span>
-<span><span class="co">#&gt; 197979799</span></span>
-<span><span class="co">#&gt; 199999499</span></span>
-<span><span class="co">#&gt; 297979799</span></span>
-<span><span class="co">#&gt; 299999499</span></span>
-<span><span class="co">#&gt; 397979799</span></span>
-<span><span class="co">#&gt; 399999499</span></span>
-<span><span class="co">#&gt; 497979799</span></span>
-<span><span class="co">#&gt; 499999499</span></span>
-<span><span class="co">#&gt; 597979799</span></span>
-<span><span class="co">#&gt; 599999499</span></span>
-<span><span class="co">#&gt; 697979799</span></span>
-<span><span class="co">#&gt; 699999499</span></span>
-<span><span class="co">#&gt; 797979799</span></span>
-<span><span class="co">#&gt; 799999499</span></span>
-<span><span class="co">#&gt; 897979799</span></span>
-<span><span class="co">#&gt; 899999499</span></span>
-<span><span class="co">#&gt; 997979799</span></span>
-<span><span class="co">#&gt; 999999499</span></span>
 <span></span>
 <span><span class="va">sa3_2016</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_polygon.html">get_polygon</a></span><span class="op">(</span><span class="st">"sa32016"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">sa3_counts</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Reading sa32016 file found in C:\Users\REX~1.PAR\AppData\Local\Temp\Rtmp2XHtTv</span></span>
-<span><span class="co">#&gt; Joining with `by = join_by(sa3_code_2016)`</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">sa3_counts</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sa2_2011</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
