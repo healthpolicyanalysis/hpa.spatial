@@ -1,4 +1,5 @@
 test_that("contained SA3s are unchanged, split SA3s are adapted", {
+  suppressWarnings(withr::local_package("sf"))
   test_mb <- readRDS(test_path("fixtures", "brisbane_west_mb.rds"))
 
   qld_sa3 <- get_polygon("sa32021") |>
