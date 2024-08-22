@@ -24,12 +24,13 @@ as well as replicating their approach to access data from
 
 ## Installation
 
-You can install the development version of hpa.spatial from
-[GitHub](https://github.com/) with:
+hpa.spatial is only available here on GitHub. You can install the
+development or release versions of it using the code below:
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("healthpolicyanalysis/hpa.spatial")
+remotes::install_github("healthpolicyanalysis/hpa.spatial") # development version
+remotes::install_github("healthpolicyanalysis/hpa.spatial@*release") # latest release version
 ```
 
 ``` r
@@ -254,52 +255,10 @@ sa3_counts <- map_data_with_correspondence(
   value_type = "aggs"
 ) |>
   rename(patient_counts = values)
-#> The following 18 codes were passed but are not valid (within the from geography) codes:
-#> 197979799
-#> 199999499
-#> 297979799
-#> 299999499
-#> 397979799
-#> 399999499
-#> 497979799
-#> 499999499
-#> 597979799
-#> 599999499
-#> 697979799
-#> 699999499
-#> 797979799
-#> 799999499
-#> 897979799
-#> 899999499
-#> 997979799
-#> 999999499
 #> Error in get(filename) : object 'CG_SA2_2016_SA3_2016' not found
-#> Failed to retrieve correspondence table through {strayr}, making correspondence table
-#> Reading sa22016 file found in C:\Users\REX~1.PAR\AppData\Local\Temp\Rtmp2XHtTv
-#> The following 18 codes were passed but are not valid (within the from geography) codes:
-#> 197979799
-#> 199999499
-#> 297979799
-#> 299999499
-#> 397979799
-#> 399999499
-#> 497979799
-#> 499999499
-#> 597979799
-#> 599999499
-#> 697979799
-#> 699999499
-#> 797979799
-#> 799999499
-#> 897979799
-#> 899999499
-#> 997979799
-#> 999999499
 
 sa3_2016 <- get_polygon("sa32016") |>
   left_join(sa3_counts)
-#> Reading sa32016 file found in C:\Users\REX~1.PAR\AppData\Local\Temp\Rtmp2XHtTv
-#> Joining with `by = join_by(sa3_code_2016)`
 ```
 
 ``` r

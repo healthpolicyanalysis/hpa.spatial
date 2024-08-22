@@ -31,11 +31,12 @@ The way that data are accessed with hpa.spatial both uses these packages as well
 
 ## Installation
 
-You can install the development version of hpa.spatial from [GitHub](https://github.com/) with:
+hpa.spatial is only available here on GitHub. You can install the development or release versions of it using the code below:
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("healthpolicyanalysis/hpa.spatial")
+remotes::install_github("healthpolicyanalysis/hpa.spatial") # development version
+remotes::install_github("healthpolicyanalysis/hpa.spatial@*release") # latest release version
 ```
 
 ```{r, message=FALSE, warning=FALSE}
@@ -167,7 +168,7 @@ map_data_with_correspondence(
 
 Suppose we have counts of patients within SA2s (2011) and we want to aggregate these up into SA3s (2016 edition). Here is how we could do this with `map_data_correspondence()` mapping up both to a higher level of ASGS and to a more recent edition.
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 sa2_2011 <- get_polygon("sa22011")
 sa2_2011$patient_counts <- rpois(n = nrow(sa2_2011), lambda = 30)
 
