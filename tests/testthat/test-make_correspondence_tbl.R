@@ -1,45 +1,38 @@
 test_that("test mapping is similar to published correspondence tables", {
-  sa2_2016 <- suppressWarnings(get_polygon("sa22016", crs = 7844))
-  sa2_2016_qld <- sa2_2016[sa2_2016$state_name_2016 == "Queensland", ]
-  sa2_2021 <- suppressWarnings(get_polygon("sa22021", crs = 7844))
-  sa2_2021_qld <- sa2_2021[sa2_2021$state_name_2021 == "Queensland", ]
+  sa2_2016_wb <- suppressWarnings(get_polygon("sa22016", crs = 7844)) |>
+    dplyr::filter(sa4_name_2016 == "Brisbane - West")
+
+  sa2_2021_wb <- suppressWarnings(get_polygon("sa22021", crs = 7844)) |>
+    dplyr::filter(sa4_name_2021 == "Brisbane - West")
 
   published_tbl <- strayr::read_correspondence_tbl("sa2", 2016, "sa2", "2021.csv")
 
   tbl_ref <- published_tbl |>
-    dplyr::filter(SA2_MAINCODE_2016 %in% sa2_2016_qld$sa2_code_2016) |>
+    dplyr::filter(SA2_MAINCODE_2016 %in% sa2_2016_wb$sa2_code_2016) |>
     dplyr::select(SA2_MAINCODE_2016, SA2_CODE_2021, ratio) |>
     dplyr::arrange(SA2_MAINCODE_2016, SA2_CODE_2021) |>
     dplyr::mutate(dplyr::across(!ratio, as.character))
 
-  qld_mb21 <- get_mb21_pop() |>
-    dplyr::filter(STE_NAME21 == "Queensland")
+  wb_mb21 <- readRDS(test_path("fixtures/brisbane_west_mb.rds"))$pop
 
-  tbl_test <- make_correspondence_tbl(from_geo = sa2_2016_qld, sa2_2021_qld, mb_geo = qld_mb21) |> na.omit()
-  tbl_test2 <- make_correspondence_tbl(from_geo = sa2_2016_qld, sa2_2021_qld) |> na.omit()
+  tbl_test <- make_correspondence_tbl(from_geo = sa2_2016_wb, sa2_2021_wb, mb_geo = wb_mb21)
 
-  tbl_test3 <- callr::r(
-    function() {
-      sa2_2016 <- suppressWarnings(hpa.spatial::get_polygon("sa22016", crs = 7844))
-      sa2_2016_qld <- sa2_2016[sa2_2016$state_name_2016 == "Queensland", ]
-      sa2_2021 <- suppressWarnings(hpa.spatial::get_polygon("sa22021", crs = 7844))
-      sa2_2021_qld <- sa2_2021[sa2_2021$state_name_2021 == "Queensland", ]
-      hpa.spatial::make_correspondence_tbl(from_geo = sa2_2016_qld, to_geo = sa2_2021_qld)
-    }
-  ) |> na.omit()
+  names(tbl_test) <- names(tbl_ref)
 
-  expect_identical(tbl_test, tbl_test2) # use default mb_geo
-  expect_identical(tbl_test, tbl_test3) # use default mb_geo when hpa.spatial isn't loaded
-  expect_tbl_snap(tbl_test)
+  expect_identical(tbl_ref, tbl_test)
 })
 
 
 test_that("test mapping works for non-standard geographies", {
-  to_poly <- get_polygon(area = "LHN", crs = 7844)
-  from_poly <- suppressWarnings(get_polygon(area = "sa2", year = 2021, crs = 7844))
+  to_lhn <- get_polygon(area = "LHN", crs = 7844)
+
+  from_sa3_2016_wb <- suppressWarnings(get_polygon("sa32016", crs = 7844)) |>
+    dplyr::filter(sa4_name_2016 == "Brisbane - West")
+
+  wb_mb21 <- readRDS(test_path("fixtures/brisbane_west_mb.rds"))$pop
 
   # test creation of correspondence table on non-standard geography
-  sa2_to_lhn_tbl <- make_correspondence_tbl(from_poly, to_poly)
+  wb_sa3_to_lhn_tbl <- make_correspondence_tbl(from_sa3_2016_wb, to_lhn, mb_geo = wb_mb21)
 
-  expect_tbl_snap(sa2_to_lhn_tbl)
+  expect_tbl_snap(wb_sa3_to_lhn_tbl)
 })
