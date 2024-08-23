@@ -60,6 +60,7 @@ make_correspondence_tbl <- function(from_geo, to_geo, mb_geo = get_mb21_pop(), .
       1,
       pop_sum / sum(pop_sum)
     )) |>
+    dplyr::ungroup() |>
     dplyr::select(-pop_sum) |>
     dplyr::filter(
       ratio != 0,
@@ -76,7 +77,8 @@ make_correspondence_tbl <- function(from_geo, to_geo, mb_geo = get_mb21_pop(), .
     ratio = 1
   )
 
-  dplyr::bind_rows(matched_geos, unmatched_geos)
+  dplyr::bind_rows(matched_geos, unmatched_geos) |>
+    dplyr::arrange(1)
 }
 
 remove_empty_geographies <- function(geo, print_removed_codes = FALSE) {
