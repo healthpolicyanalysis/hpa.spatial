@@ -14,6 +14,7 @@ get_polygon(
   .validate_name,
   simplify_keep = 1,
   crs = NULL,
+  quiet = getOption("hpa.spatial.quiet", FALSE),
   ...
 )
 }
@@ -45,6 +46,9 @@ input (or area year combination) against a list of available objects in the
 no simplification).}
 
 \item{crs}{Whether to update the crs (if necessary) of the returned polygon.}
+
+\item{quiet}{whether to be quiet about warnings and messages. Set package
+level quiet-ness with \code{options(hpa.spatial.quiet = TRUE)}.}
 
 \item{...}{Arguments passed to \code{rmapshaper::ms_simplify()} (other than
 \code{keep}).}

@@ -1,8 +1,8 @@
 test_that("test mapping is similar to published correspondence tables", {
-  sa2_2016_wb <- suppressWarnings(get_polygon("sa22016", crs = 7844)) |>
+  sa2_2016_wb <- get_polygon("sa22016", crs = 7844) |>
     dplyr::filter(sa4_name_2016 == "Brisbane - West")
 
-  sa2_2021_wb <- suppressWarnings(get_polygon("sa22021", crs = 7844)) |>
+  sa2_2021_wb <- get_polygon("sa22021", crs = 7844) |>
     dplyr::filter(sa4_name_2021 == "Brisbane - West")
 
   published_tbl <- strayr::read_correspondence_tbl("sa2", 2016, "sa2", "2021.csv")
@@ -26,7 +26,7 @@ test_that("test mapping is similar to published correspondence tables", {
 test_that("test mapping works for non-standard geographies", {
   to_lhn <- get_polygon(area = "LHN", crs = 7844)
 
-  from_sa3_2016_wb <- suppressWarnings(get_polygon("sa32016", crs = 7844)) |>
+  from_sa3_2016_wb <- get_polygon("sa32016", crs = 7844) |>
     dplyr::filter(sa4_name_2016 == "Brisbane - West")
 
   wb_mb21 <- readRDS(test_path("fixtures/brisbane_west_mb.rds"))$pop

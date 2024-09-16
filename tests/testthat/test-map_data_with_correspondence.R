@@ -23,10 +23,11 @@ test_that("user-specified correspondence table", {
   mapped_data2 <- callr::r(function() {
     wb_mb21_pop <- readRDS(testthat::test_path("fixtures/brisbane_west_mb.rds"))$pop
 
-    wb_sa32016 <- suppressMessages(hpa.spatial::get_polygon(name = "sa32016", crs = 7844)) |>
+    withr::local_options(list(hpa.spatial.quiet = TRUE))
+    wb_sa32016 <- hpa.spatial::get_polygon(name = "sa32016", crs = 7844) |>
       dplyr::filter(sa4_name_2016 == "Brisbane - West")
 
-    qld_lhn <- suppressMessages(hpa.spatial::get_polygon(name = "LHN")) |>
+    qld_lhn <- hpa.spatial::get_polygon(name = "LHN") |>
       dplyr::filter(state == "QLD")
 
 
@@ -62,7 +63,7 @@ test_that("user-specified correspondence table", {
 test_that("multiple groups and various ways of specifying args", {
   # ALSO tests that the column names are retained in resulting tibble
 
-  sa2_2011 <- suppressMessages(get_polygon(area = "sa2", year = 2011))
+  sa2_2011 <- get_polygon(area = "sa2", year = 2011)
   withr::local_seed(42)
   n_sample <- 100
   sa2_2011_sample_with_groups <- sa2_2011[1:n_sample, ] |>
@@ -125,9 +126,9 @@ test_that("multiple groups and various ways of specifying args", {
 
 test_that("user-specified polygons", {
   withr::local_seed(42)
-  from_sa2s <- suppressMessages(get_polygon("sa22016")) |>
+  from_sa2s <- get_polygon("sa22016") |>
     remove_empty_geographies()
-  to_lhns <- suppressMessages(get_polygon("LHN"))
+  to_lhns <- get_polygon("LHN")
 
   from_sa2s$test_outcome <- rnorm(nrow(from_sa2s))
 
@@ -165,7 +166,7 @@ test_that("mapping with non-standard geo and default creation of correspondence 
 
 test_that("aggregating up SA's works (without correspondence tbl)", {
   withr::local_seed(42)
-  sa2_2011 <- suppressMessages(get_polygon(area = "sa2", year = 2011))
+  sa2_2011 <- get_polygon(area = "sa2", year = 2011)
   n_sample <- 200
 
   sa2_to_sa3_2011_mapped_unit <- map_data_with_correspondence(
@@ -194,7 +195,7 @@ test_that("aggregating up SA's works (without correspondence tbl)", {
 
 test_that("mapping across SAs and editions together works (without correspondence tbl)", {
   withr::local_seed(42)
-  sa2_2011 <- suppressMessages(get_polygon(area = "sa2", year = 2011))
+  sa2_2011 <- get_polygon(area = "sa2", year = 2011)
   n_sample <- 200
   sa2_2011_sample <- dplyr::sample_n(sa2_2011, n_sample)
   random_vals <- rnorm(n = n_sample)
@@ -246,7 +247,7 @@ test_that("mapping across SAs and editions together works (without correspondenc
 
 test_that("basic tests of output dimensions", {
   withr::local_seed(42)
-  sa2_2011 <- suppressMessages(get_polygon(area = "sa2", year = 2011))
+  sa2_2011 <- get_polygon(area = "sa2", year = 2011)
 
   sa2_2016_mapped_unit <- map_data_with_correspondence(
     codes = sa2_2011$sa2_code_2011,
@@ -300,7 +301,7 @@ test_that("rounding works", {
 
 test_that("messaging back to user", {
   withr::local_seed(42)
-  sa2_2011 <- suppressMessages(get_polygon(area = "sa2", year = 2011))
+  sa2_2011 <- get_polygon(area = "sa2", year = 2011)
 
   suppressMessages(
     expect_message(
@@ -310,11 +311,13 @@ test_that("messaging back to user", {
         from_area = "sa2",
         from_year = 2011,
         to_area = "sa2",
-        to_year = 2016
+        to_year = 2016,
+        quiet = FALSE
       ),
       "234234"
     )
   )
+
   # should have removed bad codes
   expect_equal(nrow(mdf_with_removed_codes), 1)
 

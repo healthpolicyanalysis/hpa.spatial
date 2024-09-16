@@ -21,6 +21,8 @@
 #' @param simplify_keep The proportion of points to retain (0-1; default 1 -
 #' no simplification).
 #' @param crs Whether to update the crs (if necessary) of the returned polygon.
+#' @param quiet whether to be quiet about warnings and messages. Set package
+#' level quiet-ness with \code{options(hpa.spatial.quiet = TRUE)}.
 #' @param ... Arguments passed to \code{rmapshaper::ms_simplify()} (other than
 #' \code{keep}).
 #'
@@ -38,12 +40,14 @@ get_polygon <- function(name = NULL,
                         .validate_name,
                         simplify_keep = 1,
                         crs = NULL,
+                        quiet = getOption("hpa.spatial.quiet", FALSE),
                         ...) {
   call <- rlang::expr(check_for_internal_polygon(
     name = rlang::eval_tidy(rlang::expr(!!rlang::quo(name))),
     area = rlang::eval_tidy(rlang::expr(!!rlang::quo(area))),
     year = rlang::eval_tidy(rlang::expr(!!rlang::quo(year))),
-    export_dir = rlang::eval_tidy(rlang::expr(!!rlang::quo(export_dir)))
+    export_dir = rlang::eval_tidy(rlang::expr(!!rlang::quo(export_dir))),
+    quiet = quiet
   ))
 
   polygon <- rlang::eval_tidy(call)
@@ -58,10 +62,15 @@ get_polygon <- function(name = NULL,
       )
     )
 
-    polygon <- evaluate::try_capture_stack(
+    if (quiet) {
+      f <- function(x) suppressMessages(suppressWarnings(x))
+    } else {
+      f <- function(x) x
+    }
+    polygon <- f(evaluate::try_capture_stack(
       rlang::eval_tidy(call),
       env = rlang::current_env()
-    )
+    ))
 
     if (evaluate::is.error(polygon)) {
       if (stringr::str_detect(polygon$message, "Applicable files are:")) {
@@ -108,6 +117,8 @@ update_crs <- function(geo, crs = NULL) {
 #' @param year A character string names to identify data not kept on
 #' \code{absmapsdata}.
 #' @param export_dir The directory to store the downloaded data.
+#' @param quiet whether to be quiet about warnings and messages. Set package
+#' level quiet-ness with \code{options(hpa.spatial.quiet = TRUE)}.
 #' @param ... Additional, ignored arguments.
 #'
 #' @return An \code{sf} object or, if no pkg data found, \code{NULL}.
@@ -116,18 +127,23 @@ update_crs <- function(geo, crs = NULL) {
 #' @examples
 #' # Get the Local Hospital Network (LHN) shapes.
 #' shp <- check_for_internal_polygon(name = "LHN")
-check_for_internal_polygon <- function(name = NULL, area = NULL, year = NULL, export_dir = tempdir(), ...) {
+check_for_internal_polygon <- function(name = NULL,
+                                       area = NULL,
+                                       year = NULL,
+                                       export_dir = tempdir(),
+                                       quiet = getOption("hpa.spatial.quiet", FALSE),
+                                       ...) {
   if (any(c(toupper(name), toupper(area)) %in% c("ACPR"))) {
-    message("The data for the Aged Care Planning Regions in Australia (2018 edition) are from here: <https://www.gen-agedcaredata.gov.au/resources/access-data/2020/january/aged-care-planning-region-maps>")
+    .q_message(quiet = quiet, "The data for the Aged Care Planning Regions in Australia (2018 edition) are from here: <https://www.gen-agedcaredata.gov.au/resources/access-data/2020/january/aged-care-planning-region-maps>")
     return(read_hpa_spatial_data("acpr", export_dir = export_dir))
   }
   if (any(c(toupper(name), toupper(area)) %in% c("PHN"))) {
-    message("The data for The Primary Health Network (PHN) are from here: <https://data.gov.au/dataset/ds-dga-ef2d28a4-1ed5-47d0-8e3a-46e25bc4f66b/details?q=primary%20health%20network>")
+    .q_message(quiet = quiet, "The data for The Primary Health Network (PHN) are from here: <https://data.gov.au/dataset/ds-dga-ef2d28a4-1ed5-47d0-8e3a-46e25bc4f66b/details?q=primary%20health%20network>")
     return(read_hpa_spatial_data("phn", export_dir = export_dir))
   }
 
   if (any(c(toupper(name), toupper(area)) %in% c("LHN"))) {
-    message("The data for the Local Hospital Networks (LHN) are from here: <https://hub.arcgis.com/datasets/ACSQHC::local-hospital-networks/explore>")
+    .q_message(quiet = quiet, "The data for the Local Hospital Networks (LHN) are from here: <https://hub.arcgis.com/datasets/ACSQHC::local-hospital-networks/explore>")
     return(read_hpa_spatial_data("lhn", export_dir = export_dir))
   }
 
@@ -200,4 +216,11 @@ get_mmm19_poly <- function(export_dir = tempdir()) {
     "MB21",
     "MMM19"
   )
+}
+
+
+.q_message <- function(..., quiet = getOption("hpa.spatial.quiet", FALSE)) {
+  if (!quiet) {
+    message(...)
+  }
 }

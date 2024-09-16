@@ -1,7 +1,7 @@
 test_that("get_polygon works", {
-  sa4_16 <- suppressMessages(get_polygon(area = "sa4", year = 2016))
+  sa4_16 <- get_polygon(area = "sa4", year = 2016)
 
-  sa4_16_simplified <- suppressMessages(get_polygon(area = "sa4", year = 2016, simplify_keep = 0.05))
+  sa4_16_simplified <- get_polygon(area = "sa4", year = 2016, simplify_keep = 0.05)
 
   expect_s3_class(sa4_16, "sf")
   expect_s3_class(sa4_16_simplified, "sf")
@@ -14,11 +14,10 @@ test_that("get_polygon for internal data works", {
   internal_names <- .get_internal_polygon_names()
   geo <- sample(internal_names[internal_names != "MB21"], size = 1)
 
-  shp <- suppressMessages(get_polygon(area = geo))
+  shp <- get_polygon(area = geo)
   expect_s3_class(shp, "sf")
-  shp <- suppressMessages(get_polygon(name = geo))
+  shp <- get_polygon(name = geo)
   expect_s3_class(shp, "sf")
-
 })
 
 test_that("get_polygon messaging for bad names work", {

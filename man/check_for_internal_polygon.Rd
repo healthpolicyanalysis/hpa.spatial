@@ -10,6 +10,7 @@ check_for_internal_polygon(
   area = NULL,
   year = NULL,
   export_dir = tempdir(),
+  quiet = getOption("hpa.spatial.quiet", FALSE),
   ...
 )
 }
@@ -24,6 +25,9 @@ check_for_internal_polygon(
 \code{absmapsdata}.}
 
 \item{export_dir}{The directory to store the downloaded data.}
+
+\item{quiet}{whether to be quiet about warnings and messages. Set package
+level quiet-ness with \code{options(hpa.spatial.quiet = TRUE)}.}
 
 \item{...}{Additional, ignored arguments.}
 }
