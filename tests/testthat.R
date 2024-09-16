@@ -9,4 +9,5 @@
 library(testthat)
 library(hpa.spatial)
 
+withr::local_options(list("hpa.spatial.quiet" = TRUE))
 test_check("hpa.spatial")

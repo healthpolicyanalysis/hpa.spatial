@@ -14,8 +14,7 @@ test_that("user-specified correspondence table", {
     codes = sa3_code_2016,
     values = vals,
     correspondence_tbl = custom_ct,
-    value_type = "aggs",
-    quiet = TRUE
+    value_type = "aggs"
   )
 
   expect_equal(sum(wb_shapes$wb_sa32016$vals), sum(mapped_data$vals))
@@ -51,8 +50,7 @@ test_that("user-specified correspondence table", {
       codes = sa3_code_2016,
       values = vals,
       correspondence_tbl = custom_ct,
-      value_type = "aggs",
-      quiet = TRUE
+      value_type = "aggs"
     )
     mapped_data
   })
@@ -139,8 +137,7 @@ test_that("user-specified polygons", {
     from_geo = from_sa2s,
     to_geo = to_lhns,
     export_fname = "sa22016_to_lhns",
-    value_type = "aggs",
-    quiet = TRUE
+    value_type = "aggs"
   )
 
   expect_s3_class(mapped_df_with_data, "tbl")
@@ -167,7 +164,6 @@ test_that("mapping with non-standard geo and default creation of correspondence 
 
 
 test_that("aggregating up SA's works (without correspondence tbl)", {
-  withr::local_options(list(hpa.spatial.quiet = TRUE))
   withr::local_seed(42)
   sa2_2011 <- suppressMessages(get_polygon(area = "sa2", year = 2011))
   n_sample <- 200
@@ -197,7 +193,6 @@ test_that("aggregating up SA's works (without correspondence tbl)", {
 })
 
 test_that("mapping across SAs and editions together works (without correspondence tbl)", {
-  withr::local_options(list(hpa.spatial.quiet = TRUE))
   withr::local_seed(42)
   sa2_2011 <- suppressMessages(get_polygon(area = "sa2", year = 2011))
   n_sample <- 200
@@ -360,7 +355,8 @@ test_that("messaging back to user", {
         from_area = "sa2",
         from_year = 2011,
         to_area = "sa2",
-        to_year = 2016
+        to_year = 2016,
+        quiet = FALSE
       ),
       "not valid"
     )
