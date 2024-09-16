@@ -55,6 +55,7 @@ hpa.spatial and hpa.spatial.data)"></head><body>
 <span>  <span class="va">.validate_name</span>,</span>
 <span>  simplify_keep <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  crs <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"hpa.spatial.quiet"</span>, <span class="cn">FALSE</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -105,6 +106,11 @@ no simplification).</p></dd>
 
 <dt id="arg-crs">crs<a class="anchor" aria-label="anchor" href="#arg-crs"></a></dt>
 <dd><p>Whether to update the crs (if necessary) of the returned polygon.</p></dd>
+
+
+<dt id="arg-quiet">quiet<a class="anchor" aria-label="anchor" href="#arg-quiet"></a></dt>
+<dd><p>whether to be quiet about warnings and messages. Set package
+level quiet-ness with <code>options(hpa.spatial.quiet = TRUE)</code>.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -171,7 +177,7 @@ no simplification).</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9  MULTIPOLYGON (((148.5512 -3...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 MULTIPOLYGON (((148.5512 -3...</span>
 <span class="r-in"><span><span class="fu">get_polygon</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"sa22016"</span>, simplify_keep <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Reading sa22016 file found in /tmp/Rtmpy7v8xO</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Reading sa22016 file found in /tmp/RtmpbtAlfC</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 2268 features and 14 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: GEOMETRY</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
