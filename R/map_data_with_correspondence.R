@@ -102,7 +102,7 @@ map_data_with_correspondence <- function(.data = NULL,
       if (values_name %in% names(.data)) {
         values <- dplyr::pull(.data, dplyr::all_of(values_name))
       } else {
-        if(length(values) == 1) {
+        if (length(values) == 1) {
           values <- try(dplyr::pull(.data, dplyr::all_of(values)))
         } else {
           # check whether it was passed as a vector
@@ -120,7 +120,7 @@ map_data_with_correspondence <- function(.data = NULL,
         codes <- dplyr::pull(.data, dplyr::all_of(codes_name))
       } else {
         # if not passed as a symbol to access from data but still length 1, access from .data
-        if(length(codes) == 1) {
+        if (length(codes) == 1) {
           codes <- try(dplyr::pull(.data, dplyr::all_of(codes)))
         } else {
           # check whether it was passed as a vector
@@ -266,36 +266,6 @@ map_data_with_correspondence <- function(.data = NULL,
   }
 }
 
-# kill
-get_mapping_tbl_col_name <- function(area, year) {
-  if (length(area) > 1) {
-    col_names <- lapply(area, \(x) get_mapping_tbl_col_name(x, year))
-    return(do.call("c", col_names))
-  }
-
-  if (is_SA_area(area)) {
-    glue::glue("{clean_sa(area)}_code_{year}")
-  } else {
-    stop("Not sure how to make col names for non-SA areas yet...")
-  }
-}
-
-# kill
-get_asgs_table <- function(from_area, to_area, year) {
-  stopifnot(as.character(year) %in% c("2011", "2016", "2021"))
-
-  valid_areas <- get_sa_codes()
-  stopifnot(from_area %in% valid_areas)
-  stopifnot(to_area %in% valid_areas)
-  stopifnot(which(valid_areas == from_area) < which(valid_areas == to_area))
-
-  cols <- glue::glue("{tolower(c(from_area, to_area))}_code_{year}")
-
-  get(paste0("asgs_", year)) |>
-    dplyr::select(dplyr::all_of(cols)) |>
-    dplyr::distinct()
-}
-
 
 clean_mapped_tbl <- function(.data, values_name, groups_name) {
   if (!is.na(values_name)) {
@@ -371,9 +341,4 @@ is_sa_code_aggregating <- function(from_area, to_area) {
   stopifnot(is_SA_area(to_area))
 
   sa_code_level(from_area) < sa_code_level(to_area)
-}
-
-# kill
-clean_year <- function(x) {
-  stringr::str_trim(x)
 }
