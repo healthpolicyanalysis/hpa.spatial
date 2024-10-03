@@ -623,7 +623,7 @@
     Code
       df_sample
     Output
-          SA3_CODE_2016 random_vals
+          sa3_code_2016 random_vals
       1           80105       -0.22
       2           10704       -0.27
       3           30906        1.81
@@ -731,7 +731,7 @@
       x
     Output
       # A tibble: 197 x 2
-         SA3_CODE_2016 random_vals
+         sa3_code_2016 random_vals
          <chr>               <dbl>
        1 30805                0.9 
        2 30503               -0.23
@@ -750,7 +750,7 @@
     Code
       df_sample
     Output
-          SA3_CODE_2016 values
+          sa3_code_2016 values
       1           50703  -0.22
       2           31503  -0.27
       3           50603   0.05
@@ -858,7 +858,7 @@
       x
     Output
       # A tibble: 199 x 2
-         SA3_CODE_2016 values
+         sa3_code_2016 values
          <chr>          <dbl>
        1 20903           0.9 
        2 20703          -0.23
@@ -877,7 +877,7 @@
     Code
       df_sample
     Output
-          SA3_CODE_2016 values
+          sa3_code_2016 values
       1           20504   0.38
       2           21104   1.18
       3           21601   0.25
@@ -985,7 +985,7 @@
       x
     Output
       # A tibble: 153 x 2
-         SA3_CODE_2016 values
+         sa3_code_2016 values
          <chr>          <dbl>
        1 10102           0.76
        2 10104          -1.5 
@@ -1004,7 +1004,7 @@
     Code
       df_sample
     Output
-          SA2_MAINCODE_2016 values
+          sa2_maincode_2016 values
       1           308051537   0.45
       2           305031123   0.33
       3           310021277  -0.39
@@ -1112,7 +1112,7 @@
       x
     Output
       # A tibble: 2,214 x 2
-         SA2_MAINCODE_2016 values
+         sa2_maincode_2016 values
          <chr>              <dbl>
        1 101051539           1.37
        2 101051540          -0.56
@@ -1131,7 +1131,7 @@
     Code
       df_sample
     Output
-          SA2_MAINCODE_2016 values
+          sa2_maincode_2016 values
       1           305041135  10.00
       2           303021056  14.00
       3           308031222   9.00
@@ -1239,7 +1239,7 @@
       x
     Output
       # A tibble: 2,303 x 2
-         SA2_MAINCODE_2016 values
+         sa2_maincode_2016 values
          <chr>              <dbl>
        1 101021007             10
        2 101021008             18

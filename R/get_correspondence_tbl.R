@@ -164,7 +164,6 @@ make_asgs_cg_tbl <- function(from_area,
   years_are_the_same <- from_year == to_year
   areas_are_the_same <- from_area == to_area
   sa_area_is_aggregating <- is_sa_code_aggregating(from_area, to_area)
-  # browser()
 
   # codes are both SAs and they are aggregating up - load the from_area/year and agg up
   if (years_are_the_same & sa_area_is_aggregating) {
@@ -178,51 +177,70 @@ make_asgs_cg_tbl <- function(from_area,
 
   if (areas_are_the_same & get_sa_year_step(from_year, to_year) > 1) {
     # when the increment in edition is more than 1, these correspondence tables are not released by ABS but can be made by combining multiple.
+    cg <- make_multi_edition_asgs_cg(from_year, to_year, area = from_area)
+    return(cg)
+  }
 
-    n_incremements <- get_sa_year_step(from_year, to_year)
-
-    l_cg_steps <- list()
-
-    for (i in seq_len(n_incremements)) {
-      if (i == 1) {
-        next_year <- get_next_sa_year_step(from_year)
-        prev_year <- from_year
-      } else {
-        prev_year <- next_year
-        next_year <- get_next_sa_year_step(next_year)
-      }
-
-      cg_step <- read_correspondence_tbl(
-        from_area = from_area,
-        from_year = prev_year,
-        to_area = to_area,
-        to_year = next_year
-      ) |>
-        dplyr::select(1, 3, ratio) |>
-        dplyr::mutate(dplyr::across(!ratio, as.character))
-
-      l_cg_steps <- c(l_cg_steps, list(cg_step))
-    }
-
-    lj_cgs <- function(x, y) {
-      shared_code_col <- names(x)[names(x) %in% names(y)] |>
-        stringr::str_subset(stringr::regex("code", ignore_case = TRUE))
-      dplyr::left_join(x, y, by = shared_code_col) |>
-        dplyr::select(-dplyr::all_of(shared_code_col))
-    }
-
-
-    cg <- Reduce(lj_cgs, l_cg_steps) |>
-      dplyr::mutate(prod = purrr::pmap_dbl(dplyr::pick(dplyr::starts_with("ratio")), prod)) |>
-      dplyr::select(dplyr::matches("code", ignore.case = TRUE), ratio = prod) |>
-      dplyr::group_by(dplyr::across(-ratio)) |>
-      dplyr::summarize(ratio = sum(ratio)) |>
-      dplyr::ungroup()
-
+  # if both aggregating up and changing multiple editions, do the edition change and then aggregate
+  if (sa_area_is_aggregating & get_sa_year_step(from_year, to_year) > 1) {
+    cg_edition_step <- make_multi_edition_asgs_cg(from_year, to_year, area = from_area)
+    cg_aggregation_step <- select_cols_for_aggregating_sa(
+      tbl = get_polygon(area = from_area, year = to_year),
+      to_area = to_area
+    )
+    cg <- combine_cg_list(list(cg_edition_step, cg_aggregation_step))
     return(cg)
   }
 
   stop("couldn't make a table using available ASGS correspondence tables")
+}
+
+
+make_multi_edition_asgs_cg <- function(from_year, to_year, area) {
+  n_incremements <- get_sa_year_step(from_year, to_year)
+
+  l_cg_steps <- list()
+
+  for (i in seq_len(n_incremements)) {
+    if (i == 1) {
+      next_year <- get_next_sa_year_step(from_year)
+      prev_year <- from_year
+    } else {
+      prev_year <- next_year
+      next_year <- get_next_sa_year_step(next_year)
+    }
+
+    cg_step <- read_correspondence_tbl(
+      from_area = area,
+      from_year = prev_year,
+      to_area = area,
+      to_year = next_year
+    ) |>
+      dplyr::select(1, 3, ratio) |>
+      dplyr::mutate(dplyr::across(!ratio, as.character))
+
+    l_cg_steps <- c(l_cg_steps, list(cg_step))
+  }
+
+  combine_cg_list(cg_list = l_cg_steps)
+}
+
+
+combine_cg_list <- function(cg_list) {
+  Reduce(lj_cgs, cg_list) |>
+    dplyr::mutate(prod = purrr::pmap_dbl(dplyr::pick(dplyr::starts_with("ratio")), prod)) |>
+    dplyr::select(dplyr::matches("code", ignore.case = TRUE), ratio = prod) |>
+    dplyr::group_by(dplyr::across(-ratio)) |>
+    dplyr::summarize(ratio = sum(ratio)) |>
+    dplyr::ungroup()
+}
+
+lj_cgs <- function(x, y) {
+  # left join several CG tables
+  shared_code_col <- names(x)[names(x) %in% names(y)] |>
+    stringr::str_subset(stringr::regex("code", ignore_case = TRUE))
+  dplyr::left_join(x, y, by = shared_code_col) |>
+    dplyr::select(-dplyr::all_of(shared_code_col))
 }
 
 adjust_correspondence_tbl <- function(tbl) {
@@ -259,9 +277,8 @@ adjust_correspondence_tbl <- function(tbl) {
 select_cols_for_aggregating_sa <- function(tbl, to_area) {
   tbl |>
     tibble::as_tibble() |>
-    dplyr::rename_with(tolower) |>
     dplyr::select(1, dplyr::matches(to_area)) |>
-    dplyr::select(dplyr::contains("code")) |>
+    dplyr::select(dplyr::matches(stringr::regex("code", ignore_case = TRUE))) |>
     dplyr::mutate(ratio = 1)
 }
 

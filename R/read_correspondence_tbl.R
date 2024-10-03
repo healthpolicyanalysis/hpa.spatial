@@ -41,5 +41,5 @@ read_correspondence_tbl <- function(from_area,
     }
     stop("Correspondence table not available.")
   }
-  cg_tbl
+  cg_tbl |> dplyr::rename_with(tolower)
 }
