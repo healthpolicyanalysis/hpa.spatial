@@ -155,7 +155,6 @@ map_data_with_correspondence <- function(.data = NULL,
     values_name <- NA
   }
 
-
   ### CREATE CORRESPONDENCE TBL
   if (is.null(correspondence_tbl)) {
     ct_provided <- FALSE
@@ -176,7 +175,7 @@ map_data_with_correspondence <- function(.data = NULL,
 
   # not all the sum of the ratios add up to 1 in the correspondence tables.
   # For those that don't, add/subtract the difference from the majority target code by adjust_correspondence_tbl()
-  correspondence_tbl <- adjust_correspodence_tbl(correspondence_tbl)
+  correspondence_tbl <- adjust_correspondence_tbl(correspondence_tbl)
 
   # remove codes that aren't in the correspondence table
   bad_codes <- codes[!codes %in% correspondence_tbl[[1]]]
@@ -425,7 +424,7 @@ get_asgs_table <- function(from_area, to_area, year) {
     dplyr::distinct()
 }
 
-adjust_correspodence_tbl <- function(tbl) {
+adjust_correspondence_tbl <- function(tbl) {
   # in some cases, the correspondence table has a 1-to-1 mapping and the ratio = NA.
   # for these cases, assign the ratio to be 2 before the fixing process
   # (which will affect the new value and reduce it to be 1- sum(ratio))
