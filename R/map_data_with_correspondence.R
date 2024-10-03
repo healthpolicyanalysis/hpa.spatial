@@ -102,11 +102,11 @@ map_data_with_correspondence <- function(.data = NULL,
       if (values_name %in% names(.data)) {
         values <- dplyr::pull(.data, dplyr::all_of(values_name))
       } else {
-        # check whether it was passed as a vector
-        values <- try(values)
-        # if not, access from .data
-        if (inherits(values, "try-error")) {
-          values <- rlang::eval_tidy(rlang::enexpr(values), data = .data)
+        if(length(values) == 1) {
+          values <- try(dplyr::pull(.data, dplyr::all_of(values)))
+        } else {
+          # check whether it was passed as a vector
+          values <- try(values)
         }
       }
     } else {
@@ -119,11 +119,12 @@ map_data_with_correspondence <- function(.data = NULL,
       if (codes_name %in% names(.data)) {
         codes <- dplyr::pull(.data, dplyr::all_of(codes_name))
       } else {
-        # check whether it was passed as a vector
-        codes <- try(codes)
-        # if not, access from .data
-        if (inherits(codes, "try-error")) {
-          codes <- rlang::eval_tidy(rlang::enexpr(codes), data = .data)
+        # if not passed as a symbol to access from data but still length 1, access from .data
+        if(length(codes) == 1) {
+          codes <- try(dplyr::pull(.data, dplyr::all_of(codes)))
+        } else {
+          # check whether it was passed as a vector
+          codes <- try(codes)
         }
       }
     } else {
@@ -214,7 +215,6 @@ map_data_with_correspondence <- function(.data = NULL,
     return(clean_mapped_tbl(mapped_df, values_name = values_name, groups_name = groups_name))
   }
 
-
   if (!is.null(groups)) {
     # if grouped are used call self (map_data_with_correspondence() for each group)
     if (!inherits(groups, "list")) {
@@ -266,7 +266,7 @@ map_data_with_correspondence <- function(.data = NULL,
   }
 }
 
-
+# kill
 get_mapping_tbl_col_name <- function(area, year) {
   if (length(area) > 1) {
     col_names <- lapply(area, \(x) get_mapping_tbl_col_name(x, year))
@@ -280,7 +280,7 @@ get_mapping_tbl_col_name <- function(area, year) {
   }
 }
 
-
+# kill
 get_asgs_table <- function(from_area, to_area, year) {
   stopifnot(as.character(year) %in% c("2011", "2016", "2021"))
 
@@ -295,6 +295,7 @@ get_asgs_table <- function(from_area, to_area, year) {
     dplyr::select(dplyr::all_of(cols)) |>
     dplyr::distinct()
 }
+
 
 clean_mapped_tbl <- function(.data, values_name, groups_name) {
   if (!is.na(values_name)) {
@@ -316,31 +317,38 @@ clean_sa <- function(x) {
   stringr::str_trim(tolower(x))
 }
 
+
 is_SA_area <- function(x) {
   clean_sa(x) %in% get_sa_codes()
 }
+
 
 get_sa_codes <- function() {
   c("sa1", "sa2", "sa3", "sa4", "gcc")
 }
 
+
 get_sa_years <- function() {
   c(2011, 2016, 2021)
 }
+
 
 sa_code_level <- function(area) {
   stopifnot(is_SA_area(area))
   which(get_sa_codes() == area)
 }
 
+
 is_SA_year <- function(year) {
   as.character(year) %in% as.character(get_sa_years())
 }
+
 
 sa_year_level <- function(year) {
   stopifnot(is_SA_year(year))
   which(get_sa_years() == year)
 }
+
 
 get_next_sa_year_step <- function(year) {
   stopifnot(is_SA_year(year))
@@ -352,9 +360,11 @@ get_next_sa_year_step <- function(year) {
   years[current_year_idx + 1]
 }
 
+
 get_sa_year_step <- function(from_year, to_year) {
   sa_year_level(to_year) - sa_year_level(from_year)
 }
+
 
 is_sa_code_aggregating <- function(from_area, to_area) {
   stopifnot(is_SA_area(from_area))
@@ -363,6 +373,7 @@ is_sa_code_aggregating <- function(from_area, to_area) {
   sa_code_level(from_area) < sa_code_level(to_area)
 }
 
+# kill
 clean_year <- function(x) {
   stringr::str_trim(x)
 }

@@ -58,10 +58,10 @@ get_correspondence_tbl <- function(from_area = NULL,
     )
 
     export_fname <- make_fname(
-      from_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_area))),
-      from_year = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_year))),
-      to_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_area))),
-      to_year = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_year)))
+      from_area = from_area,
+      from_year = from_year,
+      to_area = to_area,
+      to_year = to_year
     )
   }
 
@@ -72,11 +72,11 @@ get_correspondence_tbl <- function(from_area = NULL,
   }
 
   call <- rlang::expr(read_correspondence_tbl(
-    from_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_area))),
-    from_year = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_year))),
-    to_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_area))),
-    to_year = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_year))),
-    export_dir = rlang::eval_tidy(rlang::expr(!!rlang::quo(export_dir)))
+    from_area = from_area,
+    from_year = from_year,
+    to_area = to_area,
+    to_year = to_year,
+    export_dir = export_dir
   ))
 
   cg <- try(suppressMessages(suppressWarnings(rlang::eval_tidy(call))), silent = TRUE)
@@ -235,6 +235,7 @@ combine_cg_list <- function(cg_list) {
     dplyr::ungroup()
 }
 
+
 lj_cgs <- function(x, y) {
   # left join several CG tables
   shared_code_col <- names(x)[names(x) %in% names(y)] |>
@@ -242,6 +243,7 @@ lj_cgs <- function(x, y) {
   dplyr::left_join(x, y, by = shared_code_col) |>
     dplyr::select(-dplyr::all_of(shared_code_col))
 }
+
 
 adjust_correspondence_tbl <- function(tbl) {
   # in some cases, the correspondence table has a 1-to-1 mapping and the ratio = NA.
@@ -264,8 +266,7 @@ adjust_correspondence_tbl <- function(tbl) {
     dplyr::filter(sum(ratio) != 1)
 
   # add the difference from 1 to the largest correspondence ratio
-  tbl_not_ok_fixed <-
-    tbl_not_ok |>
+  tbl_not_ok_fixed <- tbl_not_ok |>
     dplyr::arrange(dplyr::desc(ratio)) |>
     dplyr::mutate(ratio = ifelse(dplyr::row_number() == 1, ratio + 1 - sum(ratio), ratio)) |>
     dplyr::ungroup()
@@ -273,6 +274,7 @@ adjust_correspondence_tbl <- function(tbl) {
   rbind(tbl_ok, tbl_not_ok_fixed) |>
     dplyr::arrange(!!!rlang::syms(code_col))
 }
+
 
 select_cols_for_aggregating_sa <- function(tbl, to_area) {
   tbl |>

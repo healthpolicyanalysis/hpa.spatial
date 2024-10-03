@@ -42,23 +42,21 @@ get_polygon <- function(name = NULL,
                         crs = NULL,
                         quiet = getOption("hpa.spatial.quiet", FALSE),
                         ...) {
-  call <- rlang::expr(check_for_internal_polygon(
-    name = rlang::eval_tidy(rlang::expr(!!rlang::quo(name))),
-    area = rlang::eval_tidy(rlang::expr(!!rlang::quo(area))),
-    year = rlang::eval_tidy(rlang::expr(!!rlang::quo(year))),
-    export_dir = rlang::eval_tidy(rlang::expr(!!rlang::quo(export_dir))),
+  polygon <- check_for_internal_polygon(
+    name = name,
+    area = area,
+    year = year,
+    export_dir = export_dir,
     quiet = quiet
-  ))
-
-  polygon <- rlang::eval_tidy(call)
+  )
 
   if (is.null(polygon)) {
     call <- rlang::expr(
       strayr::read_absmap(
-        name = rlang::eval_tidy(rlang::expr(!!rlang::quo(name))),
-        area = rlang::eval_tidy(rlang::expr(!!rlang::quo(area))),
-        year = rlang::eval_tidy(rlang::expr(!!rlang::quo(year))),
-        export_dir = rlang::eval_tidy(rlang::expr(!!rlang::quo(export_dir)))
+        name = name,
+        area = area,
+        year = year,
+        export_dir = export_dir
       )
     )
 
@@ -156,6 +154,7 @@ check_for_internal_polygon <- function(name = NULL,
   }
 }
 
+
 #' Get Mesh Blocks (2021 edition) and population counts
 #'
 #' @param export_dir The directory to store the downloaded data.
@@ -168,6 +167,7 @@ check_for_internal_polygon <- function(name = NULL,
 get_mb21_pop <- function(export_dir = tempdir()) {
   read_hpa_spatial_data("mb21_pop", export_dir = export_dir)
 }
+
 
 #' Get Mesh Blocks (2021 edition) polygons
 #'

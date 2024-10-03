@@ -81,6 +81,7 @@ make_correspondence_tbl <- function(from_geo, to_geo, mb_geo = get_mb21_pop(), .
     dplyr::arrange(1)
 }
 
+
 remove_empty_geographies <- function(geo, print_removed_codes = FALSE) {
   idx_empty <- sf::st_is_empty(geo)
   if (any(idx_empty)) {

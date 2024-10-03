@@ -9,7 +9,7 @@ read_correspondence_tbl <- function(from_area,
   url <- "https://github.com/wfmackey/absmapsdata/raw/master/R/sysdata.rda"
   out_path <- file.path(export_dir, "cg_tables.rda")
   if (!file.exists(out_path)) {
-    tryCatch(download.file(url, destfile = out_path, mode = "wb"),
+    tryCatch(utils::download.file(url, destfile = out_path, mode = "wb"),
       error = "Download failed. Check that you have access to the internet and that your requested object is available at https://github.com/wfmackey/absmapsdata/tree/master/data"
     )
   } else {
@@ -36,7 +36,7 @@ read_correspondence_tbl <- function(from_area,
   cg_tbl <- try(get(filename))
   if (inherits(cg_tbl, "try-error")) {
     message("The following correspondence tables are available:")
-    for (obj in ls()[str_detect(ls(), "^CG_")]) {
+    for (obj in ls()[stringr::str_detect(ls(), "^CG_")]) {
       message(obj)
     }
     stop("Correspondence table not available.")

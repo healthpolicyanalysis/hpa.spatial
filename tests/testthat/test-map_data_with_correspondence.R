@@ -10,7 +10,7 @@ test_that("asgs correspondences are done with abs data where possible", {
     # no message - uses the downloaded asgs file
     map_data_with_correspondence(
       .data = sa2_2011_sample,
-      codes = sa2_code_2011,
+      codes = "sa2_code_2011",
       values = random_vals,
       from_area = "sa2",
       from_year = 2011,
