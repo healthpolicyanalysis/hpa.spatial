@@ -42,6 +42,23 @@ get_polygon <- function(name = NULL,
                         crs = NULL,
                         quiet = getOption("hpa.spatial.quiet", FALSE),
                         ...) {
+  if (!is.null(name)) {
+    assertthat::assert_that(assertthat::is.string(name))
+  }
+  if (!is.null(area)) {
+    assertthat::assert_that(assertthat::is.string(area))
+  }
+  if (!is.null(year)) {
+    assertthat::assert_that(assertthat::is.scalar(year))
+  }
+  if (!is.null(year)) {
+    assertthat::assert_that(assertthat::is.scalar(year))
+  }
+  assertthat::assert_that(assertthat::is.dir(export_dir))
+  assertthat::assert_that(simplify_keep <= 1)
+  assertthat::assert_that(simplify_keep > 0)
+  assertthat::assert_that(assertthat::is.flag(quiet))
+
   polygon <- check_for_internal_polygon(
     name = name,
     area = area,

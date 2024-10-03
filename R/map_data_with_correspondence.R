@@ -94,6 +94,7 @@ map_data_with_correspondence <- function(.data = NULL,
                                          quiet = getOption("hpa.spatial.quiet", FALSE)) {
   # extract codes and values from .data
   if (!is.null(.data)) {
+    assertthat::assert_that(inherits(.data, "data.frame"))
     .data <- dplyr::as_tibble(.data)
 
     values_name <- try(as.character(substitute(values)), silent = FALSE)

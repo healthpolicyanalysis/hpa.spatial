@@ -3,9 +3,8 @@ read_correspondence_tbl <- function(from_area,
                                     to_area,
                                     to_year,
                                     export_dir = tempdir()) {
-  if (!dir.exists(export_dir)) {
-    stop("export_dir provided does not exist: ", export_dir)
-  }
+  assertthat::assert_that(assertthat::is.writeable(export_dir))
+
   url <- "https://github.com/wfmackey/absmapsdata/raw/master/R/sysdata.rda"
   out_path <- file.path(export_dir, "cg_tables.rda")
   if (!file.exists(out_path)) {

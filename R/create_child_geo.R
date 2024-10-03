@@ -29,8 +29,13 @@ create_child_geo <- function(child_geo,
                              mb_geo = get_mb21_pop(),
                              mb_poly = get_mb21_poly(),
                              minimum_majority_portions = 0.95) {
-  # TODO: assert that child/parent/mb_geo are sf polygons
-  # TODO: assert that minimum majority_portions is 0 <= x <= 1
+  assertthat::assert_that(inherits(child_geo, "sf"))
+  assertthat::assert_that(inherits(parent_geo, "sf"))
+  assertthat::assert_that(inherits(mb_poly, "sf"))
+  assertthat::assert_that(inherits(mb_geo, "sf"))
+  assertthat::assert_that(minimum_majority_portions <= 1)
+  assertthat::assert_that(minimum_majority_portions >= 0)
+
   child_geo_orig <- child_geo
 
   child_geo <- update_crs(child_geo, crs = sf::st_crs(mb_geo))

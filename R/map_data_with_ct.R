@@ -5,6 +5,8 @@
                               bad_codes,
                               round_values,
                               seed) {
+  assertthat::assert_that(assertthat::are_equal(length(codes), length(values)))
+  assertthat::assert_that(assertthat::is.flag(round_values))
   df <- dplyr::tibble(codes = codes, values = values)
   if (value_type == "units") {
     # randomly assign codes to new mapped codes based on ratios

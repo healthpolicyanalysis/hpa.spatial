@@ -33,6 +33,26 @@ get_correspondence_tbl <- function(from_area = NULL,
                                    export_dir = tempdir(),
                                    export_fname = NULL,
                                    mb_geo = get_mb21_pop()) {
+  if (!is.null(from_area)) {
+    assertthat::assert_that(assertthat::is.string(from_area))
+  }
+  if (!is.null(to_area)) {
+    assertthat::assert_that(assertthat::is.string(to_area))
+  }
+  if (!is.null(from_year)) {
+    assertthat::assert_that(assertthat::is.scalar(from_year))
+  }
+  if (!is.null(to_year)) {
+    assertthat::assert_that(assertthat::is.scalar(to_year))
+  }
+  if (!is.null(from_geo)) {
+    assertthat::assert_that(inherits(from_geo, "sf"))
+  }
+  if (!is.null(to_geo)) {
+    assertthat::assert_that(inherits(to_geo, "sf"))
+  }
+  assertthat::assert_that(inherits(mb_geo, "sf"))
+  assertthat::assert_that(assertthat::is.dir(export_dir))
   if (!dir.exists(export_dir)) {
     stop("export_dir provided does not exist: ", export_dir)
   }
