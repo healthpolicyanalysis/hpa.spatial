@@ -43,7 +43,7 @@
 #' @param export_fname The file name for the saved correspondence table file
 #' (applicable if \code{from_geo}) and \code{to_geo} are used instead of areas
 #' and years).
-#' @param round Whether or not to round the resulting mapped values to be whole
+#' @param round_values Whether or not to round the resulting mapped values to be whole
 #' numbers (maybe be useful when mapping count, aggregate values which may
 #' otherwise return decimal values in the mapped areas).
 #' @param seed A random seed (integer). May be useful for ensuring mappings of
@@ -89,7 +89,7 @@ map_data_with_correspondence <- function(.data = NULL,
                                          mb_geo = get_mb21_pop(),
                                          value_type = c("units", "aggs"),
                                          export_fname = NULL,
-                                         round = FALSE,
+                                         round_values = FALSE,
                                          seed = NULL,
                                          quiet = getOption("hpa.spatial.quiet", FALSE)) {
   # extract codes and values from .data
@@ -155,20 +155,21 @@ map_data_with_correspondence <- function(.data = NULL,
     values_name <- NA
   }
 
+  value_type <- match.arg(value_type)
+
   ### CREATE CORRESPONDENCE TBL
   if (is.null(correspondence_tbl)) {
     ct_provided <- FALSE
-    call <- rlang::expr(get_correspondence_tbl(
-      from_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_area))),
-      from_year = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_year))),
-      from_geo = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_geo))),
-      to_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_area))),
-      to_year = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_year))),
-      to_geo = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_geo))),
-      export_fname = rlang::eval_tidy(rlang::expr(!!rlang::quo(export_fname)))
-    ))
 
-    correspondence_tbl <- rlang::eval_tidy(call)
+    correspondence_tbl <- get_correspondence_tbl(
+      from_area = from_area,
+      from_year = from_year,
+      from_geo = from_geo,
+      to_area = to_area,
+      to_year = to_year,
+      to_geo = to_geo,
+      export_fname = export_fname
+    )
   } else {
     ct_provided <- TRUE
   }
@@ -197,46 +198,55 @@ map_data_with_correspondence <- function(.data = NULL,
     }
   }
 
-  df <- data.frame(codes = as.character(codes), values) |>
+  df <- dplyr::tibble(codes = as.character(codes), values) |>
     dplyr::filter(codes %in% correspondence_tbl[[1]])
 
+  if (is.null(groups)) {
+    mapped_df <- .map_data_with_ct(
+      codes = df$codes,
+      values = df$values,
+      correspondence_tbl = correspondence_tbl,
+      value_type = value_type,
+      bad_codes = bad_codes,
+      round_values = round_values,
+      seed = seed
+    )
+    return(clean_mapped_tbl(mapped_df, values_name = values_name, groups_name = groups_name))
+  }
 
-  # if grouped are used call self (map_data_with_correspondence() for each group)
-  multiple_groups <- inherits(groups, "list")
 
   if (!is.null(groups)) {
-    if (multiple_groups) {
-      assertthat::assert_that(inherits(groups, "list"))
-    } else {
+    # if grouped are used call self (map_data_with_correspondence() for each group)
+    if (!inherits(groups, "list")) {
       groups <- list(groups)
     }
+
     for (g in groups) {
       stopifnot(length(g) == length(codes))
     }
 
     stopifnot(length(codes) == length(values))
-    groups_df <- do.call("cbind.data.frame", groups)
+
+    names(groups) <- paste0("grp", seq_along(groups))
+    groups_df <- do.call(dplyr::bind_cols, groups)
 
     df_res <- split(
-      cbind(data.frame(codes = codes, values = values), groups_df),
+      dplyr::bind_cols(dplyr::tibble(codes = codes, values = values), groups_df),
       f = groups,
       drop = TRUE
     ) |>
       lapply(\(x) {
-        call <- rlang::expr(map_data_with_correspondence(
+        mapped_df <- .map_data_with_ct(
           codes = x$codes,
           values = x$values,
-          from_area = !!rlang::quo(from_area),
-          from_year = !!rlang::quo(from_year),
-          from_geo = !!rlang::quo(from_geo),
-          to_area = !!rlang::quo(to_area),
-          to_year = !!rlang::quo(to_year),
-          to_geo = !!rlang::quo(to_geo),
-          correspondence_tbl = rlang::eval_tidy(correspondence_tbl),
-          value_type = !!rlang::quo(value_type)
-        ))
+          correspondence_tbl = correspondence_tbl,
+          value_type = value_type,
+          bad_codes = bad_codes,
+          round_values = round_values,
+          seed = seed
+        )
 
-        groups_df <- x |>
+        grp_cols <- x |>
           dplyr::select(-dplyr::all_of(c("codes", "values"))) |>
           (\(x) {
             names(x) <- paste0("grp", 1:ncol(x))
@@ -245,154 +255,16 @@ map_data_with_correspondence <- function(.data = NULL,
           dplyr::slice_head(n = 1)
 
         dplyr::bind_cols(
-          rlang::eval_tidy(call),
-          groups_df
+          mapped_df,
+          grp_cols
         )
       }) |>
-      (\(x) do.call("rbind", x))()
+      dplyr::bind_rows() |>
+      clean_mapped_tbl(values_name = values_name, groups_name = groups_name)
 
-    return(clean_mapped_tbl(df_res, values_name = values_name, groups_name = groups_name))
+    return(df_res)
   }
-
-  value_type <- match.arg(value_type)
-  stopifnot(length(codes) == length(values))
-  maybe_sa <- all(
-    !is.null(from_year),
-    !is.null(to_year),
-    !is.null(from_area),
-    !is.null(to_area),
-    is.null(from_geo),
-    is.null(to_geo)
-  )
-
-  if (maybe_sa & !ct_provided) {
-    if (is_SA(from_area) & is_SA(to_area) & clean_year(from_year) == clean_year(to_year)) {
-      # if the areas are both SA's and the year is the same, this is the process
-      # of aggregating up (i.e. from SA2 to SA3) and can be done without
-      # correspondence tables but just with the asgs tables.
-      asgs_tbl <- get_asgs_table(
-        from_area = clean_sa(from_area),
-        to_area = clean_sa(to_area),
-        year = clean_year(from_year)
-      )
-
-      mapped_df <- cbind(asgs_tbl[asgs_tbl[[1]] %in% codes, 2, drop = FALSE], values)
-
-      if (value_type == "units") {
-        return(clean_mapped_tbl(
-          mapped_df,
-          values_name = values_name,
-          groups_name = groups_name
-        ))
-      }
-
-      if (value_type == "aggs") {
-        mapped_df <- mapped_df |>
-          dplyr::group_by(!!rlang::sym(names(mapped_df)[1])) |>
-          dplyr::summarize(values = sum(values)) |>
-          (\(.data) if (round) dplyr::mutate(.data, values = round(values)) else .data)()
-
-        return(clean_mapped_tbl(
-          mapped_df,
-          values_name = values_name,
-          groups_name = groups_name
-        ))
-      }
-    }
-
-    if (is_SA(from_area) & is_SA(to_area) &
-      clean_sa(from_area) != clean_sa(to_area) &
-      clean_year(from_year) != clean_year(to_year)
-    ) {
-      # if the areas are both SA's and the years are different, then the user is
-      # wanting to both map using the correspondence tables from one edition to another
-      # AND aggregate the data assigned to map codes to a new ASGS level (i.e. SA2 to SA3)
-
-      # approach... call function recursively to:
-      #     > map editions (from_area to from_area)
-      #     > aggregate up area levels
-
-      call <- rlang::expr(map_data_with_correspondence(
-        codes = codes,
-        values = values,
-        from_area = !!rlang::quo(from_area),
-        from_year = !!rlang::quo(from_year),
-        to_area = !!rlang::quo(from_area),
-        to_year = !!rlang::quo(to_year),
-        value_type = !!rlang::quo(value_type)
-      ))
-
-      df_edition_mapped <- rlang::eval_tidy(call)
-
-      call <- rlang::expr(map_data_with_correspondence(
-        codes = df_edition_mapped[[1]],
-        values = df_edition_mapped[[2]],
-        from_area = !!rlang::quo(from_area),
-        from_year = !!rlang::quo(to_year), # have already mapped edition
-        to_area = !!rlang::quo(to_area),
-        to_year = !!rlang::quo(to_year),
-        value_type = !!rlang::quo(value_type)
-      ))
-
-      mapped_df <- rlang::eval_tidy(call)
-
-      return(clean_mapped_tbl(mapped_df, values_name = values_name, groups_name = groups_name))
-    }
-  }
-
-
-  if (value_type == "units") {
-    # randomly assign codes to new mapped codes based on ratios
-    f_assign_code <- function(code, mapping_df) {
-      mapping_df_filtered <- dplyr::filter(mapping_df, mapping_df[[1]] == code)
-
-      if (any(is.na(mapping_df_filtered[[3]]))) {
-        na_count <- sum(is.na(mapping_df_filtered[[3]]))
-        sum_ratio <- sum(mapping_df_filtered[[3]], na.rm = TRUE)
-        mapping_df_filtered[is.na(mapping_df_filtered[[3]]), 3] <- (1 - sum_ratio) / na_count
-      }
-      sample(mapping_df_filtered[[2]], size = 1, prob = mapping_df_filtered[[3]])
-    }
-
-    if (is.null(seed)) {
-      mapped_df <- df |>
-        dplyr::rowwise() |>
-        dplyr::mutate(codes = f_assign_code(code = codes, mapping_df = correspondence_tbl))
-    } else {
-      withr::with_seed(seed, {
-        mapped_df <- df |>
-          dplyr::rowwise() |>
-          dplyr::mutate(codes = f_assign_code(code = codes, mapping_df = correspondence_tbl))
-      })
-    }
-
-    names(mapped_df)[1] <- names(correspondence_tbl)[2]
-
-    stopifnot(nrow(mapped_df) == length(values[!codes %in% bad_codes]))
-  }
-
-  if (value_type == "aggs") {
-    stopifnot(length(codes) == length(unique(codes)))
-
-
-    mapped_df <- df |>
-      dplyr::left_join(correspondence_tbl, by = c("codes" = names(correspondence_tbl)[1])) |>
-      dplyr::mutate(values = values * ratio) |>
-      dplyr::group_by(!!rlang::sym(names(correspondence_tbl)[2])) |>
-      dplyr::summarize(values = sum(values))
-  }
-
-  stopifnot(all.equal(sum(mapped_df$values), sum(values[!codes %in% bad_codes])))
-
-  if (value_type == "aggs" & round) {
-    mapped_df <- dplyr::mutate(mapped_df, values = round(values))
-  }
-
-
-  clean_mapped_tbl(mapped_df, values_name = values_name, groups_name = groups_name)
 }
-
-
 
 
 get_mapping_tbl_col_name <- function(area, year) {
@@ -401,7 +273,7 @@ get_mapping_tbl_col_name <- function(area, year) {
     return(do.call("c", col_names))
   }
 
-  if (is_SA(area)) {
+  if (is_SA_area(area)) {
     glue::glue("{clean_sa(area)}_code_{year}")
   } else {
     stop("Not sure how to make col names for non-SA areas yet...")
@@ -412,7 +284,7 @@ get_mapping_tbl_col_name <- function(area, year) {
 get_asgs_table <- function(from_area, to_area, year) {
   stopifnot(as.character(year) %in% c("2011", "2016", "2021"))
 
-  valid_areas <- c("sa1", "sa2", "sa3", "sa4", "gcc")
+  valid_areas <- get_sa_codes()
   stopifnot(from_area %in% valid_areas)
   stopifnot(to_area %in% valid_areas)
   stopifnot(which(valid_areas == from_area) < which(valid_areas == to_area))
@@ -424,43 +296,10 @@ get_asgs_table <- function(from_area, to_area, year) {
     dplyr::distinct()
 }
 
-adjust_correspondence_tbl <- function(tbl) {
-  # in some cases, the correspondence table has a 1-to-1 mapping and the ratio = NA.
-  # for these cases, assign the ratio to be 2 before the fixing process
-  # (which will affect the new value and reduce it to be 1- sum(ratio))
-  # this will force the missing ratio to be the remainder of the sum of the other non-NA ratios
-  tbl <- tidyr::drop_na(tbl, !ratio)
-  tbl$ratio[is.na(tbl$ratio)] <- 2
-  code_col <- names(tbl)[1]
-
-  # keep the mappings which have ratios that add up to 1 separate
-  tbl_ok <- tbl |>
-    dplyr::group_by(!!!rlang::syms(code_col)) |>
-    dplyr::filter(sum(ratio) == 1) |>
-    dplyr::ungroup()
-
-  # get the mappings where the ratios do NOT add up to 1
-  tbl_not_ok <- tbl |>
-    dplyr::group_by(!!!rlang::syms(code_col)) |>
-    dplyr::filter(sum(ratio) != 1)
-
-  # add the difference from 1 to the largest correspondence ratio
-  tbl_not_ok_fixed <-
-    tbl_not_ok |>
-    dplyr::arrange(dplyr::desc(ratio)) |>
-    dplyr::mutate(ratio = ifelse(dplyr::row_number() == 1, ratio + 1 - sum(ratio), ratio)) |>
-    dplyr::ungroup()
-
-  rbind(tbl_ok, tbl_not_ok_fixed) |>
-    dplyr::arrange(!!!rlang::syms(code_col))
-}
-
-
 clean_mapped_tbl <- function(.data, values_name, groups_name) {
   if (!is.na(values_name)) {
     .data <- dplyr::rename(.data, !!values_name := values)
   }
-
 
   if (!any(is.na(groups_name))) {
     rename_vec <- names(.data)[3:ncol(.data)]
@@ -477,8 +316,51 @@ clean_sa <- function(x) {
   stringr::str_trim(tolower(x))
 }
 
-is_SA <- function(x) {
-  clean_sa(x) %in% c("sa1", "sa2", "sa3", "sa4", "gcc")
+is_SA_area <- function(x) {
+  clean_sa(x) %in% get_sa_codes()
+}
+
+get_sa_codes <- function() {
+  c("sa1", "sa2", "sa3", "sa4", "gcc")
+}
+
+get_sa_years <- function() {
+  c(2011, 2016, 2021)
+}
+
+sa_code_level <- function(area) {
+  stopifnot(is_SA_area(area))
+  which(get_sa_codes() == area)
+}
+
+is_SA_year <- function(year) {
+  as.character(year) %in% as.character(get_sa_years())
+}
+
+sa_year_level <- function(year) {
+  stopifnot(is_SA_year(year))
+  which(get_sa_years() == year)
+}
+
+get_next_sa_year_step <- function(year) {
+  stopifnot(is_SA_year(year))
+  years <- get_sa_years()
+  current_year_idx <- which(years == year)
+  stopifnot(current_year_idx != length(years))
+
+  # return the next year/edition
+  years[current_year_idx + 1]
+}
+
+get_sa_year_step <- function(from_year, to_year) {
+  sa_year_level(to_year) - sa_year_level(from_year)
+}
+
+is_sa_code_aggregating <- function(from_area, to_area) {
+  stopifnot(is_SA_area(from_area))
+  stopifnot(is_SA_area(to_area))
+
+  sa_code_level(from_area) < sa_code_level(to_area)
 }
 
 clean_year <- function(x) {

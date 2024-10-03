@@ -239,9 +239,9 @@ test_that("mapping across SAs and editions together works (without correspondenc
     nrow(sa2_to_sa3_2011_to_2016_mapped_unit)
   )
 
-  expect_in(sa2_to_sa3_2011_to_2016_mapped_unit_ref_col$sa3_code_2016, asgs_2016$sa3_code_2016)
-  expect_in(sa2_to_sa3_2011_to_2016_mapped_unit$sa3_code_2016, asgs_2016$sa3_code_2016)
-  expect_in(sa2_to_sa3_2011_to_2016_mapped_aggs$sa3_code_2016, asgs_2016$sa3_code_2016)
+  expect_in(sa2_to_sa3_2011_to_2016_mapped_unit_ref_col$SA3_CODE_2016, asgs_2016$sa3_code_2016)
+  expect_in(sa2_to_sa3_2011_to_2016_mapped_unit$SA3_CODE_2016, asgs_2016$sa3_code_2016)
+  expect_in(sa2_to_sa3_2011_to_2016_mapped_aggs$SA3_CODE_2016, asgs_2016$sa3_code_2016)
 })
 
 
@@ -293,7 +293,7 @@ test_that("rounding works", {
     to_area = "sa2",
     to_year = 2016,
     value_type = "aggs",
-    round = TRUE
+    round_values = TRUE
   )
 
   expect_identical(mdf_agg_rounded$values, round(mdf_agg_rounded$values))
