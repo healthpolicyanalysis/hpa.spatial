@@ -1,5 +1,11 @@
 # hpa.spatial (development version)
 
+* where possible to use a combination of ASGS correspondence tables (including
+  combining multiple) use these for mapping data across editions/geographies.
+
+* avoid recursive programming for `map_data_with_correspondence()` by using new
+  function: `.map_data_with_ct()`
+
 * update testing suite to be faster to run and more comprehensive.
 
 # hpa.spatial 0.2.12
