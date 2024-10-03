@@ -1,5 +1,7 @@
 # hpa.spatial (development version)
 
+* update testing suite to be faster to run and more comprehensive.
+
 # hpa.spatial 0.2.12
 
 * data read from `{hpa.spatial.data}` is read from a specific commit to ensure
