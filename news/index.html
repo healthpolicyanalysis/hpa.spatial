@@ -38,7 +38,11 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="hpaspatial-development-version">hpa.spatial (development version)<a class="anchor" aria-label="anchor" href="#hpaspatial-development-version"></a></h2>
-</div>
+<ul><li><p>remove hideous meta-programming that was handling the recursive calling of <code><a href="../reference/map_data_with_correspondence.html">map_data_with_correspondence()</a></code> (now that it’s not used recursively).</p></li>
+<li><p>where possible to use a combination of ASGS correspondence tables (including combining multiple) use these for mapping data across editions/geographies.</p></li>
+<li><p>avoid recursive programming for <code><a href="../reference/map_data_with_correspondence.html">map_data_with_correspondence()</a></code> by using new function: <code>.map_data_with_ct()</code></p></li>
+<li><p>update testing suite to be faster to run and more comprehensive.</p></li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.12" id="hpaspatial-0212">hpa.spatial 0.2.12<a class="anchor" aria-label="anchor" href="#hpaspatial-0212"></a></h2>
 <ul><li><p>data read from <code>{hpa.spatial.data}</code> is read from a specific commit to ensure (from now on) old versions of <a href="https://healthpolicyanalysis.github.io/hpa.spatial/">hpa.spatial</a> will read the same data as they are expected to (did at the time of analyses).</p></li>
@@ -131,7 +135,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>
