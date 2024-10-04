@@ -1,3 +1,5 @@
+# hpa.spatial (development version)
+
 # hpa.spatial 0.2.13
 
 * remove hideous meta-programming that was handling the recursive calling of 
