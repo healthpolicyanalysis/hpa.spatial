@@ -1,5 +1,16 @@
 # hpa.spatial (development version)
 
+* remove hideous meta-programming that was handling the recursive calling of 
+  `map_data_with_correspondence()` (now that it's not used recursively).
+
+* where possible to use a combination of ASGS correspondence tables (including
+  combining multiple) use these for mapping data across editions/geographies.
+
+* avoid recursive programming for `map_data_with_correspondence()` by using new
+  function: `.map_data_with_ct()`
+
+* update testing suite to be faster to run and more comprehensive.
+
 # hpa.spatial 0.2.12
 
 * data read from `{hpa.spatial.data}` is read from a specific commit to ensure

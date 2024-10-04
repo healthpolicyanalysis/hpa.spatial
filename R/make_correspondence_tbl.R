@@ -19,6 +19,10 @@
 #'   mb_geo = get_mb21_pop()
 #' )
 make_correspondence_tbl <- function(from_geo, to_geo, mb_geo = get_mb21_pop(), ...) {
+  assertthat::assert_that(inherits(from_geo, "sf"))
+  assertthat::assert_that(inherits(to_geo, "sf"))
+  assertthat::assert_that(inherits(mb_geo, "sf"))
+
   mb_geo <- mb_geo |>
     dplyr::select(mb_code = 1, pop = Person)
 
@@ -81,7 +85,9 @@ make_correspondence_tbl <- function(from_geo, to_geo, mb_geo = get_mb21_pop(), .
     dplyr::arrange(1)
 }
 
+
 remove_empty_geographies <- function(geo, print_removed_codes = FALSE) {
+  assertthat::assert_that(inherits(geo, "sf"))
   idx_empty <- sf::st_is_empty(geo)
   if (any(idx_empty)) {
     if (print_removed_codes) {

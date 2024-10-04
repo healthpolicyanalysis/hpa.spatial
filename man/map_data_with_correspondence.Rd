@@ -19,7 +19,7 @@ map_data_with_correspondence(
   mb_geo = get_mb21_pop(),
   value_type = c("units", "aggs"),
   export_fname = NULL,
-  round = FALSE,
+  round_values = FALSE,
   seed = NULL,
   quiet = getOption("hpa.spatial.quiet", FALSE)
 )
@@ -82,7 +82,7 @@ proportion across the (potentially multiple) mapped codes.}
 (applicable if \code{from_geo}) and \code{to_geo} are used instead of areas
 and years).}
 
-\item{round}{Whether or not to round the resulting mapped values to be whole
+\item{round_values}{Whether or not to round the resulting mapped values to be whole
 numbers (maybe be useful when mapping count, aggregate values which may
 otherwise return decimal values in the mapped areas).}
 

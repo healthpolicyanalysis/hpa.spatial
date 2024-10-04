@@ -33,6 +33,26 @@ get_correspondence_tbl <- function(from_area = NULL,
                                    export_dir = tempdir(),
                                    export_fname = NULL,
                                    mb_geo = get_mb21_pop()) {
+  if (!is.null(from_area)) {
+    assertthat::assert_that(assertthat::is.string(from_area))
+  }
+  if (!is.null(to_area)) {
+    assertthat::assert_that(assertthat::is.string(to_area))
+  }
+  if (!is.null(from_year)) {
+    assertthat::assert_that(assertthat::is.scalar(from_year))
+  }
+  if (!is.null(to_year)) {
+    assertthat::assert_that(assertthat::is.scalar(to_year))
+  }
+  if (!is.null(from_geo)) {
+    assertthat::assert_that(inherits(from_geo, "sf"))
+  }
+  if (!is.null(to_geo)) {
+    assertthat::assert_that(inherits(to_geo, "sf"))
+  }
+  assertthat::assert_that(inherits(mb_geo, "sf"))
+  assertthat::assert_that(assertthat::is.dir(export_dir))
   if (!dir.exists(export_dir)) {
     stop("export_dir provided does not exist: ", export_dir)
   }
@@ -58,10 +78,10 @@ get_correspondence_tbl <- function(from_area = NULL,
     )
 
     export_fname <- make_fname(
-      from_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_area))),
-      from_year = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_year))),
-      to_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_area))),
-      to_year = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_year)))
+      from_area = from_area,
+      from_year = from_year,
+      to_area = to_area,
+      to_year = to_year
     )
   }
 
@@ -71,48 +91,217 @@ get_correspondence_tbl <- function(from_area = NULL,
     return(readRDS(out_path))
   }
 
-
-  call <- rlang::expr(strayr::read_correspondence_tbl(
-    from_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_area))),
-    from_year = rlang::eval_tidy(rlang::expr(!!rlang::quo(from_year))),
-    to_area = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_area))),
-    to_year = rlang::eval_tidy(rlang::expr(!!rlang::quo(to_year))),
-    export_dir = rlang::eval_tidy(rlang::expr(!!rlang::quo(export_dir)))
+  call <- rlang::expr(read_correspondence_tbl(
+    from_area = from_area,
+    from_year = from_year,
+    to_area = to_area,
+    to_year = to_year,
+    export_dir = export_dir
   ))
 
   cg <- try(suppressMessages(suppressWarnings(rlang::eval_tidy(call))), silent = TRUE)
 
-
-  if (inherits(cg, "try-error")) { # not a correspondence table accessible via strayr...
-    message("Failed to retrieve correspondence table through {strayr}, making correspondence table")
-
-    crs <- sf::st_crs(mb_geo)$input
-
-    if (is.null(from_geo)) {
-      from_geo <- get_polygon(area = from_area, year = from_year, crs = crs)
-    } else {
-      from_geo <- update_crs(from_geo, crs = crs)
-    }
-
-    if (is.null(to_geo)) {
-      to_geo <- get_polygon(area = to_area, year = to_year, crs = crs)
-    } else {
-      to_geo <- update_crs(to_geo, crs = crs)
-    }
-
-    cg <- make_correspondence_tbl(
-      from_geo = from_geo,
-      to_geo = to_geo,
-      mb_geo = mb_geo
-    )
-  } else {
+  # if success, return the CG
+  if (!inherits(cg, "try-error")) {
     cg <- cg |>
       dplyr::select(1, 3, ratio) |>
       dplyr::mutate(dplyr::across(1:2, as.character))
+    saveRDS(cg, file = out_path)
+    return(cg)
   }
+
+  # if it's a (non-standard) ASGS-SA mapping, try making a correspondence table
+  maybe_sa <- all(
+    !is.null(from_year),
+    !is.null(to_year),
+    !is.null(from_area),
+    !is.null(to_area),
+    is.null(from_geo),
+    is.null(to_geo)
+  )
+
+  if (maybe_sa) {
+    is_sa_mapping <- all(
+      is_SA_area(from_area),
+      is_SA_area(to_area),
+      is_SA_year(from_year),
+      is_SA_year(to_year)
+    )
+
+    if (is_sa_mapping) {
+      message("Failed to retrieve correspondence table through {strayr}, making one using a combination of available ASGS correspondence tables")
+      cg <- try(suppressMessages(suppressWarnings(
+        make_asgs_cg_tbl(
+          from_area = from_area,
+          from_year = from_year,
+          to_area = to_area,
+          to_year = to_year
+        )
+      )), silent = TRUE)
+
+      if (!inherits(cg, "try-error")) {
+        saveRDS(cg, file = out_path)
+        return(cg)
+      }
+    }
+  }
+
+
+  # if still can't get a CG, make one using the polygons and mb_pop
+  message("Last resort: making correspondence table using shapes and population at mesh block level")
+
+  crs <- sf::st_crs(mb_geo)$input
+
+  if (is.null(from_geo)) {
+    from_geo <- get_polygon(area = from_area, year = from_year, crs = crs)
+  } else {
+    from_geo <- update_crs(from_geo, crs = crs)
+  }
+
+  if (is.null(to_geo)) {
+    to_geo <- get_polygon(area = to_area, year = to_year, crs = crs)
+  } else {
+    to_geo <- update_crs(to_geo, crs = crs)
+  }
+
+  cg <- make_correspondence_tbl(
+    from_geo = from_geo,
+    to_geo = to_geo,
+    mb_geo = mb_geo
+  )
 
   saveRDS(cg, file = out_path)
   cg
+}
+
+
+make_asgs_cg_tbl <- function(from_area,
+                             from_year,
+                             to_area,
+                             to_year) {
+  # from and to areas/years are pre-checked with is_SA_area() and is_SA_year()
+
+  years_are_the_same <- from_year == to_year
+  areas_are_the_same <- from_area == to_area
+  sa_area_is_aggregating <- is_sa_code_aggregating(from_area, to_area)
+
+  # codes are both SAs and they are aggregating up - load the from_area/year and agg up
+  if (years_are_the_same & sa_area_is_aggregating) {
+    cg <- select_cols_for_aggregating_sa(
+      tbl = get_polygon(area = from_area, year = from_year),
+      to_area = to_area
+    )
+
+    return(cg)
+  }
+
+  if (areas_are_the_same & get_sa_year_step(from_year, to_year) > 1) {
+    # when the increment in edition is more than 1, these correspondence tables are not released by ABS but can be made by combining multiple.
+    cg <- make_multi_edition_asgs_cg(from_year, to_year, area = from_area)
+    return(cg)
+  }
+
+  # if both aggregating up and changing multiple editions, do the edition change and then aggregate
+  if (sa_area_is_aggregating & get_sa_year_step(from_year, to_year) > 1) {
+    cg_edition_step <- make_multi_edition_asgs_cg(from_year, to_year, area = from_area)
+    cg_aggregation_step <- select_cols_for_aggregating_sa(
+      tbl = get_polygon(area = from_area, year = to_year),
+      to_area = to_area
+    )
+    cg <- combine_cg_list(list(cg_edition_step, cg_aggregation_step))
+    return(cg)
+  }
+
+  stop("couldn't make a table using available ASGS correspondence tables")
+}
+
+
+make_multi_edition_asgs_cg <- function(from_year, to_year, area) {
+  n_incremements <- get_sa_year_step(from_year, to_year)
+
+  l_cg_steps <- list()
+
+  for (i in seq_len(n_incremements)) {
+    if (i == 1) {
+      next_year <- get_next_sa_year_step(from_year)
+      prev_year <- from_year
+    } else {
+      prev_year <- next_year
+      next_year <- get_next_sa_year_step(next_year)
+    }
+
+    cg_step <- read_correspondence_tbl(
+      from_area = area,
+      from_year = prev_year,
+      to_area = area,
+      to_year = next_year
+    ) |>
+      dplyr::select(1, 3, ratio) |>
+      dplyr::mutate(dplyr::across(!ratio, as.character))
+
+    l_cg_steps <- c(l_cg_steps, list(cg_step))
+  }
+
+  combine_cg_list(cg_list = l_cg_steps)
+}
+
+
+combine_cg_list <- function(cg_list) {
+  Reduce(lj_cgs, cg_list) |>
+    dplyr::mutate(prod = purrr::pmap_dbl(dplyr::pick(dplyr::starts_with("ratio")), prod)) |>
+    dplyr::select(dplyr::matches("code", ignore.case = TRUE), ratio = prod) |>
+    dplyr::group_by(dplyr::across(-ratio)) |>
+    dplyr::summarize(ratio = sum(ratio)) |>
+    dplyr::ungroup()
+}
+
+
+lj_cgs <- function(x, y) {
+  # left join several CG tables
+  shared_code_col <- names(x)[names(x) %in% names(y)] |>
+    stringr::str_subset(stringr::regex("code", ignore_case = TRUE))
+  dplyr::left_join(x, y, by = shared_code_col) |>
+    dplyr::select(-dplyr::all_of(shared_code_col))
+}
+
+
+adjust_correspondence_tbl <- function(tbl) {
+  # in some cases, the correspondence table has a 1-to-1 mapping and the ratio = NA.
+  # for these cases, assign the ratio to be 2 before the fixing process
+  # (which will affect the new value and reduce it to be 1- sum(ratio))
+  # this will force the missing ratio to be the remainder of the sum of the other non-NA ratios
+  tbl <- tidyr::drop_na(tbl, !ratio)
+  tbl$ratio[is.na(tbl$ratio)] <- 2
+  code_col <- names(tbl)[1]
+
+  # keep the mappings which have ratios that add up to 1 separate
+  tbl_ok <- tbl |>
+    dplyr::group_by(!!!rlang::syms(code_col)) |>
+    dplyr::filter(sum(ratio) == 1) |>
+    dplyr::ungroup()
+
+  # get the mappings where the ratios do NOT add up to 1
+  tbl_not_ok <- tbl |>
+    dplyr::group_by(!!!rlang::syms(code_col)) |>
+    dplyr::filter(sum(ratio) != 1)
+
+  # add the difference from 1 to the largest correspondence ratio
+  tbl_not_ok_fixed <- tbl_not_ok |>
+    dplyr::arrange(dplyr::desc(ratio)) |>
+    dplyr::mutate(ratio = ifelse(dplyr::row_number() == 1, ratio + 1 - sum(ratio), ratio)) |>
+    dplyr::ungroup()
+
+  rbind(tbl_ok, tbl_not_ok_fixed) |>
+    dplyr::arrange(!!!rlang::syms(code_col))
+}
+
+
+select_cols_for_aggregating_sa <- function(tbl, to_area) {
+  tbl |>
+    tibble::as_tibble() |>
+    dplyr::select(1, dplyr::matches(to_area)) |>
+    dplyr::select(dplyr::matches(stringr::regex("code", ignore_case = TRUE))) |>
+    dplyr::mutate(ratio = 1)
 }
 
 

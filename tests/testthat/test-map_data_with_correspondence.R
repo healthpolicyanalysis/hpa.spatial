@@ -1,3 +1,54 @@
+test_that("asgs correspondences are done with abs data where possible", {
+  withr::local_seed(42)
+  sa2_2011 <- get_polygon(area = "sa2", year = 2011)
+  n_sample <- 200
+  sa2_2011_sample <- dplyr::sample_n(sa2_2011, n_sample)
+  random_vals <- rnorm(n = n_sample)
+  sample_codes <- sample(sa2_2011$sa2_code_2011, size = n_sample)
+
+  expect_no_message(
+    # no message - uses the downloaded asgs file
+    map_data_with_correspondence(
+      .data = sa2_2011_sample,
+      codes = "sa2_code_2011",
+      values = random_vals,
+      from_area = "sa2",
+      from_year = 2011,
+      to_area = "sa2",
+      to_year = 2016
+    )
+  )
+
+  expect_message(
+    map_data_with_correspondence(
+      .data = sa2_2011_sample,
+      codes = sa2_code_2011,
+      values = random_vals,
+      from_area = "sa2",
+      from_year = 2011,
+      to_area = "sa2",
+      to_year = 2021,
+      export_fname = basename(tempfile())
+    ),
+    regexp = "making one using a combination of available ASGS correspondence tables"
+  )
+
+  expect_message(
+    map_data_with_correspondence(
+      .data = sa2_2011_sample,
+      codes = sa2_code_2011,
+      values = random_vals,
+      from_area = "sa2",
+      from_year = 2011,
+      to_area = "sa3",
+      to_year = 2021,
+      export_fname = basename(tempfile())
+    ),
+    regexp = "making one using a combination of available ASGS correspondence tables"
+  )
+})
+
+
 test_that("user-specified correspondence table", {
   wb_shapes <- load_wb_sa3_and_hhs_mapping_shapes()
   wb_shapes$wb_sa32016$vals <- rep(1, nrow(wb_shapes$wb_sa32016))
@@ -262,7 +313,7 @@ test_that("basic tests of output dimensions", {
 
   # expect that some SA2s will have multiple units mapped to them (not a 1-to-1
   # relationship when mapping on unit level
-  expect_gt(nrow(sa2_2016_mapped_unit), length(unique(sa2_2016_mapped_unit$SA2_MAINCODE_2016)))
+  expect_gt(nrow(sa2_2016_mapped_unit), length(unique(sa2_2016_mapped_unit$sa2_maincode_2016)))
 
   sa2_2016_mapped_aggs <- map_data_with_correspondence(
     codes = sa2_2011$sa2_code_2011,
@@ -279,7 +330,7 @@ test_that("basic tests of output dimensions", {
   # mapping on aggregate level as the mapped values should be summed within new
   # location codes)
   expect_equal(
-    length(unique(sa2_2016_mapped_aggs$SA2_MAINCODE_2016)),
+    length(unique(sa2_2016_mapped_aggs$sa2_maincode_2016)),
     nrow(sa2_2016_mapped_aggs)
   )
 })
@@ -293,7 +344,7 @@ test_that("rounding works", {
     to_area = "sa2",
     to_year = 2016,
     value_type = "aggs",
-    round = TRUE
+    round_values = TRUE
   )
 
   expect_identical(mdf_agg_rounded$values, round(mdf_agg_rounded$values))

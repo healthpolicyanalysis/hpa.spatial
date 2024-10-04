@@ -3,7 +3,7 @@
     Code
       df_sample
     Output
-          SA2_MAINCODE_2011 SA2_MAINCODE_2016 ratio
+          sa2_maincode_2011 sa2_maincode_2016 ratio
       1           801051061         801051061  1.00
       2           304031095         304031095  1.00
       3           302021027         302021027  1.00
@@ -111,7 +111,7 @@
       x
     Output
       # A tibble: 2,426 x 3
-         SA2_MAINCODE_2011 SA2_MAINCODE_2016 ratio
+         sa2_maincode_2011 sa2_maincode_2016 ratio
          <chr>             <chr>             <dbl>
        1 101011001         101051539             1
        2 101011002         101051540             1
