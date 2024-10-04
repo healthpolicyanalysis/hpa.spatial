@@ -31,8 +31,6 @@ create_child_geo <- function(child_geo,
                              minimum_majority_portions = 0.95) {
   assertthat::assert_that(inherits(child_geo, "sf"))
   assertthat::assert_that(inherits(parent_geo, "sf"))
-  assertthat::assert_that(inherits(mb_poly, "sf"))
-  assertthat::assert_that(inherits(mb_geo, "sf"))
   assertthat::assert_that(minimum_majority_portions <= 1)
   assertthat::assert_that(minimum_majority_portions >= 0)
 
