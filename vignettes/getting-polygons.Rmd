@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 
 ```{r setup, message=FALSE}
 library(hpa.spatial)
+library(sf)
 library(dplyr)
 library(ggplot2)
 ```

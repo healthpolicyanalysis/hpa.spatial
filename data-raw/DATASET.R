@@ -106,7 +106,7 @@ sheets <- readxl::excel_sheets(erp23_file) |>
 
 sa2_erp23 <- map(
   sheets,
-  ~readxl::read_excel(path = erp23_file, sheet = .x, skip = 6) |>
+  ~ readxl::read_excel(path = erp23_file, sheet = .x, skip = 6) |>
     janitor::clean_names() |>
     select(sa2_code_2021 = sa2_code, erp = no_10) |>
     mutate(sa2_code_2021 = as.character(sa2_code_2021))
@@ -116,4 +116,3 @@ sa2_erp23 <- map(
   filter(!is.na(sa2_code_2021))
 
 usethis::use_data(sa2_erp23, overwrite = TRUE)
-

@@ -1,0 +1,120 @@
+---
+title: "Advanced mapping with correspondence example - ACPR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Advanced-mapping-with-correspondence-example-ACPR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, message=FALSE}
+library(hpa.spatial)
+library(sf)
+library(dplyr)
+library(ggplot2)
+```
+
+# Current problem
+
+- The year is 2024. 
+- We want to map count data from SA2s (2021 edition) to Aged Care Planning Regions (ACPRs). 
+- There has been population growth in Australia since the 2021 census population (which the `map_with_correspondence()` uses by default for creating correspondence tables).
+
+
+### The plan
+
+Use `map_with_correspondence()` but create a new `sf (POINT)` object that incorporates the estimated residential population projections (ERP) from 2023 at the SA2 level. Since we don't have mesh block population data from the ERP, this won't account for within-SA2-differences in population growth from 2021 to 2023, but it will account for differences in between-SA2-differences in population growth.
+
+
+
+```{r}
+sa2_erp23 # use ERP data at SA2 level from ABS <https://www.abs.gov.au/statistics/people/population/regional-population/latest-release#data-downloads>
+
+mb21_pop <- get_mb21_pop()
+
+# create adjusted MB21 population data for creating correspondence table using ERP data at SA2 level
+adj_mb21_pop <- mb21_pop |>
+  as_tibble() |>
+  select(MB_CODE21, sa2_code_2021 = SA2_CODE21, Person) |>
+  # create within-sa2 pop ratios for each mesh block
+  mutate(within_sa2_pp = Person / sum(Person), .by = sa2_code_2021) |>
+  # join the ERP (2023) at SA2 level
+  inner_join(sa2_erp23, by = "sa2_code_2021") |>
+  # apply SA2 level ERP to within-sa2 pop ratios to get adjusted pop at mesh block level
+  mutate(pop23 = erp * within_sa2_pp) |>
+  select(MB_CODE21, Person = pop23) |>
+  # join the POINT geometry back
+  (\(d) {
+    mb21_pop |>
+      select(MB_CODE21, sa2_code_2021 = SA2_CODE21) |>
+      inner_join(d, by = "MB_CODE21")
+  })()
+
+adj_mb21_pop
+```
+
+
+```{r}
+# create SA2 count data for mapping
+d_sa2 <- get_polygon("sa22021") |>
+  as_tibble() |>
+  select(sa2_code_2021) |>
+  filter(sa2_code_2021 %in% adj_mb21_pop$sa2_code_2021)
+
+d_sa2$measure <- rpois(n = nrow(d_sa2), lambda = 1000)
+
+
+# map (and aggregate) the data to ACPR
+mapped_measures <- map_data_with_correspondence(
+  .data = d_sa2,
+  codes = sa2_code_2021,
+  values = measure,
+  from_geo = get_polygon("sa22021"),
+  to_geo = get_polygon("ACPR"),
+  mb_geo = adj_mb21_pop,
+  export_fname = "sa22021-to-acpr",
+  value_type = "aggs"
+)
+
+# map (and aggregate) the ERP to ACPR so that a rate can be calculated
+mapped_pop <- map_data_with_correspondence(
+  .data = sa2_erp23,
+  codes = sa2_code_2021,
+  values = erp,
+  from_geo = get_polygon("sa22021"),
+  to_geo = get_polygon("ACPR"),
+  mb_geo = adj_mb21_pop,
+  export_fname = "sa22021-to-acpr",
+  value_type = "aggs"
+)
+
+sa2_rate_poly <- get_polygon("sa22021", crs = 7844) |>
+  inner_join(d_sa2, by = "sa2_code_2021") |>
+  left_join(sa2_erp23, by = "sa2_code_2021") |>
+  mutate(rate = measure / erp)
+
+acpr_rate_poly <- get_polygon("ACPR", crs = 7844) |>
+  inner_join(mapped_measures, by = "acpr_code") |>
+  left_join(mapped_pop, by = "acpr_code") |>
+  mutate(rate = measure / erp)
+
+bind_rows(
+  select(sa2_rate_poly, rate, erp) |> mutate(geo = "SA2 (2021)"),
+  select(acpr_rate_poly, rate, erp) |> mutate(geo = "ACPR (2018)")
+) |>
+  filter(erp > 0) |>
+  ggplot() +
+  geom_sf(aes(fill = rate), col = NA) +
+  scale_fill_continuous(trans = "log10", labels = scales::label_comma()) +
+  facet_wrap(~geo, ncol = 1) +
+  theme_bw() +
+  labs(fill = "Rate")
+```
+

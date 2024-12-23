@@ -106,7 +106,7 @@ get_polygon <- function(name = NULL,
   }
 
   update_crs(polygon, crs = crs) |>
-    dplyr::mutate(across(1, as.character))
+    dplyr::mutate(dplyr::across(1, as.character))
 }
 
 

@@ -1,5 +1,8 @@
 # hpa.spatial (development version)
 
+* create new vignette with example of more complex mapping of data using 
+  more up-to-date ERP dataset to adjust correspondence table creation.
+
 * add dataset (`sa2_erp23`) with estimated residential population (2023) at SA2
   level.
 
