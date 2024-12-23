@@ -95,3 +95,25 @@ sticker(
   h_color = "#1D2455",
   filename = "inst/figures/hex.png"
 )
+
+
+
+# get 2023 ERP data
+erp23_file <- "data-raw/32180DS0001_2022-23.xlsx"
+
+sheets <- readxl::excel_sheets(erp23_file) |>
+  str_subset("^Table [0-9]$") # skip table 10 (states)
+
+sa2_erp23 <- map(
+  sheets,
+  ~readxl::read_excel(path = erp23_file, sheet = .x, skip = 6) |>
+    janitor::clean_names() |>
+    select(sa2_code_2021 = sa2_code, erp = no_10) |>
+    mutate(sa2_code_2021 = as.character(sa2_code_2021))
+) |>
+  bind_rows() |>
+  mutate(erp = replace_na(erp, 0)) |>
+  filter(!is.na(sa2_code_2021))
+
+usethis::use_data(sa2_erp23, overwrite = TRUE)
+

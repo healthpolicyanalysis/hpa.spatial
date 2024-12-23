@@ -1,5 +1,8 @@
 # hpa.spatial (development version)
 
+* add dataset (`sa2_erp23`) with estimated residential population (2023) at SA2
+  level.
+
 # hpa.spatial 0.2.13
 
 * remove hideous meta-programming that was handling the recursive calling of 
