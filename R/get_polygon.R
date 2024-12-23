@@ -105,7 +105,8 @@ get_polygon <- function(name = NULL,
     polygon <- rmapshaper::ms_simplify(polygon, keep = simplify_keep, ...)
   }
 
-  update_crs(polygon, crs = crs)
+  update_crs(polygon, crs = crs) |>
+    dplyr::mutate(across(1, as.character))
 }
 
 
