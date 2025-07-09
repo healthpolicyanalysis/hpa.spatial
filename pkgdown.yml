@@ -1,10 +1,11 @@
 pandoc: 3.1.11
-pkgdown: 2.1.1
+pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
+  Advanced-mapping-with-correspondence-example-ACPR: Advanced-mapping-with-correspondence-example-ACPR.html
   getting-polygons: getting-polygons.html
   mapping-data: mapping-data.html
-last_built: 2024-10-04T04:56Z
+last_built: 2025-07-09T04:57Z
 urls:
   reference: https://healthpolicyanalysis.github.io/hpa.spatial/reference
   article: https://healthpolicyanalysis.github.io/hpa.spatial/articles

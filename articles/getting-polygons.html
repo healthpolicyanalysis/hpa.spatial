@@ -8,8 +8,8 @@
 <title>Loading polygons • hpa.spatial</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Loading polygons">
 </head>
 <body>
@@ -33,7 +33,8 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/getting-polygons.html">Loading polygons</a></li>
+<li><a class="dropdown-item" href="../articles/Advanced-mapping-with-correspondence-example-ACPR.html">Advanced mapping with correspondence example - ACPR</a></li>
+    <li><a class="dropdown-item" href="../articles/getting-polygons.html">Loading polygons</a></li>
     <li><a class="dropdown-item" href="../articles/mapping-data.html">Mapping data across geographies</a></li>
   </ul>
 </li>
@@ -67,6 +68,7 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://healthpolicyanalysis.github.io/hpa.spatial/">hpa.spatial</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
 <p><code><a href="../reference/get_polygon.html">get_polygon()</a></code> works very similarly to
@@ -94,9 +96,9 @@ user to simplify shape files (which is helpful when being used in
 interactive maps to reduce load time).</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sa2_2016</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_polygon.html">get_polygon</a></span><span class="op">(</span>area <span class="op">=</span> <span class="st">"sa2"</span>, year <span class="op">=</span> <span class="fl">2016</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Reading sa22016 file found in /tmp/Rtmpd1KR5A</span></span>
+<span><span class="co">#&gt; Reading sa22016 file found in /tmp/RtmpdSWhmH</span></span>
 <span><span class="va">sa2_2016_simple</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_polygon.html">get_polygon</a></span><span class="op">(</span>area <span class="op">=</span> <span class="st">"sa2"</span>, year <span class="op">=</span> <span class="fl">2016</span>, simplify_keep <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Reading sa22016 file found in /tmp/Rtmpd1KR5A</span></span>
+<span><span class="co">#&gt; Reading sa22016 file found in /tmp/RtmpdSWhmH</span></span>
 <span></span>
 <span><span class="va">sa2_2016</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">gcc_name_2016</span> <span class="op">==</span> <span class="st">"Greater Brisbane"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -120,7 +122,7 @@ interactive maps to reduce load time).</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>
