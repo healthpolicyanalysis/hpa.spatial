@@ -16,7 +16,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Rex Parsons \email{rex.parsons@healthpolicy.com}
+\strong{Maintainer}: Rex Parsons \email{rex.parsons@nousgroup.com}
 
 }
 \keyword{internal}

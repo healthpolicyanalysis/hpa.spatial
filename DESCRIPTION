@@ -3,7 +3,7 @@ Package: hpa.spatial
 Title: (Australian) Data Access and Helpful Functions for Spatial Data Analyses
 Version: 0.2.13.9000
 Authors@R: 
-    person("Rex", "Parsons", , "rex.parsons@healthpolicy.com", role = c("aut", "cre"))
+    person("Rex", "Parsons", , "rex.parsons@nousgroup.com", role = c("aut", "cre"))
 Description: Data and helpful functions for spatial data analyses.
 License: MIT + file LICENSE
 Imports: 
