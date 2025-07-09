@@ -118,8 +118,7 @@ We can map data to this new geography and so that we can visualise differences b
 Sometimes, we may have data for groups, with values for each group within each geography and want to map these to a new geography. `map_data_with_correspondence()` can handle these groups nicely with the `groups` argument. Also in this example, we show off that you can pass the input data as `.data` and reference its columns for the `codes` and `values` arguments rather than passing them as vectors.
 
 ```{r}
-sa2_2011_data <-
-  get_polygon("sa22011") |>
+sa2_2011_data <- get_polygon("sa22011") |>
   as_tibble() |>
   select(sa2_code_2011) |>
   mutate(

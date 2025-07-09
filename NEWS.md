@@ -1,5 +1,7 @@
 # hpa.spatial (development version)
 
+* fix problem caused by `sf::st_crs()` within `update_crs()` by importing {sf}.
+
 * create new vignette with example of more complex mapping of data using 
   more up-to-date ERP dataset to adjust correspondence table creation.
 

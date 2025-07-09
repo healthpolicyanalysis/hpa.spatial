@@ -2,6 +2,7 @@
 "_PACKAGE"
 
 ## usethis namespace: start
+#' @import sf
 ## usethis namespace: end
 NULL
 
