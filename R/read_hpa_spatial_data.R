@@ -14,7 +14,7 @@ read_hpa_spatial_data <- function(name, export_dir = tempdir()) {
   # adapted from strayr::read_absmap()
   assertthat::assert_that(assertthat::is.writeable(export_dir))
 
-  base_url <- "https://github.com/healthpolicyanalysis/hpa.spatial.data/raw/1ccc30b15ece78d0953d122e9470abbc047df2d5/data/"
+  base_url <- "https://github.com/healthpolicyanalysis/hpa.spatial.data/raw/3e657efb8d5a8a2a4b97ba67871923a02b14314d/data/"
   out_path <- file.path(export_dir, paste0(name, ".rda"))
 
   if (!file.exists(out_path)) {

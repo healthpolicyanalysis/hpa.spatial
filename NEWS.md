@@ -1,5 +1,7 @@
 # hpa.spatial (development version)
 
+* update hpa.spatial.data commit ref to access the updated ACPR data.
+
 * update my email in DESCRIPTION file.
 
 * fix problem caused by `sf::st_crs()` within `update_crs()` by importing {sf}.
