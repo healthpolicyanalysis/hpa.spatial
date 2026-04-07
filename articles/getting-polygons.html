@@ -82,23 +82,23 @@ shape files but also has access to additional data from <a href="https://github.
 <span><span class="op">}</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_polygon.html">get_polygon</a></span><span class="op">(</span><span class="st">"sa22016"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">quick_plot</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="getting-polygons_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
+<p><img src="getting-polygons_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_polygon.html">get_polygon</a></span><span class="op">(</span><span class="st">"LHN"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">quick_plot</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; The data for the Local Hospital Networks (LHN) are from here: &lt;https://hub.arcgis.com/datasets/ACSQHC::local-hospital-networks/explore&gt;</span></span></code></pre></div>
-<p><img src="getting-polygons_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
+<p><img src="getting-polygons_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_polygon.html">get_polygon</a></span><span class="op">(</span><span class="st">"PHN"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">quick_plot</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; The data for The Primary Health Network (PHN) are from here: &lt;https://data.gov.au/dataset/ds-dga-ef2d28a4-1ed5-47d0-8e3a-46e25bc4f66b/details?q=primary%20health%20network&gt;</span></span></code></pre></div>
-<p><img src="getting-polygons_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
+<p><img src="getting-polygons_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="" width="700"></p>
 <p>It includes an argument, <code>simplify_keep</code>, which allows the
 user to simplify shape files (which is helpful when being used in
 interactive maps to reduce load time).</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sa2_2016</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_polygon.html">get_polygon</a></span><span class="op">(</span>area <span class="op">=</span> <span class="st">"sa2"</span>, year <span class="op">=</span> <span class="fl">2016</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Reading sa22016 file found in /tmp/RtmpchFrHc</span></span>
+<span><span class="co">#&gt; Reading sa22016 file found in /tmp/RtmpHOMFR7</span></span>
 <span><span class="va">sa2_2016_simple</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_polygon.html">get_polygon</a></span><span class="op">(</span>area <span class="op">=</span> <span class="st">"sa2"</span>, year <span class="op">=</span> <span class="fl">2016</span>, simplify_keep <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Reading sa22016 file found in /tmp/RtmpchFrHc</span></span>
+<span><span class="co">#&gt; Reading sa22016 file found in /tmp/RtmpHOMFR7</span></span>
 <span></span>
 <span><span class="va">sa2_2016</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">gcc_name_2016</span> <span class="op">==</span> <span class="st">"Greater Brisbane"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -111,7 +111,7 @@ interactive maps to reduce load time).</p>
 <span>  <span class="fu">quick_plot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">152.9</span>, <span class="fl">153.1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">27.4</span>, <span class="op">-</span><span class="fl">27.6</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="getting-polygons_files/figure-html/unnamed-chunk-6-1.png" width="700"><img src="getting-polygons_files/figure-html/unnamed-chunk-6-2.png" width="700"></p>
+<p><img src="getting-polygons_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="" width="700"><img src="getting-polygons_files/figure-html/unnamed-chunk-6-2.png" class="r-plt" alt="" width="700"></p>
   </main>
 </div>
 
@@ -122,7 +122,7 @@ interactive maps to reduce load time).</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
