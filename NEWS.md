@@ -1,5 +1,7 @@
 # hpa.spatial (development version)
 
+* update hpa.spatial.data commit ref to access the MMM23 lookup to SA1 2021.
+
 * update hpa.spatial.data commit ref to access the updated ACPR data.
 
 * update my email in DESCRIPTION file.
