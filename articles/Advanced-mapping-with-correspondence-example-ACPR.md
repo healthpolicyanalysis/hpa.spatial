@@ -1,6 +1,7 @@
 # Advanced mapping with correspondence example - ACPR
 
 ``` r
+
 library(hpa.spatial)
 library(sf)
 library(dplyr)
@@ -26,6 +27,7 @@ population growth from 2021 to 2023, but it will account for differences
 in between-SA2-differences in population growth.
 
 ``` r
+
 sa2_erp23 # use ERP data at SA2 level from ABS <https://www.abs.gov.au/statistics/people/population/regional-population/latest-release#data-downloads>
 #> # A tibble: 2,454 × 2
 #>    sa2_code_2021   erp
@@ -85,6 +87,7 @@ adj_mb21_pop
 ```
 
 ``` r
+
 # create SA2 count data for mapping
 d_sa2 <- get_polygon("sa22021") |>
   as_tibble() |>
@@ -105,7 +108,7 @@ mapped_measures <- map_data_with_correspondence(
   export_fname = "sa22021-to-acpr",
   value_type = "aggs"
 )
-#> Reading sa22021 file found in /tmp/Rtmp935tsz
+#> Reading sa22021 file found in /tmp/RtmpTb427v
 #> The data for the Aged Care Planning Regions in Australia (2018 edition) are from here: <https://www.gen-agedcaredata.gov.au/resources/access-data/2020/january/aged-care-planning-region-maps>
 #> Error in get(filename) : object 'CG____' not found
 #> Last resort: making correspondence table using shapes and population at mesh block level
@@ -121,14 +124,14 @@ mapped_pop <- map_data_with_correspondence(
   export_fname = "sa22021-to-acpr",
   value_type = "aggs"
 )
-#> Reading sa22021 file found in /tmp/Rtmp935tsz
+#> Reading sa22021 file found in /tmp/RtmpTb427v
 #> The data for the Aged Care Planning Regions in Australia (2018 edition) are from here: <https://www.gen-agedcaredata.gov.au/resources/access-data/2020/january/aged-care-planning-region-maps>
 
 sa2_rate_poly <- get_polygon("sa22021", crs = 7844) |>
   inner_join(d_sa2, by = "sa2_code_2021") |>
   left_join(sa2_erp23, by = "sa2_code_2021") |>
   mutate(rate = measure / erp)
-#> Reading sa22021 file found in /tmp/Rtmp935tsz
+#> Reading sa22021 file found in /tmp/RtmpTb427v
 
 acpr_rate_poly <- get_polygon("ACPR", crs = 7844) |>
   inner_join(mapped_measures, by = "acpr_code") |>

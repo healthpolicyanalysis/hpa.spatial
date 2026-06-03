@@ -20,12 +20,14 @@ hpa.spatial is only available here on GitHub. You can install the
 development or release versions of it using the code below:
 
 ``` r
+
 # install.packages("remotes")
 remotes::install_github("healthpolicyanalysis/hpa.spatial") # development version
 remotes::install_github("healthpolicyanalysis/hpa.spatial@*release") # latest release version
 ```
 
 ``` r
+
 library(hpa.spatial)
 library(sf)
 library(dplyr)
@@ -38,6 +40,7 @@ library(ggplot2)
 is used to get shape files from the abs.
 
 ``` r
+
 sa2_2016 <- get_polygon(area = "sa2", year = 2016)
 head(sa2_2016)
 #> Simple feature collection with 6 features and 14 fields
@@ -85,6 +88,7 @@ sa2_2016 |>
 
 ``` r
 
+
 lga_2016 <- get_polygon(area = "lga", year = 2016)
 head(lga_2016)
 #> Simple feature collection with 6 features and 7 fields
@@ -122,6 +126,7 @@ except it also includes a `simplify_keep` argument for simplifying the
 polygon.
 
 ``` r
+
 sa2_2016_simple <- get_polygon(area = "sa2", year = 2016, simplify_keep = 0.1)
 
 sa2_2016 |>
@@ -154,6 +159,7 @@ For example, these can be accessed by the `"area"` or `"name"` arguments
 as “LHN”.
 
 ``` r
+
 qld_hhs <- get_polygon(area = "LHN") |> filter(state == "QLD")
 #> The data for the Local Hospital Networks (LHN) are from here: <https://hub.arcgis.com/datasets/ACSQHC::local-hospital-networks/explore>
 head(qld_hhs)
@@ -190,6 +196,7 @@ the code of the updated edition based on the population-weighted
 proportions (as probabilities) on the relevant correspondence table.
 
 ``` r
+
 map_data_with_correspondence(
   codes = c(107011130, 107041149),
   values = c(10, 10),
@@ -211,6 +218,7 @@ of the updated edition based on the population-weighted proportions on
 the relevant correspondence table.
 
 ``` r
+
 map_data_with_correspondence(
   codes = c(107011130, 107041149),
   values = c(10, 10),
@@ -238,6 +246,7 @@ this with `map_data_correspondence()` mapping up both to a higher level
 of ASGS and to a more recent edition.
 
 ``` r
+
 sa2_2011 <- get_polygon("sa22011")
 sa2_2011$patient_counts <- rpois(n = nrow(sa2_2011), lambda = 30)
 
@@ -258,6 +267,7 @@ sa3_2016 <- get_polygon("sa32016") |>
 ```
 
 ``` r
+
 sa2_2011 |>
   ggplot() +
   geom_sf(aes(fill = patient_counts)) +

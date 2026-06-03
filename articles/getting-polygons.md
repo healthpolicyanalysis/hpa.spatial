@@ -1,6 +1,7 @@
 # Loading polygons
 
 ``` r
+
 library(hpa.spatial)
 library(sf)
 library(dplyr)
@@ -13,6 +14,7 @@ all the same shape files but also has access to additional data from
 [`{hpa.spatial.data}`](https://github.com/healthpolicyanalysis/hpa.spatial.data).
 
 ``` r
+
 quick_plot <- function(poly) {
   ggplot() +
     geom_sf(data = poly) +
@@ -21,12 +23,14 @@ quick_plot <- function(poly) {
 ```
 
 ``` r
+
 get_polygon("sa22016") |> quick_plot()
 ```
 
 ![](getting-polygons_files/figure-html/unnamed-chunk-3-1.png)
 
 ``` r
+
 get_polygon("LHN") |> quick_plot()
 #> The data for the Local Hospital Networks (LHN) are from here: <https://hub.arcgis.com/datasets/ACSQHC::local-hospital-networks/explore>
 ```
@@ -34,6 +38,7 @@ get_polygon("LHN") |> quick_plot()
 ![](getting-polygons_files/figure-html/unnamed-chunk-4-1.png)
 
 ``` r
+
 get_polygon("PHN") |> quick_plot()
 #> The data for The Primary Health Network (PHN) are from here: <https://data.gov.au/dataset/ds-dga-ef2d28a4-1ed5-47d0-8e3a-46e25bc4f66b/details?q=primary%20health%20network>
 ```
@@ -45,10 +50,11 @@ simplify shape files (which is helpful when being used in interactive
 maps to reduce load time).
 
 ``` r
+
 sa2_2016 <- get_polygon(area = "sa2", year = 2016)
-#> Reading sa22016 file found in /tmp/RtmpHOMFR7
+#> Reading sa22016 file found in /tmp/RtmpthHf8i
 sa2_2016_simple <- get_polygon(area = "sa2", year = 2016, simplify_keep = 0.1)
-#> Reading sa22016 file found in /tmp/RtmpHOMFR7
+#> Reading sa22016 file found in /tmp/RtmpthHf8i
 
 sa2_2016 |>
   filter(gcc_name_2016 == "Greater Brisbane") |>

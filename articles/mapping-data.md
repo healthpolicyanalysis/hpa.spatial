@@ -1,6 +1,7 @@
 # Mapping data across geographies
 
 ``` r
+
 library(hpa.spatial)
 library(dplyr)
 library(tidyr)
@@ -38,6 +39,7 @@ These are helpful when mapping between geographies which they release
 editions for. For example, between the 2011 and 2016 edition of SA2s.
 
 ``` r
+
 sa2_cg <- get_correspondence_tbl(
   from_area = "sa2",
   from_year = 2011,
@@ -66,6 +68,7 @@ Some of the SA2 codes from 2011 will be split into more than one SA2
 code in the 2016 edition.
 
 ``` r
+
 sa2_cg |> filter(ratio != 1)
 #> # A tibble: 461 × 3
 #>    sa2_maincode_2011 sa2_maincode_2016   ratio
@@ -96,6 +99,7 @@ single unit to be allocated to a new geography and is specified by the
 `value_type` argument.
 
 ``` r
+
 map_data_with_correspondence(
   codes = c(107011130, 107011130),
   values = c(1, 4),
@@ -119,6 +123,7 @@ then aggregate up again in the new geographies. This is what happens
 when we pass “aggregate” values with `value_type = "aggs"`
 
 ``` r
+
 map_data_with_correspondence(
   codes = 107011130,
   values = 10,
@@ -146,6 +151,7 @@ LHNs, it might be best to split those particular SA2s where they cross
 LHN boundaries.
 
 ``` r
+
 custom_geo <- create_child_geo(
   child_geo = get_polygon("sa22011"),
   parent_geo = get_polygon("LHN")
@@ -189,6 +195,7 @@ reference its columns for the `codes` and `values` arguments rather than
 passing them as vectors.
 
 ``` r
+
 sa2_2011_data <- get_polygon("sa22011") |>
   as_tibble() |>
   select(sa2_code_2011) |>
@@ -206,7 +213,7 @@ sa2_2011_data <- get_polygon("sa22011") |>
       str_replace("_to_", "-") |>
       str_replace("_plus", "+")
   )
-#> Reading sa22011 file found in /tmp/Rtmpwa5hvl
+#> Reading sa22011 file found in /tmp/Rtmp7sJgxl
 
 sa2_2016_data <- map_data_with_correspondence(
   .data = sa2_2011_data,
