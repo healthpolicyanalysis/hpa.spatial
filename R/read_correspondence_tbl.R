@@ -8,8 +8,9 @@ read_correspondence_tbl <- function(from_area,
   url <- "https://github.com/wfmackey/absmapsdata/raw/master/R/sysdata.rda"
   out_path <- file.path(export_dir, "cg_tables.rda")
   if (!file.exists(out_path)) {
-    tryCatch(utils::download.file(url, destfile = out_path, mode = "wb"),
-      error = "Download failed. Check that you have access to the internet and that your requested object is available at https://github.com/wfmackey/absmapsdata/tree/master/data"
+    stop_on_error(
+      utils::download.file(url, destfile = out_path, mode = "wb"),
+      "Download failed. Check that you have access to the internet and that your requested object is available at https://github.com/wfmackey/absmapsdata/tree/master/data"
     )
   } else {
     message("Reading file found in ", export_dir)

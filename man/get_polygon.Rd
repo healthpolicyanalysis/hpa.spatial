@@ -9,9 +9,7 @@ get_polygon(
   name = NULL,
   area = NULL,
   year = NULL,
-  remove_year_suffix,
   export_dir = tempdir(),
-  .validate_name,
   simplify_keep = 1,
   crs = NULL,
   quiet = getOption("hpa.spatial.quiet", FALSE),
@@ -31,16 +29,8 @@ eg "sa4"; "gcc". See full list at <https://github.com/wfmackey/absmapsdata>.}
 \code{absmapsdata} object, eg "2016"; 2021. See full list at
 <https://github.com/wfmackey/absmapsdata>.}
 
-\item{remove_year_suffix}{A logical defaulting to FALSE. If TRUE,
-'strip_year_suffix' is run before returning the object, removing the '_year'
-suffix from variable names.}
-
 \item{export_dir}{Path to a directory to store the desired sf object.
 \code{tempdir()} by default.}
-
-\item{.validate_name}{Logical defaulting to TRUE, which checks the name
-input (or area year combination) against a list of available objects in the
-\code{absmapsdata} package.}
 
 \item{simplify_keep}{The proportion of points to retain (0-1; default 1 -
 no simplification).}

@@ -49,7 +49,7 @@ create_child_geo <- function(child_geo,
   parent_code_col <- names(correspondence_tbl)[2]
   mb_code_col <- names(mb_geo)[1]
 
-  assertthat::are_equal(names(mb_geo)[1], names(mb_poly)[1])
+  assertthat::assert_that(assertthat::are_equal(names(mb_geo)[1], names(mb_poly)[1]))
 
   majority_portions <- correspondence_tbl |>
     dplyr::group_by(!!rlang::sym(child_code_col)) |>
@@ -94,7 +94,17 @@ create_child_geo <- function(child_geo,
   mb_poly_agg <-
     mb_poly |>
     dplyr::group_by(!!rlang::sym(child_code_col), !!rlang::sym(parent_code_col)) |>
-    dplyr::summarize(geometry = sf::st_union(geometry)) |>
+    dplyr::summarize(geometry = sf::st_union(geometry))
+
+  assertthat::assert_that(
+    max(dplyr::group_size(mb_poly_agg)) <= length(LETTERS),
+    msg = paste0(
+      "A child polygon was split across more than ", length(LETTERS),
+      " parent polygons, which cannot be uniquely suffixed with LETTERS."
+    )
+  )
+
+  mb_poly_agg <- mb_poly_agg |>
     dplyr::mutate(
       !!rlang::sym(child_code_col) := paste0(
         !!rlang::sym(child_code_col),
@@ -104,7 +114,7 @@ create_child_geo <- function(child_geo,
     )
 
   non_split_polys <- correspondence_tbl |>
-    dplyr::filter(Negate(`%in%`)(!!rlang::sym(child_code_col), child_polygons_for_splitting[[1]])) |>
+    dplyr::filter(!(!!rlang::sym(child_code_col) %in% child_polygons_for_splitting[[1]])) |>
     dplyr::group_by(!!rlang::sym(child_code_col)) |>
     dplyr::arrange(dplyr::desc(ratio)) |>
     dplyr::slice(1) |>

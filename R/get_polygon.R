@@ -10,14 +10,8 @@
 #' @param year A character string or numeric of the full source year of
 #' \code{absmapsdata} object, eg "2016"; 2021. See full list at
 #' <https://github.com/wfmackey/absmapsdata>.
-#' @param remove_year_suffix A logical defaulting to FALSE. If TRUE,
-#' 'strip_year_suffix' is run before returning the object, removing the '_year'
-#' suffix from variable names.
 #' @param export_dir Path to a directory to store the desired sf object.
 #' \code{tempdir()} by default.
-#' @param .validate_name Logical defaulting to TRUE, which checks the name
-#' input (or area year combination) against a list of available objects in the
-#' \code{absmapsdata} package.
 #' @param simplify_keep The proportion of points to retain (0-1; default 1 -
 #' no simplification).
 #' @param crs Whether to update the crs (if necessary) of the returned polygon.
@@ -35,9 +29,7 @@
 get_polygon <- function(name = NULL,
                         area = NULL,
                         year = NULL,
-                        remove_year_suffix,
                         export_dir = tempdir(),
-                        .validate_name,
                         simplify_keep = 1,
                         crs = NULL,
                         quiet = getOption("hpa.spatial.quiet", FALSE),
@@ -47,9 +39,6 @@ get_polygon <- function(name = NULL,
   }
   if (!is.null(area)) {
     assertthat::assert_that(assertthat::is.string(area))
-  }
-  if (!is.null(year)) {
-    assertthat::assert_that(assertthat::is.scalar(year))
   }
   if (!is.null(year)) {
     assertthat::assert_that(assertthat::is.scalar(year))

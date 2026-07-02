@@ -18,15 +18,16 @@ read_hpa_spatial_data <- function(name, export_dir = tempdir()) {
   out_path <- file.path(export_dir, paste0(name, ".rda"))
 
   if (!file.exists(out_path)) {
-    file_list <- tryCatch(
+    file_list <- stop_on_error(
       get_data_file_list(),
-      error = "Error reading the file list from hpa.spatial.data github repo. Check that you have access to the internet."
+      "Error reading the file list from hpa.spatial.data github repo. Check that you have access to the internet."
     )
 
-    assertthat::assert_that(name %in% get_data_file_list())
+    assertthat::assert_that(name %in% file_list)
 
-    if (name %in% names(get_split_files())) {
-      name_download <- get_split_files()[[name]]
+    split_files <- get_split_files()
+    if (name %in% names(split_files)) {
+      name_download <- split_files[[name]]
       urls <- paste0(base_url, name_download, ".rda")
       out_paths <- file.path(export_dir, paste0(name_download, ".rda"))
 
@@ -83,12 +84,17 @@ get_split_files <- function() {
 
 
 download_data <- function(url, dest) {
-  tryCatch(
+  stop_on_error(
     utils::download.file(url, destfile = dest, mode = "wb"),
-    error = glue::glue(
+    glue::glue(
       "Download failed. Check that you have access to the internet and that ",
       "your requested object is one of the following:",
       "{paste0(get_data_file_list(), collapse = '\n')}"
     )
   )
+}
+
+
+stop_on_error <- function(expr, msg) {
+  tryCatch(expr, error = function(e) stop(msg, call. = FALSE))
 }

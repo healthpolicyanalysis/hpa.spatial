@@ -99,7 +99,7 @@ map_data_with_correspondence <- function(.data = NULL,
 
     values_name <- try(as.character(substitute(values)), silent = FALSE)
     if (inherits(try(as.character(substitute(values)), silent = FALSE), "character")) {
-      assertthat::are_equal(length(as.character(substitute(values))), 1)
+      assertthat::assert_that(assertthat::are_equal(length(as.character(substitute(values))), 1))
       if (values_name %in% names(.data)) {
         values <- dplyr::pull(.data, dplyr::all_of(values_name))
       } else {
@@ -115,7 +115,7 @@ map_data_with_correspondence <- function(.data = NULL,
     }
 
     if (inherits(try(as.character(substitute(codes)), silent = FALSE), "character")) {
-      assertthat::are_equal(length(as.character(substitute(codes))), 1)
+      assertthat::assert_that(assertthat::are_equal(length(as.character(substitute(codes))), 1))
       codes_name <- rlang::eval_tidy(as.character(substitute(codes)))
       if (codes_name %in% names(.data)) {
         codes <- dplyr::pull(.data, dplyr::all_of(codes_name))
@@ -203,6 +203,10 @@ map_data_with_correspondence <- function(.data = NULL,
   df <- dplyr::tibble(codes = as.character(codes), values) |>
     dplyr::filter(codes %in% correspondence_tbl[[1]])
 
+  # built once and reused across groups below, rather than rebuilding the same
+  # lookup on every group's call to .map_data_with_ct()
+  split_map <- if (value_type == "units") build_split_map(correspondence_tbl) else NULL
+
   if (is.null(groups)) {
     mapped_df <- .map_data_with_ct(
       codes = df$codes,
@@ -211,7 +215,8 @@ map_data_with_correspondence <- function(.data = NULL,
       value_type = value_type,
       bad_codes = bad_codes,
       round_values = round_values,
-      seed = seed
+      seed = seed,
+      split_map = split_map
     )
     return(clean_mapped_tbl(mapped_df, values_name = values_name, groups_name = groups_name))
   }
@@ -244,7 +249,8 @@ map_data_with_correspondence <- function(.data = NULL,
           value_type = value_type,
           bad_codes = bad_codes,
           round_values = round_values,
-          seed = seed
+          seed = seed,
+          split_map = split_map
         )
 
         grp_cols <- x |>

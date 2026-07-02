@@ -53,9 +53,6 @@ get_correspondence_tbl <- function(from_area = NULL,
   }
   assertthat::assert_that(inherits(mb_geo, "sf"))
   assertthat::assert_that(assertthat::is.dir(export_dir))
-  if (!dir.exists(export_dir)) {
-    stop("export_dir provided does not exist: ", export_dir)
-  }
 
   if (is.null(export_fname)) {
     assertthat::assert_that(
