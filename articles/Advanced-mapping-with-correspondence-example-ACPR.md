@@ -108,7 +108,7 @@ mapped_measures <- map_data_with_correspondence(
   export_fname = "sa22021-to-acpr",
   value_type = "aggs"
 )
-#> Reading sa22021 file found in /tmp/RtmpTb427v
+#> Reading sa22021 file found in /tmp/Rtmpuik1mu
 #> The data for the Aged Care Planning Regions in Australia (2018 edition) are from here: <https://www.gen-agedcaredata.gov.au/resources/access-data/2020/january/aged-care-planning-region-maps>
 #> Error in get(filename) : object 'CG____' not found
 #> Last resort: making correspondence table using shapes and population at mesh block level
@@ -124,14 +124,14 @@ mapped_pop <- map_data_with_correspondence(
   export_fname = "sa22021-to-acpr",
   value_type = "aggs"
 )
-#> Reading sa22021 file found in /tmp/RtmpTb427v
+#> Reading sa22021 file found in /tmp/Rtmpuik1mu
 #> The data for the Aged Care Planning Regions in Australia (2018 edition) are from here: <https://www.gen-agedcaredata.gov.au/resources/access-data/2020/january/aged-care-planning-region-maps>
 
 sa2_rate_poly <- get_polygon("sa22021", crs = 7844) |>
   inner_join(d_sa2, by = "sa2_code_2021") |>
   left_join(sa2_erp23, by = "sa2_code_2021") |>
   mutate(rate = measure / erp)
-#> Reading sa22021 file found in /tmp/RtmpTb427v
+#> Reading sa22021 file found in /tmp/Rtmpuik1mu
 
 acpr_rate_poly <- get_polygon("ACPR", crs = 7844) |>
   inner_join(mapped_measures, by = "acpr_code") |>

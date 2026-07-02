@@ -2,6 +2,8 @@
 
 ## hpa.spatial (development version)
 
+- let claude do a review and clean up some redundant code and arguments.
+
 - update hpa.spatial.data commit ref to access the MMM23 lookup to SA1
   2021.
 

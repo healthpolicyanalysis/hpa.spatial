@@ -10,9 +10,7 @@ get_polygon(
   name = NULL,
   area = NULL,
   year = NULL,
-  remove_year_suffix,
   export_dir = tempdir(),
-  .validate_name,
   simplify_keep = 1,
   crs = NULL,
   quiet = getOption("hpa.spatial.quiet", FALSE),
@@ -41,22 +39,10 @@ get_polygon(
   object, eg "2016"; 2021. See full list at
   \<https://github.com/wfmackey/absmapsdata\>.
 
-- remove_year_suffix:
-
-  A logical defaulting to FALSE. If TRUE, 'strip_year_suffix' is run
-  before returning the object, removing the '\_year' suffix from
-  variable names.
-
 - export_dir:
 
   Path to a directory to store the desired sf object.
   [`tempdir()`](https://rdrr.io/r/base/tempfile.html) by default.
-
-- .validate_name:
-
-  Logical defaulting to TRUE, which checks the name input (or area year
-  combination) against a list of available objects in the `absmapsdata`
-  package.
 
 - simplify_keep:
 
@@ -137,7 +123,7 @@ get_polygon(area = "sa2", year = 2016)
 #> 9  MULTIPOLYGON (((148.5512 -3...
 #> 10 MULTIPOLYGON (((148.5512 -3...
 get_polygon(name = "sa22016", simplify_keep = 0.05)
-#> Reading sa22016 file found in /tmp/RtmpAWFgwO
+#> Reading sa22016 file found in /tmp/RtmpMo9eze
 #> Simple feature collection with 2268 features and 14 fields
 #> Geometry type: GEOMETRY
 #> Dimension:     XY
