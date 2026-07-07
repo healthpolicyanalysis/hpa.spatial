@@ -123,7 +123,7 @@ get_polygon(area = "sa2", year = 2016)
 #> 9  MULTIPOLYGON (((148.5512 -3...
 #> 10 MULTIPOLYGON (((148.5512 -3...
 get_polygon(name = "sa22016", simplify_keep = 0.05)
-#> Reading sa22016 file found in /tmp/RtmpiFRf7A
+#> Reading sa22016 file found in /tmp/RtmpbgIcOY
 #> Simple feature collection with 2268 features and 14 fields
 #> Geometry type: GEOMETRY
 #> Dimension:     XY

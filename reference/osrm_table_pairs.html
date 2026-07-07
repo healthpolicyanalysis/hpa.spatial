@@ -79,8 +79,8 @@ cost of issuing more requests than a single full-matrix call.</p>
 <span>  <span class="va">destinations</span>,</span>
 <span>  <span class="va">exclude</span>,</span>
 <span>  measure <span class="op">=</span> <span class="st">"duration"</span>,</span>
-<span>  osrm.server <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"osrm.server"</span><span class="op">)</span>,</span>
-<span>  osrm.profile <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"osrm.profile"</span><span class="op">)</span></span>
+<span>  osrm.server <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"osrm.server"</span>, <span class="st">"https://routing.openstreetmap.de/"</span><span class="op">)</span>,</span>
+<span>  osrm.profile <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"osrm.profile"</span>, <span class="st">"car"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -124,7 +124,10 @@ can be "duration" (in minutes), "distance" (in meters), or both
     <p>A <code>tibble</code> with one row per origin-destination pair,
 including the origin and destination coordinates and ids, and the
 requested <code>duration</code> (in minutes) and/or <code>distance</code> (in
-meters) columns.</p>
+meters) columns. If a request for a group of pairs fails twice (the
+original attempt plus one retry), those pairs are returned with
+<code>NA</code> duration/distance rather than aborting the whole call, and a
+warning reports how many pairs failed.</p>
     </div>
 
     <div class="section level2">

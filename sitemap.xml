@@ -12,7 +12,8 @@
 <url><loc>https://healthpolicyanalysis.github.io/hpa.spatial/reference/check_for_internal_polygon.html</loc></url>
 <url><loc>https://healthpolicyanalysis.github.io/hpa.spatial/reference/create_child_geo.html</loc></url>
 <url><loc>https://healthpolicyanalysis.github.io/hpa.spatial/reference/dot-osrm_pair_coords.html</loc></url>
-<url><loc>https://healthpolicyanalysis.github.io/hpa.spatial/reference/dot-osrm_table_error.html</loc></url>
+<url><loc>https://healthpolicyanalysis.github.io/hpa.spatial/reference/dot-osrm_table_ssl_hint.html</loc></url>
+<url><loc>https://healthpolicyanalysis.github.io/hpa.spatial/reference/dot-osrm_table_with_retry.html</loc></url>
 <url><loc>https://healthpolicyanalysis.github.io/hpa.spatial/reference/get_correspondence_tbl.html</loc></url>
 <url><loc>https://healthpolicyanalysis.github.io/hpa.spatial/reference/get_mb21_poly.html</loc></url>
 <url><loc>https://healthpolicyanalysis.github.io/hpa.spatial/reference/get_mb21_pop.html</loc></url>

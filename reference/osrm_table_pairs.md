@@ -24,8 +24,8 @@ osrm_table_pairs(
   destinations,
   exclude,
   measure = "duration",
-  osrm.server = getOption("osrm.server"),
-  osrm.profile = getOption("osrm.profile")
+  osrm.server = getOption("osrm.server", "https://routing.openstreetmap.de/"),
+  osrm.profile = getOption("osrm.profile", "car")
 )
 ```
 
@@ -66,7 +66,10 @@ osrm_table_pairs(
 
 A `tibble` with one row per origin-destination pair, including the
 origin and destination coordinates and ids, and the requested `duration`
-(in minutes) and/or `distance` (in meters) columns.
+(in minutes) and/or `distance` (in meters) columns. If a request for a
+group of pairs fails twice (the original attempt plus one retry), those
+pairs are returned with `NA` duration/distance rather than aborting the
+whole call, and a warning reports how many pairs failed.
 
 ## Examples
 
