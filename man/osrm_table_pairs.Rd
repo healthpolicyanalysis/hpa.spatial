@@ -9,8 +9,8 @@ osrm_table_pairs(
   destinations,
   exclude,
   measure = "duration",
-  osrm.server = getOption("osrm.server"),
-  osrm.profile = getOption("osrm.profile")
+  osrm.server = getOption("osrm.server", "https://routing.openstreetmap.de/"),
+  osrm.profile = getOption("osrm.profile", "car")
 )
 }
 \arguments{
@@ -37,7 +37,10 @@ can be "duration" (in minutes), "distance" (in meters), or both
 A \code{tibble} with one row per origin-destination pair,
 including the origin and destination coordinates and ids, and the
 requested \code{duration} (in minutes) and/or \code{distance} (in
-meters) columns.
+meters) columns. If a request for a group of pairs fails twice (the
+original attempt plus one retry), those pairs are returned with
+\code{NA} duration/distance rather than aborting the whole call, and a
+warning reports how many pairs failed.
 }
 \description{
 A wrapper around \code{osrm::osrmTable()} for when only specific

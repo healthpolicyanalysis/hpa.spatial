@@ -29,7 +29,10 @@
 #' @return A \code{tibble} with one row per origin-destination pair,
 #' including the origin and destination coordinates and ids, and the
 #' requested \code{duration} (in minutes) and/or \code{distance} (in
-#' meters) columns.
+#' meters) columns. If a request for a group of pairs fails twice (the
+#' original attempt plus one retry), those pairs are returned with
+#' \code{NA} duration/distance rather than aborting the whole call, and a
+#' warning reports how many pairs failed.
 #' @export
 #'
 #' @examples
@@ -49,8 +52,8 @@ osrm_table_pairs <- function(
   destinations,
   exclude,
   measure = "duration",
-  osrm.server = getOption("osrm.server"),
-  osrm.profile = getOption("osrm.profile")
+  osrm.server = getOption("osrm.server", "https://routing.openstreetmap.de/"),
+  osrm.profile = getOption("osrm.profile", "car")
 ) {
   assertthat::assert_that(
     inherits(origins, c("sf", "sfc")),
@@ -113,7 +116,16 @@ osrm_table_pairs <- function(
     table_args_base$exclude <- exclude
   }
 
-  for (key in unique(group_key)) {
+  keys <- unique(group_key)
+  n_failed_pairs <- 0L
+  last_error_msg <- NULL
+
+  cli::cli_progress_bar(
+    name = paste("Requesting", paste(measure, collapse = "/")),
+    total = length(keys)
+  )
+
+  for (key in keys) {
     idx <- which(group_key == key)
 
     if (group_by_origin) {
@@ -130,48 +142,81 @@ osrm_table_pairs <- function(
       cell <- cbind(match(counterpart_key, origin_key[unique_idx]), 1)
     }
 
-    result <- tryCatch(
-      do.call(osrm::osrmTable, c(list(src = src, dst = dst), table_args_base)),
-      error = function(e) .osrm_table_error(e)
-    )
+    result <- .osrm_table_with_retry(c(list(src = src, dst = dst), table_args_base))
 
-    if ("duration" %in% measure) {
-      out$duration[idx] <- result$durations[cell]
+    if (inherits(result, "error")) {
+      n_failed_pairs <- n_failed_pairs + length(idx)
+      last_error_msg <- conditionMessage(result)
+    } else {
+      if ("duration" %in% measure) {
+        out$duration[idx] <- result$durations[cell]
+      }
+      if ("distance" %in% measure) {
+        out$distance[idx] <- result$distances[cell]
+      }
     }
-    if ("distance" %in% measure) {
-      out$distance[idx] <- result$distances[cell]
-    }
+
+    cli::cli_progress_update()
+  }
+
+  cli::cli_progress_done()
+
+  if (n_failed_pairs > 0) {
+    warning(
+      glue::glue(
+        "{n_failed_pairs} of {nrow(out)} origin-destination pair(s) failed ",
+        "after retrying and were returned as NA.\n",
+        "Last error: {last_error_msg}",
+        "{.osrm_table_ssl_hint(last_error_msg)}"
+      ),
+      call. = FALSE
+    )
   }
 
   out
 }
 
 
-#' Re-throw an \code{osrm::osrmTable()} error, adding a hint for the known
-#' Windows curl/SSL backend issue
+#' Call \code{osrm::osrmTable()}, retrying once on error
 #'
-#' @param e The condition raised by \code{osrm::osrmTable()}.
+#' @param table_args A list of arguments to pass to \code{osrm::osrmTable()}.
 #'
-#' @return Never returns; always raises an error.
+#' @return The result of \code{osrm::osrmTable()}, or the \code{error}
+#' condition raised if it fails on both the original attempt and the retry.
 #' @keywords internal
-.osrm_table_error <- function(e) {
-  msg <- conditionMessage(e)
-  if (grepl("ssl|certificate|schannel", msg, ignore.case = TRUE)) {
-    stop(
-      glue::glue(
-        "{msg}\n\n",
-        "This looks like a curl/SSL backend issue, which is common on ",
-        "Windows when the default backend cannot validate the server's ",
-        "certificate. Try switching curl to the OpenSSL backend before ",
-        "retrying:\n\n",
-        "  Sys.setenv(CURL_SSL_BACKEND = \"openssl\")\n\n",
-        "or set `CURL_SSL_BACKEND=openssl` in your `.Renviron` so it ",
-        "applies to every R session."
-      ),
-      call. = FALSE
-    )
+.osrm_table_with_retry <- function(table_args) {
+  attempt <- function() {
+    tryCatch(do.call(osrm::osrmTable, table_args), error = function(e) e)
   }
-  stop(e)
+
+  result <- attempt()
+  if (inherits(result, "error")) {
+    result <- attempt()
+  }
+  result
+}
+
+
+#' Build a hint for the known Windows curl/SSL backend issue, if relevant
+#'
+#' @param msg The error message from a failed \code{osrm::osrmTable()} call.
+#'
+#' @return A character string (possibly empty) to append to a warning
+#' message.
+#' @keywords internal
+.osrm_table_ssl_hint <- function(msg) {
+  if (is.null(msg) || !grepl("ssl|certificate|schannel", msg, ignore.case = TRUE)) {
+    return("")
+  }
+  glue::glue(
+    "\n\nThis looks like a curl/SSL backend issue, which is common on ",
+    "Windows when the default backend cannot validate the server's ",
+    "certificate. Try switching curl to the OpenSSL backend before ",
+    "retrying:\n\n",
+    "  Sys.setenv(CURL_SSL_BACKEND = \"openssl\")\n\n",
+    "or set `CURL_SSL_BACKEND=openssl` in your `.Renviron` so it ",
+    "applies to every R session."
+  )
 }
 
 #' Extract lon/lat coordinates (and row ids) from an sf/sfc POINT input

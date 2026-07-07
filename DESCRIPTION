@@ -6,8 +6,9 @@ Authors@R:
     person("Rex", "Parsons", , "rex.parsons@nousgroup.com", role = c("aut", "cre"))
 Description: Data and helpful functions for spatial data analyses.
 License: MIT + file LICENSE
-Imports: 
+Imports:
     assertthat,
+    cli,
     dplyr,
     evaluate,
     glue,

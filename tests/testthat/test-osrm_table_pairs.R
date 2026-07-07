@@ -143,10 +143,11 @@ test_that("osrm_table_pairs adds an SSL/curl hint when osrmTable fails with an S
   }
   local_mocked_bindings(osrmTable = fake_osrmTable, .package = "osrm")
 
-  expect_error(
-    osrm_table_pairs(origins, destinations),
+  expect_warning(
+    res <- osrm_table_pairs(origins, destinations),
     "CURL_SSL_BACKEND"
   )
+  expect_true(is.na(res$duration))
 })
 
 test_that("osrm_table_pairs passes through unrelated osrmTable errors unchanged", {
@@ -164,12 +165,48 @@ test_that("osrm_table_pairs passes through unrelated osrmTable errors unchanged"
   }
   local_mocked_bindings(osrmTable = fake_osrmTable, .package = "osrm")
 
-  err <- tryCatch(
-    osrm_table_pairs(origins, destinations),
-    error = function(e) e
+  w <- expect_warning(res <- osrm_table_pairs(origins, destinations))
+  expect_match(conditionMessage(w), "Too Many Requests", fixed = TRUE)
+  expect_false(grepl("CURL_SSL_BACKEND", conditionMessage(w), fixed = TRUE))
+  expect_true(is.na(res$duration))
+})
+
+test_that("osrm_table_pairs retries once, then returns NA and warns for pairs that keep failing", {
+  origins <- sf::st_as_sf(
+    data.frame(lon = c(13.38, 13.40), lat = c(52.52, 52.50)),
+    coords = c("lon", "lat"), crs = 4326
   )
-  expect_match(conditionMessage(err), "Too Many Requests", fixed = TRUE)
-  expect_false(grepl("CURL_SSL_BACKEND", conditionMessage(err), fixed = TRUE))
+  destinations <- sf::st_as_sf(
+    data.frame(lon = c(13.41, 13.39), lat = c(52.53, 52.51)),
+    coords = c("lon", "lat"), crs = 4326
+  )
+
+  n_calls <- 0L
+  fake_osrmTable <- function(src, dst, measure = "duration", ...) {
+    n_calls <<- n_calls + 1L
+    if (isTRUE(all.equal(src$lon[1], 13.40))) {
+      stop("HTTP error 500: Internal Server Error")
+    }
+    list(
+      durations = matrix(5, nrow = nrow(src), ncol = nrow(dst)),
+      distances = matrix(5000, nrow = nrow(src), ncol = nrow(dst))
+    )
+  }
+  local_mocked_bindings(osrmTable = fake_osrmTable, .package = "osrm")
+
+  expect_warning(
+    res <- osrm_table_pairs(origins, destinations, measure = c("duration", "distance")),
+    "1 of 2"
+  )
+
+  # the failing group is retried once (2 calls) in addition to the
+  # succeeding group's single call
+  expect_equal(n_calls, 3L)
+
+  expect_equal(res$duration[1], 5)
+  expect_equal(res$distance[1], 5000)
+  expect_true(is.na(res$duration[2]))
+  expect_true(is.na(res$distance[2]))
 })
 
 test_that("osrm_table_pairs errors on mismatched CRS", {
