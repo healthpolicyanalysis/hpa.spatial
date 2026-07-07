@@ -306,7 +306,8 @@ test_that("basic tests of output dimensions", {
     from_area = "sa2",
     from_year = 2011,
     to_area = "sa2",
-    to_year = 2016
+    to_year = 2016,
+    seed = 42
   )
 
   expect_tbl_snap(sa2_2016_mapped_unit)
