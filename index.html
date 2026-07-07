@@ -74,17 +74,25 @@
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"healthpolicyanalysis/hpa.spatial"</span><span class="op">)</span> <span class="co"># development version</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"healthpolicyanalysis/hpa.spatial@*release"</span><span class="op">)</span> <span class="co"># latest release version</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="troubleshooting-curlssl-errors">Troubleshooting: curl/SSL errors<a class="anchor" aria-label="anchor" href="#troubleshooting-curlssl-errors"></a>
+</h3>
+<p>hpa.spatial downloads data over HTTPS (from GitHub and from routing servers via <code><a href="reference/osrm_table_pairs.html">osrm_table_pairs()</a></code>). On some Windows setups, curl’s default SSL backend fails to validate these certificates, raising an SSL-related error. If you hit this, switch curl to the OpenSSL backend:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span>CURL_SSL_BACKEND <span class="op">=</span> <span class="st">"openssl"</span><span class="op">)</span></span></code></pre></div>
+<p>To make this persist across sessions, add <code>CURL_SSL_BACKEND=openssl</code> to your <code>.Renviron</code> (see <code>usethis::edit_r_environ()</code>).</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://healthpolicyanalysis.github.io/hpa.spatial/">hpa.spatial</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
 </div>
+</div>
 <div class="section level2">
 <h2 id="getting-shapefiles">Getting shapefiles<a class="anchor" aria-label="anchor" href="#getting-shapefiles"></a>
 </h2>
 <p><code><a href="reference/get_polygon.html">get_polygon()</a></code> is used to get shape files from the abs.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sa2_2016</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_polygon.html">get_polygon</a></span><span class="op">(</span>area <span class="op">=</span> <span class="st">"sa2"</span>, year <span class="op">=</span> <span class="fl">2016</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sa2_2016</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Simple feature collection with 6 features and 14 fields</span></span>
@@ -127,7 +135,7 @@
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"SA2 (2016)"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-3-1.png" width="100%"></p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">lga_2016</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_polygon.html">get_polygon</a></span><span class="op">(</span>area <span class="op">=</span> <span class="st">"lga"</span>, year <span class="op">=</span> <span class="fl">2016</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">lga_2016</span><span class="op">)</span></span>
@@ -158,7 +166,7 @@
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"LGA (2016)"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-3-2.png" width="100%"></p>
 <p>This is used in the same way as <code><a href="https://runapp-aus.github.io/strayr/reference/read_absmap.html" class="external-link">strayr::read_absmap()</a></code> except it also includes a <code>simplify_keep</code> argument for simplifying the polygon.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sa2_2016_simple</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_polygon.html">get_polygon</a></span><span class="op">(</span>area <span class="op">=</span> <span class="st">"sa2"</span>, year <span class="op">=</span> <span class="fl">2016</span>, simplify_keep <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">sa2_2016</span> <span class="op">|&gt;</span></span>
@@ -182,7 +190,7 @@
 </h3>
 <p>Aside from the built in shapefiles that are hosted by <code>{absmapsdata}</code>, <code><a href="reference/get_polygon.html">get_polygon()</a></code> can also access shapefiles for local hospital networks (LHNs) and Primary Health Networks (PHNs).</p>
 <p>For example, these can be accessed by the <code>"area"</code> or <code>"name"</code> arguments as “LHN”.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qld_hhs</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_polygon.html">get_polygon</a></span><span class="op">(</span>area <span class="op">=</span> <span class="st">"LHN"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">state</span> <span class="op">==</span> <span class="st">"QLD"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; The data for the Local Hospital Networks (LHN) are from here: &lt;https://hub.arcgis.com/datasets/ACSQHC::local-hospital-networks/explore&gt;</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">qld_hhs</span><span class="op">)</span></span>
@@ -213,7 +221,7 @@
 </h2>
 <p><code><a href="reference/map_data_with_correspondence.html">map_data_with_correspondence()</a></code> is used to map data across ASGS editions.</p>
 <p>When used with unit level data, it will randomly allocate the value to the code of the updated edition based on the population-weighted proportions (as probabilities) on the relevant correspondence table.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/map_data_with_correspondence.html">map_data_with_correspondence</a></span><span class="op">(</span></span>
 <span>  codes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">107011130</span>, <span class="fl">107041149</span><span class="op">)</span>,</span>
 <span>  values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>,</span>
@@ -229,7 +237,7 @@
 <span><span class="co">#&gt; 1 107011547             10</span></span>
 <span><span class="co">#&gt; 2 107041548             10</span></span></code></pre></div>
 <p>When used with aggregate data, it will split the value among the codes of the updated edition based on the population-weighted proportions on the relevant correspondence table.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/map_data_with_correspondence.html">map_data_with_correspondence</a></span><span class="op">(</span></span>
 <span>  codes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">107011130</span>, <span class="fl">107041149</span><span class="op">)</span>,</span>
 <span>  values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>,</span>
@@ -251,7 +259,7 @@
 <h3 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h3>
 <p>Suppose we have counts of patients within SA2s (2011) and we want to aggregate these up into SA3s (2016 edition). Here is how we could do this with <code>map_data_correspondence()</code> mapping up both to a higher level of ASGS and to a more recent edition.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sa2_2011</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_polygon.html">get_polygon</a></span><span class="op">(</span><span class="st">"sa22011"</span><span class="op">)</span></span>
 <span><span class="va">sa2_2011</span><span class="op">$</span><span class="va">patient_counts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html" class="external-link">rpois</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">sa2_2011</span><span class="op">)</span>, lambda <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span>
 <span></span>
@@ -269,7 +277,7 @@
 <span></span>
 <span><span class="va">sa3_2016</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_polygon.html">get_polygon</a></span><span class="op">(</span><span class="st">"sa32016"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">sa3_counts</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sa2_2011</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">patient_counts</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>

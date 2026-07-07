@@ -11,6 +11,8 @@
 <url><loc>https://healthpolicyanalysis.github.io/hpa.spatial/news/index.html</loc></url>
 <url><loc>https://healthpolicyanalysis.github.io/hpa.spatial/reference/check_for_internal_polygon.html</loc></url>
 <url><loc>https://healthpolicyanalysis.github.io/hpa.spatial/reference/create_child_geo.html</loc></url>
+<url><loc>https://healthpolicyanalysis.github.io/hpa.spatial/reference/dot-osrm_pair_coords.html</loc></url>
+<url><loc>https://healthpolicyanalysis.github.io/hpa.spatial/reference/dot-osrm_table_error.html</loc></url>
 <url><loc>https://healthpolicyanalysis.github.io/hpa.spatial/reference/get_correspondence_tbl.html</loc></url>
 <url><loc>https://healthpolicyanalysis.github.io/hpa.spatial/reference/get_mb21_poly.html</loc></url>
 <url><loc>https://healthpolicyanalysis.github.io/hpa.spatial/reference/get_mb21_pop.html</loc></url>
@@ -20,6 +22,7 @@
 <url><loc>https://healthpolicyanalysis.github.io/hpa.spatial/reference/index.html</loc></url>
 <url><loc>https://healthpolicyanalysis.github.io/hpa.spatial/reference/make_correspondence_tbl.html</loc></url>
 <url><loc>https://healthpolicyanalysis.github.io/hpa.spatial/reference/map_data_with_correspondence.html</loc></url>
+<url><loc>https://healthpolicyanalysis.github.io/hpa.spatial/reference/osrm_table_pairs.html</loc></url>
 <url><loc>https://healthpolicyanalysis.github.io/hpa.spatial/reference/read_hpa_spatial_data.html</loc></url>
 <url><loc>https://healthpolicyanalysis.github.io/hpa.spatial/reference/sa2_erp23.html</loc></url>
 </urlset>

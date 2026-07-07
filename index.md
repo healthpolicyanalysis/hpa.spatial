@@ -26,6 +26,23 @@ remotes::install_github("healthpolicyanalysis/hpa.spatial") # development versio
 remotes::install_github("healthpolicyanalysis/hpa.spatial@*release") # latest release version
 ```
 
+### Troubleshooting: curl/SSL errors
+
+hpa.spatial downloads data over HTTPS (from GitHub and from routing
+servers via
+[`osrm_table_pairs()`](https://healthpolicyanalysis.github.io/hpa.spatial/reference/osrm_table_pairs.md)).
+On some Windows setups, curl’s default SSL backend fails to validate
+these certificates, raising an SSL-related error. If you hit this,
+switch curl to the OpenSSL backend:
+
+``` r
+
+Sys.setenv(CURL_SSL_BACKEND = "openssl")
+```
+
+To make this persist across sessions, add `CURL_SSL_BACKEND=openssl` to
+your `.Renviron` (see `usethis::edit_r_environ()`).
+
 ``` r
 
 library(hpa.spatial)

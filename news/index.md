@@ -2,6 +2,13 @@
 
 ## hpa.spatial (development version)
 
+- add
+  [`osrm_table_pairs()`](https://healthpolicyanalysis.github.io/hpa.spatial/reference/osrm_table_pairs.md),
+  a wrapper around
+  [`osrm::osrmTable()`](https://rdrr.io/pkg/osrm/man/osrmTable.html) for
+  estimating drive times/distances for specific origin-destination pairs
+  without computing the full matrix between every combination of points.
+
 - let claude do a review and clean up some redundant code and arguments.
 
 - update hpa.spatial.data commit ref to access the MMM23 lookup to SA1

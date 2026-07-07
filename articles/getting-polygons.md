@@ -52,9 +52,9 @@ maps to reduce load time).
 ``` r
 
 sa2_2016 <- get_polygon(area = "sa2", year = 2016)
-#> Reading sa22016 file found in /tmp/RtmpEnnbKF
+#> Reading sa22016 file found in /tmp/Rtmpmicy2A
 sa2_2016_simple <- get_polygon(area = "sa2", year = 2016, simplify_keep = 0.1)
-#> Reading sa22016 file found in /tmp/RtmpEnnbKF
+#> Reading sa22016 file found in /tmp/Rtmpmicy2A
 
 sa2_2016 |>
   filter(gcc_name_2016 == "Greater Brisbane") |>

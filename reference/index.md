@@ -41,6 +41,9 @@
 - [`map_data_with_correspondence()`](https://healthpolicyanalysis.github.io/hpa.spatial/reference/map_data_with_correspondence.md)
   : Map data between editions using correspondence tables from the ABS.
 
+- [`osrm_table_pairs()`](https://healthpolicyanalysis.github.io/hpa.spatial/reference/osrm_table_pairs.md)
+  : Estimate drive times/distances for specific origin-destination pairs
+
 - [`read_hpa_spatial_data()`](https://healthpolicyanalysis.github.io/hpa.spatial/reference/read_hpa_spatial_data.md)
   : Read a dataset from
   \<github.com/healthpolicyanalysis/hpa.spatial.data/\>
