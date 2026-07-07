@@ -11,6 +11,7 @@ Imports:
     dplyr,
     evaluate,
     glue,
+    osrm,
     purrr,
     rlang,
     rmapshaper,
