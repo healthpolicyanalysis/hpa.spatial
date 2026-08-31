@@ -1,4 +1,6 @@
 test_that("osrm_table_pairs returns correct duration/distance per pair, including repeated points", {
+  skip_if_osrm_unavailable()
+
   origins_sf <- sf::st_as_sf(
     data.frame(lon = c(13.38, 13.40, 13.38), lat = c(52.52, 52.50, 52.52)),
     coords = c("lon", "lat"), crs = 4326
@@ -38,6 +40,8 @@ test_that("osrm_table_pairs returns correct duration/distance per pair, includin
 })
 
 test_that("osrm_table_pairs works with sfc point inputs", {
+  skip_if_osrm_unavailable()
+
   origins_sf <- sf::st_as_sf(
     data.frame(lon = c(13.38, 13.40), lat = c(52.52, 52.50)),
     coords = c("lon", "lat"), crs = 4326
